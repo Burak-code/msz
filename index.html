@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benim Modern Portfolyom</title>
+    <style>
+        /* CSS Kodları */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        header {
+            background: #fff;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #555;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .main-nav a:hover {
+            color: #007bff;
+        }
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .page-section {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .project-card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 5px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MSZ</h1>
+        <nav class="main-nav">
+            <a href="#" data-page="home">Ana Sayfa</a>
+            <a href="#" data-page="about">Hakkımda</a>
+            <a href="#" data-page="experiences">Deneyimler</a>
+            <a href="#" data-page="portfolio">Portfolyo</a>
+            <a href="#" data-page="contact">İletişim</a>
+        </nav>
+    </header>
+
+    <main id="app-content">
+        </main>
+
+    <footer>
+        <p>&copy; 2025 Burak. Tüm Hakları Saklıdır.</p>
+    </footer>
+
+    <script>
+        // JavaScript Kodları
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.getElementById('app-content');
+            const navLinks = document.querySelectorAll('.main-nav a');
+
+            const pages = {
+                home: `
+                    <div class="page-section">
+                        <h2>Merhaba, ben Burak.</h2>
+                        <p>Web geliştirme ve teknoloji tutkunuyum. Projelerimi, deneyimlerimi ve benim hakkımdaki bilgileri bu sitede bulabilirsiniz.</p>
+                    </div>
+                `,
+                about: `
+                    <div class="page-section">
+                        <h2>Hakkımda</h2>
+                        <p>
+Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca ingilizcem A2 B1 civarıdır.<p>                                                                                 Kodlama ile oyun yapmayı, youtubeda yürümeyi, ve hatta müzik yapmayı bile denedim.<p>                                                                                    Tabii ki herşeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek, ve ileride belkide dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum MSZ. Bu grup için hedeflerim portfolyo kısmındadır.<p>            Bu arada youtube kanallarımı iletişim kısmından bulabilirsiniz.<p>                                                                                                                       Müziklerimi şimdilik paylaşmak istemiyorum☺ bunlar özel deneyimler.<p>
+                    </div>
+                `,
+                experiences: `
+                    <div class="page-section">
+                        <h2>Deneyimler</h2>
+                        <p>Yaptığım ve kodladığım bazı HTML oyunlarıma buradan ulaşabilirsiniz.</p>
+                        <div class="grid-container">
+                            <div class="project-card">
+                                <h3>Bayrak tahmın et</h3>
+                                <p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et. İnternet ile çalışıyor en azından şimdilik. Her zorluğun ayrı bir zaman aralığı vardır. Ayrıca rekabetli olması için birazda rank sistemi ekledim.</p>
+                                <a href="oyun1.html" class="btn" target="_blank">Oyna</a>
+                            </div>
+                            <div class="project-card">
+                                <h3>MSZ Trade</h3>
+                                <p>Bu oyunda kendini bir ticaret adamı gibi düşün.Telefon ev araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiyede olduğu gibi paran arttıkça giderinde artacak.</p>
+                                <a href="oyun2.html" class="btn" target="_blank">Oyna</a>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                portfolio: `
+                    <div class="page-section">
+                        <h2>Portfolyo</h2>
+                        <div class="grid-container">
+                            <div class="project-card">
+                                <h3>Gerçekçi Oyun</h3>
+                                <p>Bu projede amacım:<p>
+ Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak ve oyuncuların gerçeklik içinde bir oyun keyfi sürmeleri. Tabii ki bu çok çok zor olacak. Ama bu projemi şimdilik yapmaya kararlı değilim. Eğer ekibim gerçekten üstün olabilirse bu projeyi düşüneceğim.</p>
+                            </div>
+                            <div class="project-card">
+                                <h3>Bilgilendirme Formu</h3>
+                                <p>Bu projede amacım:<p>
+ İnsanların her olaydan haberdar olması. Bu projede bir uygulama yapılacak. Bu uygulamada iki bölüm olacak. 1- Gerçek bilgi araştırılmış ve kanıtlı bilgiler olarak ben ve ekibim tarafından yayınlanacak. 2-Halk tarafından varsayım veya bir çıkarım olarak veya bir öneri olarak halktan yourmlar olacak. Bu projeyi yakın zamanda gerçekleştirmeyi umuyorum.</p>
+                            </div>
+                            <div class="project-card">
+                                <h3>BİG BANG</h3>
+                                <p>Bu projede amacım:<p>
+ İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını, icatlarını, teknolojik gelişmeleri yazacağız. Böylece yeni fikirler eskiden örnek alıp yeni, insanlığı kurtaracak bilgiler üretebilecek. Tabii bir de Halk tarafına açık kısım olacak burada insanlar önerilerini kanıt ve projeleri ile birlikte sunacak.</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                contact: `
+                    <div class="page-section">
+                        <h2>İletişim</h2>
+                        <p>Bana ulaşmak için aşağıdaki bilgilere göz atabilirsiniz:</p>
+                        <ul>
+                            <li>
+                                <strong>Gmail:</strong>
+                                <a href="mailto:burakbilec123@gmail.com">burakbilec123@gmail.com</a>
+                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Git</a>
+                            </li>
+                            <li>
+                                <strong>İnstagram:</strong>
+                                <a href="https://www.instagram.com/burak_msz/" target="_blank">https://www.instagram.com/burak_msz/</a>
+                            </li>
+                            <li>
+                                <strong>Youtube (Oyun):</strong>
+                                <a href="https://www.youtube.com/@ONEtheMSZ" target="_blank">https://www.youtube.com/@ONEtheMSZ</a>
+                            </li>
+                            <li>
+                                <strong>Youtube (Müzik):</strong>
+                                <a href="https://www.youtube.com/@msz_burak" target="_blank">https://www.youtube.com/@msz_burak</a>
+                            </li>
+                        </ul>
+                    </div>
+                `
+            };
+
+            const loadPage = (pageName) => {
+                const content = pages[pageName] || pages.home;
+                mainContent.innerHTML = content;
+            };
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.target.dataset.page;
+                    loadPage(page);
+                });
+            });
+
+            loadPage('home');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MSZ Girişim Simülatörü</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #f0f0f0;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    h1 {
+      color: #00ff99;
+      width: 100%;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      background-color: #00ff99;
+      border: none;
+      border-radius: 5px;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #log {
+      margin-top: 20px;
+      background-color: #222;
+      padding: 10px;
+      border-radius: 5px;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 100%;
+    }
+    .section {
+      background-color: #222;
+      padding: 10px;
+      border-radius: 5px;
+      flex-grow: 1;
+      min-width: 300px;
+      max-width: 600px;
+    }
+    .market-item {
+      background-color: #333;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .menu-buttons button {
+      margin-right: 10px;
+    }
+    #portfolio {
+      background-color: #222;
+      padding: 10px;
+      border-radius: 5px;
+      flex-grow: 1;
+      min-width: 300px;
+      max-width: 400px;
+      height: fit-content;
+      overflow-y: auto;
+    }
+    .owned-item {
+      background-color: #444;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    input.price-input {
+      width: 100px;
+      padding: 5px;
+      margin-top: 5px;
+      border-radius: 3px;
+      border: none;
+      font-weight: bold;
+    }
+    input.rent-input {
+      width: 100px;
+      padding: 5px;
+      margin-top: 5px;
+      margin-left: 10px;
+      border-radius: 3px;
+      border: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>📈 MSZ Girişim Simülatörü</h1>
+
+  <div class="section" style="flex-basis: 100%;">
+    <p><strong>Bakiye:</strong> <span id="money">5000</span> TL</p>
+    <p><strong>Zaman:</strong> <span id="time">1 / 1</span></p>
+    <p><strong>Kalan İşlem:</strong> <span id="actions">5</span></p>
+    <button onclick="nextMonth()">⏭️ Ayı Geç</button>
+
+    <div class="menu-buttons" style="margin-top:10px;">
+      <button onclick="openMenu('car')">🚗 Araba</button>
+      <button onclick="openMenu('phone')">📱 Telefon</button>
+      <button onclick="openMenu('house')">🏠 Ev</button>
+      <button onclick="work()">💼 İşte Çalış (+5000 TL)</button>
+    </div>
+  </div>
+
+  <div class="section" id="marketSection" style="flex-grow:2;">
+    <!-- Dinamik içerik buraya gelecek -->
+  </div>
+
+  <div id="portfolio" class="section">
+    <h3>💼 Varlıkların</h3>
+    <div id="ownedItems"></div>
+  </div>
+
+  <div id="log"></div>
+
+  <script>
+    let money = 5000;
+    let month = 1;
+    let year = 1;
+    let actions = 6;
+
+    let cars = [];
+    let phones = [];
+    let houses = [];
+
+    let carMarket = [
+      { id: 1, model: "2008 Renault Clio", price: 600000, condition: "Hasarsız" },
+      { id: 2, model: "2012 Ford Focus", price: 300000, condition: "Hasarlı" }
+    ];
+    let phoneMarket = [
+      { id: 1, model: "iPhone 12", price: 30000, condition: "Hasarsız" },
+      { id: 2, model: "Samsung S20", price: 15000, condition: "Hasarlı" }
+    ];
+    let houseMarket = [
+      { id: 1, model: "2+1 Daire - Şehir Merkezi", price: 1500000, condition: "Hasarsız" },
+      { id: 2, model: "3+1 Daire - Banliyö", price: 750000, condition: "Hasarlı" }
+    ];
+
+    let currentMenu = "";
+
+    function updateDisplay() {
+      document.getElementById("money").innerText = money.toLocaleString();
+      document.getElementById("time").innerText = `${month} / ${year}`;
+      document.getElementById("actions").innerText = actions;
+    }
+
+    function log(text) {
+      const logDiv = document.getElementById("log");
+      logDiv.innerHTML += `<p>${text}</p>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function useAction() {
+      if (actions <= 0) {
+        log("Bu ay daha fazla işlem yapamazsın.");
+        return false;
+      }
+      actions--;
+      updateDisplay();
+      return true;
+    }
+
+    function nextMonth() {
+      month++;
+      if (month > 12) {
+        month = 1;
+        year++;
+      }
+      actions = 6;
+
+      // Aylık giderler
+      let gider = 10000;
+      if (money >= 100000) {
+        gider = 40000;
+      }
+      money -= gider;
+      log(`💸 Aylık gider: ${gider.toLocaleString()} TL ödendi.`);
+
+      // Her 5 ayda bir araba veya telefon fiyatlarında %50 indirim
+      const totalMonths = (year - 1) * 12 + month;
+      if (totalMonths % 5 === 0) {
+        const dropType = Math.random() < 0.5 ? 'car' : 'phone';
+        if (dropType === 'car') {
+          carMarket.forEach(item => {
+            item.oldPrice = item.price;
+            item.price = Math.floor(item.price * 0.5);
+          });
+          log(`⚠️ Araba fiyatları bu ay %50 düştü!`);
+        } else {
+          phoneMarket.forEach(item => {
+            item.oldPrice = item.price;
+            item.price = Math.floor(item.price * 0.5);
+          });
+          log(`⚠️ Telefon fiyatları bu ay %50 düştü!`);
+        }
+      } else if ((totalMonths - 1) % 5 === 0) {
+        carMarket.forEach(item => {
+          if (item.oldPrice) {
+            item.price = item.oldPrice;
+            delete item.oldPrice;
+          }
+        });
+        phoneMarket.forEach(item => {
+          if (item.oldPrice) {
+            item.price = item.oldPrice;
+            delete item.oldPrice;
+          }
+        });
+        log(`⚠️ Fiyatlar eski seviyesine döndü.`);
+      }
+
+      // Zam ve dalgalanma
+      applyPriceIncreaseWithFluctuation(carMarket, 0.10, 150000);
+      applyPriceIncreaseWithFluctuation(phoneMarket, 0.10, 3000);
+      applyPriceIncreaseWithFluctuation(houseMarket, 0.10, 150000);
+
+      log(`📆 Yeni ay: ${month}/${year}`);
+      renderMarket();
+      renderOwned();
+      updateDisplay();
+    }
+
+    function applyPriceIncreaseWithFluctuation(market, baseIncreasePercent, maxChange) {
+      market.forEach(item => {
+        // Temel %10 zam
+        let newPrice = Math.floor(item.price * (1 + baseIncreasePercent));
+
+        // Dalgalanma: +/- maxChange TL arası rastgele
+        const fluctuation = Math.floor(Math.random() * (maxChange * 2 + 1)) - maxChange;
+
+        // Yeni fiyat = zamlı fiyat + dalgalanma
+        newPrice = Math.max(5000, newPrice + fluctuation);
+
+        item.price = newPrice;
+      });
+    }
+
+    function work() {
+      if (!useAction()) return;
+      money += 5000;
+      log("💼 İşte çalışarak 5000 TL kazandın.");
+      updateDisplay();
+    }
+
+    function openMenu(type) {
+      currentMenu = type;
+      renderMarket();
+      renderOwned();
+    }
+
+    function renderMarket() {
+      const container = document.getElementById("marketSection");
+      container.innerHTML = "";
+      let marketList = [];
+      if (currentMenu === "car") marketList = carMarket;
+      else if (currentMenu === "phone") marketList = phoneMarket;
+      else if (currentMenu === "house") marketList = houseMarket;
+
+      if (!currentMenu) {
+        container.innerHTML = "<p>Alım satım yapmak için yukarıdaki menüden seçim yap.</p>";
+        return;
+      }
+
+      marketList.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "market-item";
+        div.innerHTML = `
+          <strong>${item.model}</strong><br>
+          Durum: ${item.condition}<br>
+          Fiyat: ${item.price.toLocaleString()} TL<br>
+          <button onclick="buyItem(${item.id})">Satın Al</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function buyItem(id) {
+      if (!useAction()) return;
+      let marketList, ownedList, typeName;
+      if (currentMenu === "car") {
+        marketList = carMarket;
+        ownedList = cars;
+        typeName = "Araba";
+      } else if (currentMenu === "phone") {
+        marketList = phoneMarket;
+        ownedList = phones;
+        typeName = "Telefon";
+      } else if (currentMenu === "house") {
+        marketList = houseMarket;
+        ownedList = houses;
+        typeName = "Ev";
+      } else {
+        log("Lütfen önce kategori seçin.");
+        return;
+      }
+      const item = marketList.find(i => i.id === id);
+      if (money >= item.price) {
+        money -= item.price;
+        ownedList.push({...item, buyPrice: item.price, rentPrice: 0});
+        log(`✅ ${typeName} "${item.model}" ${item.price.toLocaleString()} TL'ye satın alındı.`);
+        updateDisplay();
+        renderOwned();
+      } else {
+        log("Yeterli paran yok.");
+      }
+    }
+
+    function renderOwned() {
+      const container = document.getElementById("ownedItems");
+      container.innerHTML = "";
+
+      function createOwnedItem(item, index, typeName, ownedList) {
+        const maxPrice = Math.floor(item.buyPrice * 1.5);  // max satış fiyatı 1.5 katı olarak güncellendi
+        let rentInputHtml = "";
+        let rentButtonHtml = "";
+
+        if(typeName === "house"){
+          rentInputHtml = `<label>Kira Belirle (TL): <input type="number" min="1" max="${maxPrice}" class="rent-input" id="${typeName}_${index}_rent" placeholder="Kira fiyatı"></label>`;
+          rentButtonHtml = `<button onclick="rentHouse(${index})">Kirala</button>`;
+        }
+
+        const div = document.createElement("div");
+        div.className = "owned-item";
+        div.innerHTML = `
+          <strong>${item.model}</strong><br>
+          Alış Fiyatı: ${item.buyPrice.toLocaleString()} TL<br>
+          Durum: ${item.condition}<br>
+          ${item.rentPrice ? `Kira (Eski): ${item.rentPrice.toLocaleString()} TL<br>` : ""}
+          ${rentInputHtml}<br>
+          ${rentButtonHtml}<br>
+          <label>Satış Fiyatı Belirle (max ${maxPrice.toLocaleString()} TL): <input type="number" min="1" max="${maxPrice}" class="price-input" id="${typeName}_${index}_price" placeholder="Satış fiyatı"></label><br>
+          <button onclick="sellItem('${typeName}', ${index})">Sat</button>
+        `;
+        container.appendChild(div);
+      }
+
+      cars.forEach((item, i) => createOwnedItem(item, i, "car", cars));
+      phones.forEach((item, i) => createOwnedItem(item, i, "phone", phones));
+      houses.forEach((item, i) => createOwnedItem(item, i, "house", houses));
+    }
+
+    function sellItem(type, index) {
+      if (!useAction()) return;
+      let ownedList;
+      if (type === "car") ownedList = cars;
+      else if (type === "phone") ownedList = phones;
+      else if (type === "house") ownedList = houses;
+      else {
+        log("Geçersiz tür.");
+        return;
+      }
+      const item = ownedList[index];
+      const inputId = `${type}_${index}_price`;
+      const priceInput = document.getElementById(inputId);
+      const sellPrice = Number(priceInput.value);
+      const maxPrice = Math.floor(item.buyPrice * 1.5);
+      if (!sellPrice || sellPrice <= 0) {
+        log("Lütfen geçerli bir satış fiyatı girin.");
+        return;
+      }
+      if(sellPrice > maxPrice){
+        log(`Satış fiyatı satın alma fiyatının 1.5 katından fazla olamaz. Max: ${maxPrice.toLocaleString()} TL`);
+        return;
+      }
+      money += sellPrice;
+      log(`🔻 ${item.model} ${sellPrice.toLocaleString()} TL'ye satıldı.`);
+      ownedList.splice(index, 1);
+      updateDisplay();
+      renderOwned();
+    }
+
+    function rentHouse(index) {
+      if (!useAction()) return;
+      const house = houses[index];
+      const rentInputId = `house_${index}_rent`;
+      const rentInput = document.getElementById(rentInputId);
+      const rentPrice = Number(rentInput.value);
+      const maxPrice = Math.floor(house.buyPrice * 1.5);
+      if (!rentPrice || rentPrice <= 0) {
+        log("Lütfen geçerli bir kira fiyatı girin.");
+        return;
+      }
+      if(rentPrice > maxPrice){
+        log(`Kira fiyatı satın alma fiyatının 1.5 katından fazla olamaz. Max: ${maxPrice.toLocaleString()} TL`);
+        return;
+      }
+      money += rentPrice;
+      log(`🏠 ${house.model} için ${rentPrice.toLocaleString()} TL kira geliri aldın.`);
+      updateDisplay();
+    }
+
+    // İlk yükleme
+    updateDisplay();
+    renderMarket();
+    renderOwned();
+  </script>
+</body>
+</html>
