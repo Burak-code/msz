@@ -13,6 +13,7 @@
             margin: 0;
             background-color: #f0f2f5;
             color: #333;
+            transition: background-color 0.5s, color 0.5s;
         }
         header {
             background: #fff;
@@ -44,6 +45,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
             animation: fadeIn 0.8s ease-in-out;
+            transition: background-color 0.5s, color 0.5s;
         }
         .grid-container {
             display: grid;
@@ -94,6 +96,104 @@
             font-style: italic;
             font-weight: bold;
         }
+
+        /* Dil ve ayar butonları için yeni CSS kodları */
+        .bottom-right {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .bottom-right .flag-btn {
+            width: 40px;
+            height: 40px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        .bottom-right .flag-btn:hover {
+            transform: scale(1.1);
+        }
+        #tr-flag {
+            background-image: url('https://flagcdn.com/tr.svg');
+        }
+        #en-flag {
+            background-image: url('https://flagcdn.com/gb.svg');
+        }
+
+        .bottom-left {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .dark-mode-toggle {
+            width: 60px;
+            height: 30px;
+            background-color: #ccc;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.5s;
+        }
+        .dark-mode-toggle.active {
+            background-color: #4CAF50;
+        }
+        .dark-mode-toggle .toggle-ball {
+            width: 26px;
+            height: 26px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.5s, background-color 0.5s;
+        }
+        .dark-mode-toggle.active .toggle-ball {
+            transform: translateX(30px);
+        }
+        
+        /* Tema değişiklikleri için CSS */
+        body.light-mode {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        body.light-mode .page-section {
+            background: #fff;
+            color: #333;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode header {
+            background: #1e1e1e;
+        }
+        body.dark-mode .page-section {
+            background: #1e1e1e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .main-nav a {
+            color: #ccc;
+        }
+        body.dark-mode .main-nav a:hover {
+            color: #007bff;
+        }
+        body.dark-mode .project-card {
+            background: #2a2a2a;
+        }
+        body.dark-mode footer {
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -116,96 +216,240 @@
         <p>&copy; 2025 Burak. Tüm Hakları Saklıdır.</p>
     </footer>
 
+    <div class="bottom-right">
+        <div class="flag-btn" id="tr-flag"></div>
+        <div class="flag-btn" id="en-flag"></div>
+    </div>
+
+    <div class="bottom-left">
+        <div class="dark-mode-toggle" id="mode-toggle">
+            <div class="toggle-ball"></div>
+        </div>
+    </div>
+    
     <script>
         // JavaScript Kodları
         document.addEventListener('DOMContentLoaded', () => {
             const mainContent = document.getElementById('app-content');
             const navLinks = document.querySelectorAll('.main-nav a');
+            const trFlag = document.getElementById('tr-flag');
+            const enFlag = document.getElementById('en-flag');
+            const modeToggle = document.getElementById('mode-toggle');
+            const body = document.body;
 
-            const pages = {
-                home: `
-                    <div class="page-section">
-                        <h2>Merhaba, ben Burak.</h2>
-                        <p>Web geliştirme ve teknoloji tutkunuyum. Projelerimi, deneyimlerimi ve benim hakkımdaki bilgileri bu sitede bulabilirsiniz.</p>
-                    </div>
-                `,
-                about: `
-                    <div class="page-section">
-                        <h2>Hakkımda</h2>
-                        <p>
-Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca ingilizcem A2 B1 civarıdır.<p>                                                                                 Kodlama ile oyun yapmayı, youtubeda yürümeyi, ve hatta müzik yapmayı bile denedim.<p>                                                                                    Tabii ki herşeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek, ve ileride belkide dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum MSZ. Bu grup için hedeflerim portfolyo kısmındadır.<p>            Bu arada youtube kanallarımı iletişim kısmından bulabilirsiniz.<p>                                                                                                                       Müziklerimi şimdilik paylaşmak istemiyorum☺ bunlar özel deneyimler.<p>
-                    </div>
-                `,
-                experiences: `
-                    <div class="page-section">
-                        <h2>Deneyimler</h2>
-                        <p>Yaptığım ve kodladığım bazı HTML oyunlarıma buradan ulaşabilirsiniz.</p>
-                        <div class="grid-container">
-                            <div class="project-card">
-                                <h3>Bayrak tahmın et</h3>
-                                <p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et. İnternet ile çalışıyor en azından şimdilik. Her zorluğun ayrı bir zaman aralığı vardır. Ayrıca rekabetli olması için birazda rank sistemi ekledim.</p>
-                                <a href="oyun1.html" class="btn" target="_blank">Oyna</a>
+            // Türkçe ve İngilizce içeriklerin bulunduğu obje
+            const content = {
+                tr: {
+                    nav: {
+                        home: "Ana Sayfa",
+                        about: "Hakkımda",
+                        experiences: "Deneyimler",
+                        portfolio: "Portfolyo",
+                        contact: "İletişim"
+                    },
+                    pages: {
+                        home: `
+                            <div class="page-section">
+                                <h2>Merhaba, ben Burak.</h2>
+                                <p>Web geliştirme ve teknoloji tutkunuyum. Projelerimi, deneyimlerimi ve benim hakkımdaki bilgileri bu sitede bulabilirsiniz.</p>
                             </div>
-                            <div class="project-card">
-                                <h3>MSZ Trade</h3>
-                                <p>Bu oyunda kendini bir ticaret adamı gibi düşün.Telefon ev araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiyede olduğu gibi paran arttıkça giderinde artacak.</p>
-                                <a href="oyun2.html" class="btn" target="_blank">Oyna</a>
+                        `,
+                        about: `
+                            <div class="page-section">
+                                <h2>Hakkımda</h2>
+                                <p>
+                                    Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca ingilizcem A2 B1 civarıdır.<p>                                                                                 Kodlama ile oyun yapmayı, youtubeda yürümeyi, ve hatta müzik yapmayı bile denedim.<p>                                                                                    Tabii ki herşeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek, ve ileride belkide dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum MSZ. Bu grup için hedeflerim portfolyo kısmındadır.<p>            Bu arada youtube kanallarımı iletişim kısmından bulabilirsiniz.<p>                                                                                                                       Müziklerimi şimdilik paylaşmak istemiyorum☺ bunlar özel deneyimler.<p>
+                                </p>
                             </div>
-                        </div>
-                    </div>
-                `,
-                portfolio: `
-                    <div class="page-section">
-                        <h2>Portfolyo</h2>
-                        <div class="grid-container">
-                            <div class="project-card">
-                                <h3>Gerçekçi Oyun</h3>
-                                <p>Bu projede amacım:<p>
- Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak ve oyuncuların gerçeklik içinde bir oyun keyfi sürmeleri. Tabii ki bu çok çok zor olacak. Ama bu projemi şimdilik yapmaya kararlı değilim. Eğer ekibim gerçekten üstün olabilirse bu projeyi düşüneceğim.</p>
+                        `,
+                        experiences: `
+                            <div class="page-section">
+                                <h2>Deneyimler</h2>
+                                <p>Yaptığım ve kodladığım bazı HTML oyunlarıma buradan ulaşabilirsiniz.</p>
+                                <div class="grid-container">
+                                    <div class="project-card">
+                                        <h3>Bayrak tahmın et</h3>
+                                        <p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et. İnternet ile çalışıyor en azından şimdilik. Her zorluğun ayrı bir zaman aralığı vardır. Ayrıca rekabetli olması için birazda rank sistemi ekledim.</p>
+                                        <a href="oyun1.html" class="btn" target="_blank">Oyna</a>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>MSZ Trade</h3>
+                                        <p>Bu oyunda kendini bir ticaret adamı gibi düşün.Telefon ev araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiyede olduğu gibi paran arttıkça giderinde artacak.</p>
+                                        <a href="oyun2.html" class="btn" target="_blank">Oyna</a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="project-card">
-                                <h3>Bilgilendirme Formu</h3>
-                                <p>Bu projede amacım:<p>
- İnsanların her olaydan haberdar olması. Bu projede bir uygulama yapılacak. Bu uygulamada iki bölüm olacak. 1- Gerçek bilgi araştırılmış ve kanıtlı bilgiler olarak ben ve ekibim tarafından yayınlanacak. 2-Halk tarafından varsayım veya bir çıkarım olarak veya bir öneri olarak halktan yourmlar olacak. Bu projeyi yakın zamanda gerçekleştirmeyi umuyorum.</p>
+                        `,
+                        portfolio: `
+                            <div class="page-section">
+                                <h2>Portfolyo</h2>
+                                <div class="grid-container">
+                                    <div class="project-card">
+                                        <h3>Gerçekçi Oyun</h3>
+                                        <p>Bu projede amacım:<p>
+                                            Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak ve oyuncuların gerçeklik içinde bir oyun keyfi sürmeleri. Tabii ki bu çok çok zor olacak. Ama bu projemi şimdilik yapmaya kararlı değilim. Eğer ekibim gerçekten üstün olabilirse bu projeyi düşüneceğim.</p>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>Bilgilendirme Formu</h3>
+                                        <p>Bu projede amacım:<p>
+                                            İnsanların her olaydan haberdar olması. Bu projede bir uygulama yapılacak. Bu uygulamada iki bölüm olacak. 1- Gerçek bilgi araştırılmış ve kanıtlı bilgiler olarak ben ve ekibim tarafından yayınlanacak. 2-Halk tarafından varsayım veya bir çıkarım olarak veya bir öneri olarak halktan yourmlar olacak. Bu projeyi yakın zamanda gerçekleştirmeyi umuyorum.</p>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>BİG BANG</h3>
+                                        <p>Bu projede amacım:<p>
+                                            İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını, icatlarını, teknolojik gelişmeleri yazacağız. Böylece yeni fikirler eskiden örnek alıp yeni, insanlığı kurtaracak bilgiler üretebilecek. Tabii bir de Halk tarafına açık kısım olacak burada insanlar önerilerini kanıt ve projeleri ile birlikte sunacak.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="project-card">
-                                <h3>BİG BANG</h3>
-                                <p>Bu projede amacım:<p>
- İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını, icatlarını, teknolojik gelişmeleri yazacağız. Böylece yeni fikirler eskiden örnek alıp yeni, insanlığı kurtaracak bilgiler üretebilecek. Tabii bir de Halk tarafına açık kısım olacak burada insanlar önerilerini kanıt ve projeleri ile birlikte sunacak.</p>
+                        `,
+                        contact: `
+                            <div class="page-section">
+                                <h2>İletişim</h2>
+                                <p>Bana ulaşmak için aşağıdaki bilgilere göz atabilirsiniz:</p>
+                                <ul>
+                                    <li>
+                                        <strong>Gmail:</strong>
+                                        <a href="mailto:burakbilec123@gmail.com">burakbilec123@gmail.com</a>
+                                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Git</a>
+                                    </li>
+                                    <li>
+                                        <strong>İnstagram:</strong>
+                                        <a href="https://www.instagram.com/burak_msz/" target="_blank">https://www.instagram.com/burak_msz/</a>
+                                    </li>
+                                    <li>
+                                        <strong>Youtube (Oyun):</strong>
+                                        <a href="https://www.youtube.com/@ONEtheMSZ" target="_blank">https://www.youtube.com/@ONEtheMSZ</a>
+                                    </li>
+                                    <li>
+                                        <strong>Youtube (Müzik):</strong>
+                                        <a href="https://www.youtube.com/@msz_burak" target="_blank">https://www.youtube.com/@msz_burak</a>
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
-                    </div>
-                `,
-                contact: `
-                    <div class="page-section">
-                        <h2>İletişim</h2>
-                        <p>Bana ulaşmak için aşağıdaki bilgilere göz atabilirsiniz:</p>
-                        <ul>
-                            <li>
-                                <strong>Gmail:</strong>
-                                <a href="mailto:burakbilec123@gmail.com">burakbilec123@gmail.com</a>
-                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Git</a>
-                            </li>
-                            <li>
-                                <strong>İnstagram:</strong>
-                                <a href="https://www.instagram.com/burak_msz/" target="_blank">https://www.instagram.com/burak_msz/</a>
-                            </li>
-                            <li>
-                                <strong>Youtube (Oyun):</strong>
-                                <a href="https://www.youtube.com/@ONEtheMSZ" target="_blank">https://www.youtube.com/@ONEtheMSZ</a>
-                            </li>
-                            <li>
-                                <strong>Youtube (Müzik):</strong>
-                                <a href="https://www.youtube.com/@msz_burak" target="_blank">https://www.youtube.com/@msz_burak</a>
-                            </li>
-                        </ul>
-                    </div>
-                `
+                        `,
+                        footer: "&copy; 2025 Burak. Tüm Hakları Saklıdır."
+                    }
+                },
+                en: {
+                    nav: {
+                        home: "Home",
+                        about: "About",
+                        experiences: "Experiences",
+                        portfolio: "Portfolio",
+                        contact: "Contact"
+                    },
+                    pages: {
+                        home: `
+                            <div class="page-section">
+                                <h2>Hello, I'm Burak.</h2>
+                                <p>I'm passionate about web development and technology. You can find my projects, experiences, and information about me on this site.</p>
+                            </div>
+                        `,
+                        about: `
+                            <div class="page-section">
+                                <h2>About Me</h2>
+                                <p>
+                                    You should know that I know a little bit of coding. My English is also around A2 B1 level. I've tried making games, walking on YouTube, and even making music with coding. Of course, a steel body is needed before anything else. That's why I'll need a group that will grow, learn, and maybe one day create the world's best design with me. I've even found a name for this group, MSZ. My goals for this group are in the portfolio section. By the way, you can find my YouTube channels in the contact section. I don't want to share my music for now ☺ these are special experiences.
+                                </p>
+                            </div>
+                        `,
+                        experiences: `
+                            <div class="page-section">
+                                <h2>Experiences</h2>
+                                <p>You can access some of the HTML games I've made and coded here.</p>
+                                <div class="grid-container">
+                                    <div class="project-card">
+                                        <h3>Guess the Flag</h3>
+                                        <p>In this game, you just have to guess which country the flags belong to. It works with the internet, at least for now. Each difficulty has a separate time interval. I also added a rank system to make it competitive.</p>
+                                        <a href="oyun1.html" class="btn" target="_blank">Play</a>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>MSZ Trade</h3>
+                                        <p>In this game, think of yourself as a businessman. You buy and sell phones, houses, and cars. But be careful, you can only sell at most 1.5 times the price. And also, you will have some expenses every month. As in Turkey, your expenses will increase as your money increases.</p>
+                                        <a href="oyun2.html" class="btn" target="_blank">Play</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `,
+                        portfolio: `
+                            <div class="page-section">
+                                <h2>Portfolio</h2>
+                                <div class="grid-container">
+                                    <div class="project-card">
+                                        <h3>Realistic Game</h3>
+                                        <p>My goal in this project is to transfer the real world entirely to a game and for players to enjoy a game experience within reality. Of course, this will be very, very difficult. But I'm not determined to do this project for now. If my team can really be superior, I'll consider this project.</p>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>Information Form</h3>
+                                        <p>My goal in this project is for people to be informed about every event. An application will be made in this project. There will be two sections in this application. 1- Real information will be published by me and my team as researched and proven information. 2- There will be comments from the public as assumptions or inferences or suggestions. I hope to realize this project soon.</p>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>BIG BANG</h3>
+                                        <p>My goal in this project is to write down the habits, inventions, and technological developments that have continued since the first ages of humanity. Thus, new ideas can be based on the old ones to produce new information that will save humanity. Of course, there will also be a section open to the public where people can present their suggestions with proof and projects.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `,
+                        contact: `
+                            <div class="page-section">
+                                <h2>Contact</h2>
+                                <p>You can check the information below to reach me:</p>
+                                <ul>
+                                    <li>
+                                        <strong>Gmail:</strong>
+                                        <a href="mailto:burakbilec123@gmail.com">burakbilec123@gmail.com</a>
+                                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Go</a>
+                                    </li>
+                                    <li>
+                                        <strong>Instagram:</strong>
+                                        <a href="https://www.instagram.com/burak_msz/" target="_blank">https://www.instagram.com/burak_msz/</a>
+                                    </li>
+                                    <li>
+                                        <strong>YouTube (Gaming):</strong>
+                                        <a href="https://www.youtube.com/@ONEtheMSZ" target="_blank">https://www.youtube.com/@ONEtheMSZ</a>
+                                    </li>
+                                    <li>
+                                        <strong>YouTube (Music):</strong>
+                                        <a href="https://www.youtube.com/@msz_burak" target="_blank">https://www.youtube.com/@msz_burak</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        `,
+                        footer: "&copy; 2025 Burak. All Rights Reserved."
+                    }
+                }
+            };
+            
+            let currentLanguage = 'tr';
+            let currentPage = 'home';
+            let isDarkMode = false;
+
+            const updateContent = (lang) => {
+                currentLanguage = lang;
+                document.querySelector('html').lang = lang;
+                
+                // Menü linklerini güncelle
+                navLinks.forEach(link => {
+                    const pageName = link.dataset.page;
+                    link.textContent = content[lang].nav[pageName];
+                });
+                
+                // Sayfa içeriğini tekrar yükle
+                loadPage(currentPage, lang);
             };
 
-            const loadPage = (pageName) => {
-                const content = pages[pageName] || pages.home;
-                mainContent.innerHTML = content;
+            const loadPage = (pageName, lang = currentLanguage) => {
+                currentPage = pageName;
+                const pageContent = content[lang].pages[pageName] || content[lang].pages.home;
+                mainContent.innerHTML = pageContent;
+                document.querySelector('footer p').textContent = content[lang].pages.footer;
+            };
+
+            const toggleDarkMode = () => {
+                isDarkMode = !isDarkMode;
+                modeToggle.classList.toggle('active');
+                body.classList.toggle('dark-mode', isDarkMode);
+                body.classList.toggle('light-mode', !isDarkMode);
             };
 
             navLinks.forEach(link => {
@@ -216,7 +460,13 @@ Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca ingilizcem A2 B1 ci
                 });
             });
 
+            trFlag.addEventListener('click', () => updateContent('tr'));
+            enFlag.addEventListener('click', () => updateContent('en'));
+            modeToggle.addEventListener('click', toggleDarkMode);
+
+            // Başlangıçta ana sayfayı ve varsayılan temayı yükle
             loadPage('home');
+            body.classList.add('light-mode');
         });
     </script>
 </body>
