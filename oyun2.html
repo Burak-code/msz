@@ -10,13 +10,25 @@
       background-color: #111;
       color: #f0f0f0;
       padding: 20px;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-areas:
+        "info   market    portfolio"
+        "menu   market    portfolio"
+        "log    log       log";
+      grid-template-columns: 1fr 2fr 1fr;
       gap: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.light-mode {
+      background-color: #f0f0f0;
+      color: #111;
     }
     h1 {
       color: #00ff99;
       width: 100%;
+    }
+    .light-mode h1 {
+      color: #009966;
     }
     button {
       margin: 5px;
@@ -28,6 +40,10 @@
       font-weight: bold;
       cursor: pointer;
     }
+    .light-mode button {
+      background-color: #009966;
+      color: #f0f0f0;
+    }
     #log {
       margin-top: 20px;
       background-color: #222;
@@ -35,15 +51,38 @@
       border-radius: 5px;
       max-height: 200px;
       overflow-y: auto;
-      width: 100%;
+      grid-area: log;
+    }
+    .light-mode #log {
+      background-color: #ddd;
     }
     .section {
       background-color: #222;
       padding: 10px;
       border-radius: 5px;
-      flex-grow: 1;
-      min-width: 300px;
-      max-width: 600px;
+      height: fit-content;
+    }
+    .light-mode .section {
+      background-color: #ccc;
+    }
+    #game-info {
+        grid-area: info;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    #game-menu {
+        grid-area: menu;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+    #marketSection {
+        grid-area: market;
+    }
+    #portfolio {
+        grid-area: portfolio;
     }
     .market-item {
       background-color: #333;
@@ -51,18 +90,8 @@
       margin-bottom: 10px;
       border-radius: 5px;
     }
-    .menu-buttons button {
-      margin-right: 10px;
-    }
-    #portfolio {
-      background-color: #222;
-      padding: 10px;
-      border-radius: 5px;
-      flex-grow: 1;
-      min-width: 300px;
-      max-width: 400px;
-      height: fit-content;
-      overflow-y: auto;
+    .light-mode .market-item {
+      background-color: #bbb;
     }
     .owned-item {
       background-color: #444;
@@ -70,48 +99,87 @@
       padding: 10px;
       border-radius: 5px;
     }
-    input.price-input {
-      width: 100px;
-      padding: 5px;
-      margin-top: 5px;
-      border-radius: 3px;
-      border: none;
-      font-weight: bold;
+    .light-mode .owned-item {
+      background-color: #aaa;
     }
-    input.rent-input {
+    input.price-input, input.rent-input {
       width: 100px;
       padding: 5px;
       margin-top: 5px;
-      margin-left: 10px;
       border-radius: 3px;
       border: none;
       font-weight: bold;
+      background-color: #555;
+      color: #f0f0f0;
+    }
+    .light-mode input.price-input, .light-mode input.rent-input {
+      background-color: #ddd;
+      color: #111;
+    }
+    .settings-menu {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #333;
+      padding: 15px;
+      border-radius: 8px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+    }
+    .light-mode .settings-menu {
+      background-color: #bbb;
+    }
+    .settings-menu.active {
+      display: flex;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>📈 MSZ Girişim Simülatörü</h1>
+  <div id="game-info" class="section">
+    <h1>📈 MSZ Girişim Simülatörü</h1>
+    <p><span data-lang="money-label"><strong>Bakiye:</strong></span> <span id="money">5000</span> TL</p>
+    <p><span data-lang="time-label"><strong>Zaman:</strong></span> <span id="time">1 / 1</span></p>
+    <p><span data-lang="actions-label"><strong>Kalan İşlem:</strong></span> <span id="actions">5</span></p>
+    <p id="debt-status" class="hidden"><span data-lang="debt-label"><strong>Borç:</strong></span> <span id="debt-amount">0</span> TL</p>
+    <button onclick="nextMonth()" data-lang="next-month-btn">⏭️ Ayı Geç</button>
+    <button id="debt-button" onclick="takeLoan()" data-lang="take-loan-btn">💸 100.000 TL Borç Çek</button>
+    <button id="repay-debt-button" onclick="repayLoan()" class="hidden" data-lang="repay-loan-btn">💰 Borcu Kapat</button>
+    <button onclick="openSettings()" data-lang="settings-btn">⚙️ Ayarlar</button>
+  </div>
 
-  <div class="section" style="flex-basis: 100%;">
-    <p><strong>Bakiye:</strong> <span id="money">5000</span> TL</p>
-    <p><strong>Zaman:</strong> <span id="time">1 / 1</span></p>
-    <p><strong>Kalan İşlem:</strong> <span id="actions">5</span></p>
-    <button onclick="nextMonth()">⏭️ Ayı Geç</button>
-
-    <div class="menu-buttons" style="margin-top:10px;">
-      <button onclick="openMenu('car')">🚗 Araba</button>
-      <button onclick="openMenu('phone')">📱 Telefon</button>
-      <button onclick="openMenu('house')">🏠 Ev</button>
-      <button onclick="work()">💼 İşte Çalış (+5000 TL)</button>
+  <div id="game-menu" class="section">
+    <button onclick="openMenu('car')" data-lang="car-btn">🚗 Araba</button>
+    <button onclick="openMenu('phone')" data-lang="phone-btn">📱 Telefon</button>
+    <button onclick="openMenu('house')" data-lang="house-btn">🏠 Ev</button>
+    <button onclick="work()" data-lang="work-btn">💼 İşte Çalış (+5000 TL)</button>
+  </div>
+  
+  <div id="settings-menu" class="settings-menu">
+    <h3 data-lang="settings-title">Ayarlar</h3>
+    <div>
+      <h4 data-lang="theme-title">Tema</h4>
+      <button onclick="setTheme('dark')" data-lang="dark-theme-btn">Koyu Tema</button>
+      <button onclick="setTheme('light')" data-lang="light-theme-btn">Açık Tema</button>
+    </div>
+    <div>
+      <h4 data-lang="language-title">Dil</h4>
+      <button onclick="setLanguage('tr')">Türkçe</button>
+      <button onclick="setLanguage('en')">English</button>
     </div>
   </div>
 
-  <div class="section" id="marketSection" style="flex-grow:2;">
-    <!-- Dinamik içerik buraya gelecek -->
+  <div id="marketSection" class="section">
+    <p><span data-lang="market-placeholder">Alım satım yapmak için yukarıdaki menüden seçim yap.</span></p>
   </div>
 
   <div id="portfolio" class="section">
-    <h3>💼 Varlıkların</h3>
+    <h3 data-lang="portfolio-title">💼 Varlıkların</h3>
     <div id="ownedItems"></div>
   </div>
 
@@ -122,6 +190,7 @@
     let month = 1;
     let year = 1;
     let actions = 6;
+    let debt = 0;
 
     let cars = [];
     let phones = [];
@@ -141,11 +210,144 @@
     ];
 
     let currentMenu = "";
+    let isSettingsOpen = false;
+
+    const translations = {
+      tr: {
+        "money-label": "<strong>Bakiye:</strong>",
+        "time-label": "<strong>Zaman:</strong>",
+        "actions-label": "<strong>Kalan İşlem:</strong>",
+        "debt-label": "<strong>Borç:</strong>",
+        "next-month-btn": "⏭️ Ayı Geç",
+        "take-loan-btn": "💸 100.000 TL Borç Çek",
+        "repay-loan-btn": "💰 Borcu Kapat",
+        "settings-btn": "⚙️ Ayarlar",
+        "car-btn": "🚗 Araba",
+        "phone-btn": "📱 Telefon",
+        "house-btn": "🏠 Ev",
+        "work-btn": "💼 İşte Çalış (+5000 TL)",
+        "settings-title": "Ayarlar",
+        "theme-title": "Tema",
+        "dark-theme-btn": "Koyu Tema",
+        "light-theme-btn": "Açık Tema",
+        "language-title": "Dil",
+        "market-placeholder": "Alım satım yapmak için yukarıdaki menüden seçim yap.",
+        "portfolio-title": "💼 Varlıkların",
+        "not-enough-money": "Yeterli paran yok.",
+        "action-limit": "Bu ay daha fazla işlem yapamazsın.",
+        "work-log": "💼 İşte çalışarak 5000 TL kazandın.",
+        "monthly-expense-log": "💸 Aylık gider: {gider} TL ödendi.",
+        "new-month-log": "📆 Yeni ay: {month}/{year}",
+        "item-bought-log": "✅ {typeName} \"{model}\" {price} TL'ye satın alındı.",
+        "invalid-type": "Geçersiz tür.",
+        "set-category-first": "Lütfen önce kategori seçin.",
+        "sell-log": "🔻 {model} {price} TL'ye satıldı.",
+        "rent-log": "🏠 {model} için {price} TL kira geliri aldın.",
+        "invalid-sell-price": "Lütfen geçerli bir satış fiyatı girin.",
+        "sell-price-limit": "Satış fiyatı satın alma fiyatının 1.5 katından fazla olamaz. Max: {maxPrice} TL",
+        "invalid-rent-price": "Lütfen geçerli bir kira fiyatı girin.",
+        "rent-price-limit": "Kira fiyatı satın alma fiyatının 1.5 katından fazla olamaz. Max: {maxPrice} TL",
+        "no-loan-available": "Zaten borcun var, tekrar borç alamazsın.",
+        "loan-taken-log": "💸 100.000 TL borç çekildi.",
+        "loan-repaid-log": "💰 Borç geri ödendi. {amount} TL bakiyeden düşüldü.",
+        "no-debt-to-repay": "Ödenecek bir borcun yok.",
+        "insufficient-funds-repay": "Borcu kapatmak için yeterli paran yok.",
+        "loan-deduction-log": "💸 Borç taksiti ödendi. {amount} TL bakiyeden düştü."
+      },
+      en: {
+        "money-label": "<strong>Balance:</strong>",
+        "time-label": "<strong>Time:</strong>",
+        "actions-label": "<strong>Remaining Actions:</strong>",
+        "debt-label": "<strong>Debt:</strong>",
+        "next-month-btn": "⏭️ Next Month",
+        "take-loan-btn": "💸 Take out 100,000 TL Loan",
+        "repay-loan-btn": "💰 Repay Loan",
+        "settings-btn": "⚙️ Settings",
+        "car-btn": "🚗 Car",
+        "phone-btn": "📱 Phone",
+        "house-btn": "🏠 House",
+        "work-btn": "💼 Work (+5000 TL)",
+        "settings-title": "Settings",
+        "theme-title": "Theme",
+        "dark-theme-btn": "Dark Theme",
+        "light-theme-btn": "Light Theme",
+        "language-title": "Language",
+        "market-placeholder": "Select a category from the menu above to buy or sell.",
+        "portfolio-title": "💼 Your Assets",
+        "not-enough-money": "You don't have enough money.",
+        "action-limit": "You cannot perform any more actions this month.",
+        "work-log": "💼 You earned 5000 TL from working.",
+        "monthly-expense-log": "💸 Monthly expense: {gider} TL paid.",
+        "new-month-log": "📆 New month: {month}/{year}",
+        "item-bought-log": "✅ {typeName} \"{model}\" bought for {price} TL.",
+        "invalid-type": "Invalid type.",
+        "set-category-first": "Please select a category first.",
+        "sell-log": "🔻 {model} sold for {price} TL.",
+        "rent-log": "🏠 You received {price} TL in rent for {model}.",
+        "invalid-sell-price": "Please enter a valid selling price.",
+        "sell-price-limit": "Selling price cannot be more than 1.5 times the purchase price. Max: {maxPrice} TL",
+        "invalid-rent-price": "Please enter a valid rent price.",
+        "rent-price-limit": "Rent price cannot be more than 1.5 times the purchase price. Max: {maxPrice} TL",
+        "no-loan-available": "You already have a loan, you cannot take out another one.",
+        "loan-taken-log": "💸 100,000 TL loan taken out.",
+        "loan-repaid-log": "💰 Loan repaid. {amount} TL deducted from balance.",
+        "no-debt-to-repay": "You have no debt to repay.",
+        "insufficient-funds-repay": "You don't have enough money to repay the loan.",
+        "loan-deduction-log": "💸 Loan installment paid. {amount} TL deducted from balance."
+      }
+    };
+
+    let currentLanguage = 'tr';
+
+    function translatePage() {
+      document.querySelectorAll('[data-lang]').forEach(element => {
+        const key = element.getAttribute('data-lang');
+        if (translations[currentLanguage][key]) {
+          element.innerHTML = translations[currentLanguage][key];
+        }
+      });
+      document.getElementById("portfolio").querySelector("h3").innerText = translations[currentLanguage]["portfolio-title"];
+      document.getElementById("marketSection").querySelector("p").innerText = translations[currentLanguage]["market-placeholder"];
+      renderMarket();
+      renderOwned();
+      updateDisplay();
+    }
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      document.documentElement.lang = lang;
+      translatePage();
+    }
+
+    function setTheme(theme) {
+      document.body.classList.toggle('light-mode', theme === 'light');
+    }
+
+    function openSettings() {
+      const settingsMenu = document.getElementById("settings-menu");
+      isSettingsOpen = !isSettingsOpen;
+      settingsMenu.classList.toggle("active", isSettingsOpen);
+    }
 
     function updateDisplay() {
       document.getElementById("money").innerText = money.toLocaleString();
       document.getElementById("time").innerText = `${month} / ${year}`;
       document.getElementById("actions").innerText = actions;
+
+      const debtStatus = document.getElementById("debt-status");
+      const debtButton = document.getElementById("debt-button");
+      const repayDebtButton = document.getElementById("repay-debt-button");
+      
+      if (debt > 0) {
+        debtStatus.classList.remove("hidden");
+        document.getElementById("debt-amount").innerText = debt.toLocaleString();
+        debtButton.classList.add("hidden");
+        repayDebtButton.classList.remove("hidden");
+      } else {
+        debtStatus.classList.add("hidden");
+        debtButton.classList.remove("hidden");
+        repayDebtButton.classList.add("hidden");
+      }
     }
 
     function log(text) {
@@ -156,7 +358,7 @@
 
     function useAction() {
       if (actions <= 0) {
-        log("Bu ay daha fazla işlem yapamazsın.");
+        log(translations[currentLanguage]["action-limit"]);
         return false;
       }
       actions--;
@@ -172,15 +374,19 @@
       }
       actions = 6;
 
-      // Aylık giderler
       let gider = 10000;
       if (money >= 100000) {
         gider = 40000;
       }
+      if (debt > 0) {
+        gider += 10000;
+        debt -= 10000;
+        if (debt < 0) debt = 0;
+        log(translations[currentLanguage]["loan-deduction-log"].replace("{amount}", 10000));
+      }
       money -= gider;
-      log(`💸 Aylık gider: ${gider.toLocaleString()} TL ödendi.`);
+      log(translations[currentLanguage]["monthly-expense-log"].replace("{gider}", gider.toLocaleString()));
 
-      // Her 5 ayda bir araba veya telefon fiyatlarında %50 indirim
       const totalMonths = (year - 1) * 12 + month;
       if (totalMonths % 5 === 0) {
         const dropType = Math.random() < 0.5 ? 'car' : 'phone';
@@ -189,13 +395,13 @@
             item.oldPrice = item.price;
             item.price = Math.floor(item.price * 0.5);
           });
-          log(`⚠️ Araba fiyatları bu ay %50 düştü!`);
+          log(`⚠️ ${currentLanguage === 'tr' ? 'Araba fiyatları bu ay %50 düştü!' : 'Car prices dropped by 50% this month!'}`);
         } else {
           phoneMarket.forEach(item => {
             item.oldPrice = item.price;
             item.price = Math.floor(item.price * 0.5);
           });
-          log(`⚠️ Telefon fiyatları bu ay %50 düştü!`);
+          log(`⚠️ ${currentLanguage === 'tr' ? 'Telefon fiyatları bu ay %50 düştü!' : 'Phone prices dropped by 50% this month!'}`);
         }
       } else if ((totalMonths - 1) % 5 === 0) {
         carMarket.forEach(item => {
@@ -210,15 +416,14 @@
             delete item.oldPrice;
           }
         });
-        log(`⚠️ Fiyatlar eski seviyesine döndü.`);
+        log(`⚠️ ${currentLanguage === 'tr' ? 'Fiyatlar eski seviyesine döndü.' : 'Prices returned to their old levels.'}`);
       }
 
-      // Zam ve dalgalanma
       applyPriceIncreaseWithFluctuation(carMarket, 0.10, 150000);
       applyPriceIncreaseWithFluctuation(phoneMarket, 0.10, 3000);
       applyPriceIncreaseWithFluctuation(houseMarket, 0.10, 150000);
 
-      log(`📆 Yeni ay: ${month}/${year}`);
+      log(translations[currentLanguage]["new-month-log"].replace("{month}", month).replace("{year}", year));
       renderMarket();
       renderOwned();
       updateDisplay();
@@ -226,15 +431,9 @@
 
     function applyPriceIncreaseWithFluctuation(market, baseIncreasePercent, maxChange) {
       market.forEach(item => {
-        // Temel %10 zam
         let newPrice = Math.floor(item.price * (1 + baseIncreasePercent));
-
-        // Dalgalanma: +/- maxChange TL arası rastgele
         const fluctuation = Math.floor(Math.random() * (maxChange * 2 + 1)) - maxChange;
-
-        // Yeni fiyat = zamlı fiyat + dalgalanma
         newPrice = Math.max(5000, newPrice + fluctuation);
-
         item.price = newPrice;
       });
     }
@@ -242,37 +441,40 @@
     function work() {
       if (!useAction()) return;
       money += 5000;
-      log("💼 İşte çalışarak 5000 TL kazandın.");
+      log(translations[currentLanguage]["work-log"]);
       updateDisplay();
     }
 
     function openMenu(type) {
       currentMenu = type;
+      isSettingsOpen = false;
+      document.getElementById("settings-menu").classList.remove("active");
       renderMarket();
       renderOwned();
     }
 
     function renderMarket() {
       const container = document.getElementById("marketSection");
-      container.innerHTML = "";
+      container.innerHTML = `<p>${translations[currentLanguage]["market-placeholder"]}</p>`;
+      
       let marketList = [];
       if (currentMenu === "car") marketList = carMarket;
       else if (currentMenu === "phone") marketList = phoneMarket;
       else if (currentMenu === "house") marketList = houseMarket;
 
       if (!currentMenu) {
-        container.innerHTML = "<p>Alım satım yapmak için yukarıdaki menüden seçim yap.</p>";
         return;
       }
-
+      
+      container.innerHTML = "";
       marketList.forEach(item => {
         const div = document.createElement("div");
         div.className = "market-item";
         div.innerHTML = `
           <strong>${item.model}</strong><br>
-          Durum: ${item.condition}<br>
-          Fiyat: ${item.price.toLocaleString()} TL<br>
-          <button onclick="buyItem(${item.id})">Satın Al</button>
+          ${currentLanguage === 'tr' ? 'Durum' : 'Condition'}: ${item.condition}<br>
+          ${currentLanguage === 'tr' ? 'Fiyat' : 'Price'}: ${item.price.toLocaleString()} TL<br>
+          <button onclick="buyItem(${item.id})">${currentLanguage === 'tr' ? 'Satın Al' : 'Buy'}</button>
         `;
         container.appendChild(div);
       });
@@ -284,28 +486,28 @@
       if (currentMenu === "car") {
         marketList = carMarket;
         ownedList = cars;
-        typeName = "Araba";
+        typeName = currentLanguage === 'tr' ? "Araba" : "Car";
       } else if (currentMenu === "phone") {
         marketList = phoneMarket;
         ownedList = phones;
-        typeName = "Telefon";
+        typeName = currentLanguage === 'tr' ? "Telefon" : "Phone";
       } else if (currentMenu === "house") {
         marketList = houseMarket;
         ownedList = houses;
-        typeName = "Ev";
+        typeName = currentLanguage === 'tr' ? "Ev" : "House";
       } else {
-        log("Lütfen önce kategori seçin.");
+        log(translations[currentLanguage]["set-category-first"]);
         return;
       }
       const item = marketList.find(i => i.id === id);
       if (money >= item.price) {
         money -= item.price;
         ownedList.push({...item, buyPrice: item.price, rentPrice: 0});
-        log(`✅ ${typeName} "${item.model}" ${item.price.toLocaleString()} TL'ye satın alındı.`);
+        log(translations[currentLanguage]["item-bought-log"].replace("{typeName}", typeName).replace("{model}", item.model).replace("{price}", item.price.toLocaleString()));
         updateDisplay();
         renderOwned();
       } else {
-        log("Yeterli paran yok.");
+        log(translations[currentLanguage]["not-enough-money"]);
       }
     }
 
@@ -314,26 +516,26 @@
       container.innerHTML = "";
 
       function createOwnedItem(item, index, typeName, ownedList) {
-        const maxPrice = Math.floor(item.buyPrice * 1.5);  // max satış fiyatı 1.5 katı olarak güncellendi
+        const maxPrice = Math.floor(item.buyPrice * 1.5);
         let rentInputHtml = "";
         let rentButtonHtml = "";
 
-        if(typeName === "house"){
-          rentInputHtml = `<label>Kira Belirle (TL): <input type="number" min="1" max="${maxPrice}" class="rent-input" id="${typeName}_${index}_rent" placeholder="Kira fiyatı"></label>`;
-          rentButtonHtml = `<button onclick="rentHouse(${index})">Kirala</button>`;
+        if(typeName === "house" || typeName === "House"){
+          rentInputHtml = `<label>${currentLanguage === 'tr' ? 'Kira Belirle (TL):' : 'Set Rent (TL):'} <input type="number" min="1" max="${maxPrice}" class="rent-input" id="${typeName}_${index}_rent" placeholder="${currentLanguage === 'tr' ? 'Kira fiyatı' : 'Rent price'}"></label>`;
+          rentButtonHtml = `<button onclick="rentHouse(${index})">${currentLanguage === 'tr' ? 'Kirala' : 'Rent'}</button>`;
         }
 
         const div = document.createElement("div");
         div.className = "owned-item";
         div.innerHTML = `
           <strong>${item.model}</strong><br>
-          Alış Fiyatı: ${item.buyPrice.toLocaleString()} TL<br>
-          Durum: ${item.condition}<br>
-          ${item.rentPrice ? `Kira (Eski): ${item.rentPrice.toLocaleString()} TL<br>` : ""}
+          ${currentLanguage === 'tr' ? 'Alış Fiyatı' : 'Purchase Price'}: ${item.buyPrice.toLocaleString()} TL<br>
+          ${currentLanguage === 'tr' ? 'Durum' : 'Condition'}: ${item.condition}<br>
+          ${item.rentPrice ? `${currentLanguage === 'tr' ? 'Kira (Eski)' : 'Rent (Old)'}: ${item.rentPrice.toLocaleString()} TL<br>` : ""}
           ${rentInputHtml}<br>
           ${rentButtonHtml}<br>
-          <label>Satış Fiyatı Belirle (max ${maxPrice.toLocaleString()} TL): <input type="number" min="1" max="${maxPrice}" class="price-input" id="${typeName}_${index}_price" placeholder="Satış fiyatı"></label><br>
-          <button onclick="sellItem('${typeName}', ${index})">Sat</button>
+          <label>${currentLanguage === 'tr' ? 'Satış Fiyatı Belirle (max' : 'Set Selling Price (max'} ${maxPrice.toLocaleString()} TL): <input type="number" min="1" max="${maxPrice}" class="price-input" id="${typeName}_${index}_price" placeholder="${currentLanguage === 'tr' ? 'Satış fiyatı' : 'Selling price'}"></label><br>
+          <button onclick="sellItem('${typeName}', ${index})">${currentLanguage === 'tr' ? 'Sat' : 'Sell'}</button>
         `;
         container.appendChild(div);
       }
@@ -350,7 +552,7 @@
       else if (type === "phone") ownedList = phones;
       else if (type === "house") ownedList = houses;
       else {
-        log("Geçersiz tür.");
+        log(translations[currentLanguage]["invalid-type"]);
         return;
       }
       const item = ownedList[index];
@@ -359,15 +561,15 @@
       const sellPrice = Number(priceInput.value);
       const maxPrice = Math.floor(item.buyPrice * 1.5);
       if (!sellPrice || sellPrice <= 0) {
-        log("Lütfen geçerli bir satış fiyatı girin.");
+        log(translations[currentLanguage]["invalid-sell-price"]);
         return;
       }
       if(sellPrice > maxPrice){
-        log(`Satış fiyatı satın alma fiyatının 1.5 katından fazla olamaz. Max: ${maxPrice.toLocaleString()} TL`);
+        log(translations[currentLanguage]["sell-price-limit"].replace("{maxPrice}", maxPrice.toLocaleString()));
         return;
       }
       money += sellPrice;
-      log(`🔻 ${item.model} ${sellPrice.toLocaleString()} TL'ye satıldı.`);
+      log(translations[currentLanguage]["sell-log"].replace("{model}", item.model).replace("{price}", sellPrice.toLocaleString()));
       ownedList.splice(index, 1);
       updateDisplay();
       renderOwned();
@@ -381,15 +583,45 @@
       const rentPrice = Number(rentInput.value);
       const maxPrice = Math.floor(house.buyPrice * 1.5);
       if (!rentPrice || rentPrice <= 0) {
-        log("Lütfen geçerli bir kira fiyatı girin.");
+        log(translations[currentLanguage]["invalid-rent-price"]);
         return;
       }
       if(rentPrice > maxPrice){
-        log(`Kira fiyatı satın alma fiyatının 1.5 katından fazla olamaz. Max: ${maxPrice.toLocaleString()} TL`);
+        log(translations[currentLanguage]["rent-price-limit"].replace("{maxPrice}", maxPrice.toLocaleString()));
         return;
       }
       money += rentPrice;
-      log(`🏠 ${house.model} için ${rentPrice.toLocaleString()} TL kira geliri aldın.`);
+      log(translations[currentLanguage]["rent-log"].replace("{model}", house.model).replace("{price}", rentPrice.toLocaleString()));
+      house.rentPrice = rentPrice;
+      updateDisplay();
+      renderOwned();
+    }
+
+    function takeLoan() {
+      if (debt > 0) {
+        log(translations[currentLanguage]["no-loan-available"]);
+        return;
+      }
+      if (!useAction()) return;
+      debt = 100000;
+      money += 100000;
+      log(translations[currentLanguage]["loan-taken-log"]);
+      updateDisplay();
+    }
+
+    function repayLoan() {
+      if (debt === 0) {
+        log(translations[currentLanguage]["no-debt-to-repay"]);
+        return;
+      }
+      if (!useAction()) return;
+      if (money < 100000) {
+        log(translations[currentLanguage]["insufficient-funds-repay"]);
+        return;
+      }
+      money -= 100000;
+      log(translations[currentLanguage]["loan-repaid-log"].replace("{amount}", 100000));
+      debt = 0;
       updateDisplay();
     }
 
