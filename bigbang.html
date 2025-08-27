@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="title">BİG BANG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Neon ışık efekti için özel CSS */
+        .neon-text {
+            color: #fff; /* Başlangıçta beyaz metin */
+            text-shadow:
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px #fff,
+                0 0 42px #ff0000, /* Kırmızı neon rengi */
+                0 0 82px #ff0000,
+                0 0 92px #ff0000,
+                0 0 102px #ff0000,
+                0 0 151px #ff0000;
+        }
+
+        /* Karanlık mod için geçişler */
+        body.dark {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark .bg-white {
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            border-color: #333;
+        }
+        body.dark .text-gray-800 {
+            color: #e0e0e0;
+        }
+        body.dark .text-gray-600 {
+            color: #b0b0b0;
+        }
+        body.dark .text-blue-900 {
+            color: #99caff;
+        }
+        body.dark .text-gray-700 {
+            color: #c0c0c0;
+        }
+        body.dark .text-gray-500 {
+            color: #a0a0a0;
+        }
+        body.dark .text-gray-900 {
+            color: #e0e0e0;
+        }
+        body.dark .border-gray-300 {
+            border-color: #555;
+        }
+        body.dark .focus\:border-blue-500:focus {
+            border-color: #66b2ff;
+        }
+        body.dark .focus\:ring-blue-500:focus {
+            --tw-ring-color: #66b2ff;
+        }
+
+        /* Karanlık modda form alanları için özel stiller */
+        body.dark textarea, body.dark input[type="text"], body.dark input[type="file"] {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border-color: #555;
+        }
+
+        /* Karanlık mod anahtarının konumu */
+        #theme-toggle {
+            display: none;
+        }
+        .toggle-label {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background-color 0.4s;
+        }
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #fff;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.4s;
+        }
+        #theme-toggle:checked + .toggle-label {
+            background-color: #2c3e50;
+        }
+        #theme-toggle:checked + .toggle-label:after {
+            transform: translateX(24px);
+        }
+
+        /* Mesaj kutusu için stil */
+        #message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2563eb;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+        }
+
+        /* Dosya yükleme ve silme için stil */
+        .file-upload-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .delete-file-button {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none; /* Başlangıçta gizle */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 transition-colors duration-500">
+
+    <div class="absolute top-4 left-4 flex flex-col items-start space-y-2">
+        <h1 class="text-3xl font-extrabold neon-text">MSZ</h1>
+
+        <div class="flex items-center space-x-2">
+            <input type="checkbox" id="theme-toggle">
+            <label for="theme-toggle" class="toggle-label"></label>
+            <span id="theme-text" class="text-xs text-gray-500">Siyah/Beyaz Ekran</span>
+        </div>
+    </div>
+
+    <div class="absolute top-4 right-4 flex space-x-2">
+        <button id="tr-flag" class="w-8 h-8 rounded-full overflow-hidden shadow-lg hover:scale-110 transition-transform duration-300">
+            <img src="https://flagcdn.com/tr.svg" alt="Türk Bayrağı">
+        </button>
+        <button id="en-flag" class="w-8 h-8 rounded-full overflow-hidden shadow-lg hover:scale-110 transition-transform duration-300">
+            <img src="https://flagcdn.com/gb.svg" alt="İngiliz Bayrağı">
+        </button>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center my-8 md:my-12">
+            <h1 id="main-title" class="text-5xl md:text-6xl font-extrabold text-blue-900 leading-tight tracking-tighter">BİG BANG</h1>
+            <p id="sub-title" class="mt-4 text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto">
+                İnsanlığın ilk fikirlerinden geleceğin teknolojilerine.
+            </p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            <section class="p-6 md:p-8 rounded-2xl">
+                <h2 id="inventions-heading" class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Geçmişten Günümüze İcatlar</h2>
+                <div id="inventions-list" class="space-y-4">
+                    </div>
+            </section>
+
+            <section class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200">
+                <h2 id="public-section-heading" class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Halk Tarafına Açık Kısım</h2>
+                <p id="public-section-text" class="text-lg text-gray-700 leading-relaxed mb-6">
+                    Burada fikirlerinizi, projelerinizi ve kanıtlarınızı sunarak bu büyük projeye katkıda bulunabilirsiniz.
+                </p>
+                <form id="idea-form" class="space-y-6">
+                    <div>
+                        <label id="form-label-idea" for="idea-project" class="block text-sm font-medium text-gray-700">Fikir veya Proje Başlığı</label>
+                        <textarea id="idea-project" name="idea-project" rows="4" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 p-3"></textarea>
+                    </div>
+                    <div>
+                        <label id="form-label-proof" for="proof" class="block text-sm font-medium text-gray-700">Kanıt ve Açıklamalar</label>
+                        <textarea id="proof" name="proof" rows="6" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 p-3"></textarea>
+                    </div>
+                    <div>
+                        <label id="form-label-file" for="file-upload" class="block text-sm font-medium text-gray-700">Dosya/Fotoğraf Ekle</label>
+                        <div class="file-upload-container">
+                            <input type="file" id="file-upload" name="file-upload" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 p-3" />
+                            <i id="delete-file-button" class="fas fa-trash-alt delete-file-button"></i>
+                        </div>
+                    </div>
+                    <button id="submit-button" type="submit" class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+                        Fikrimi Gönder
+                    </button>
+                </form>
+            </section>
+        </main>
+
+        <div id="message-box" class="hidden">
+            <p id="message-text">E-posta uygulamanız açılıyor...</p>
+        </div>
+
+        <footer class="text-center mt-12 md:mt-16 text-gray-500">
+            <p id="footer-text">Tarih, gelecek için bir rehberdir.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Dil değiştirme için metin verileri
+        const languageData = {
+            tr: {
+                title: "BİG BANG",
+                subTitle: "İnsanlığın ilk fikirlerinden geleceğin teknolojilerine.",
+                themeText: "Siyah/Beyaz Ekran",
+                inventionsHeading: "Geçmişten Günümüze İcatlar",
+                inventions: [
+                    { title: "Tekerleğin İcadı", date: "M.Ö. 3500", sortDate: -3500, text: "Mezopotamya'da ortaya çıkan tekerlek, ulaşım ve taşıma alanında devrim yaratarak modern teknolojinin temelini attı." },
+                    { title: "Kâğıdın İcadı", date: "M.S. 105", sortDate: 105, text: "Çin'de Cai Lun tarafından icat edilen kâğıt, bilgiyi saklama ve yayma yöntemlerini kökten değiştirdi, bilimin ve eğitimin gelişimine büyük katkı sağladı." },
+                    { title: "Matbaanın İcadı", date: "1440", sortDate: 1440, text: "Johannes Gutenberg tarafından Almanya'da geliştirilen matbaa, kitapların ve bilginin çok daha hızlı ve ucuz bir şekilde yayılmasını sağladı, Rönesans ve Reformasyon'a zemin hazırladı." },
+                    { title: "Teleskop", date: "1608", sortDate: 1608, text: "Hollanda'da Hans Lippershey tarafından icat edilen teleskop, astronomi alanında devrim yaratarak evreni anlamamızı sağladı. Galileo'nun Jüpiter'in uydularını keşfetmesi gibi önemli gelişmelere yol açtı." },
+                    { title: "Buhar Makinesi", date: "1770'ler", sortDate: 1770, text: "James Watt tarafından İngiltere'de geliştirilen buhar makinesi, Sanayi Devrimi'nin en önemli buluşlarından biri oldu. Fabrikalara, trenlere ve gemilere güç vererek sanayileşmeyi mümkün kıldı." },
+                    { title: "Aşılar", date: "1796", sortDate: 1796, text: "Edward Jenner tarafından İngiltere'de çiçek hastalığına karşı geliştirilen ilk aşı, salgın hastalıklarla mücadelede yeni bir dönemi başlattı. Milyonlarca hayat kurtardı ve modern tıp biliminin temelini attı." },
+                    { title: "Telgraf", date: "1837", sortDate: 1837, text: "Samuel Morse tarafından Amerika'da icat edilen telgraf, uzun mesafeli iletişimi anında mümkün kıldı. İlk modern telekomünikasyon sistemlerinden biri olarak bilgi akışını hızlandırdı." },
+                    { title: "Telefon", date: "1876", sortDate: 1876, text: "Alexander Graham Bell tarafından ABD'de icat edilen telefon, sesli iletişimi anlık hale getirdi. Bu icat, kişisel ve iş dünyasındaki iletişimi tamamen dönüştürdü." },
+                    { title: "Otomobil", date: "1886", sortDate: 1886, text: "Karl Benz tarafından Almanya'da patentlenen otomobil, kişisel ulaşımı kökten değiştirdi. Modern yaşamın vazgeçilmez bir parçası haline gelerek şehirlerin ve altyapının gelişimini hızlandırdı." },
+                    { title: "Penisilin", date: "1928", sortDate: 1928, text: "Alexander Fleming'in İngiltere'de keşfettiği penisilin, bakteriyel enfeksiyonlarla savaşta devrim yaratarak modern tıp ve antibiyotik çağını başlattı. Milyonlarca hayat kurtardı." },
+                    { title: "Transistör", date: "1947", sortDate: 1947, text: "Bell Laboratuvarları'nda John Bardeen, Walter Brattain ve William Shockley tarafından icat edilen transistör, elektronikte minyatürleşmenin önünü açarak modern bilgisayarların ve elektronik cihazların temelini oluşturdu." },
+                    { title: "Yapay Zeka (AI)", date: "1950'ler", sortDate: 1950, text: "Bilgisayar biliminin bir alt dalı olan yapay zeka, insan gibi düşünen ve öğrenen makineler yaratmayı hedefler. İlk kavramları 1950'lerde ortaya çıksa da, son yıllardaki hızlı gelişimiyle birçok sektörü yeniden şekillendiriyor." },
+                    { title: "İnternet", date: "1960'lar", sortDate: 1960, text: "Soğuk Savaş döneminde ARPANET olarak başlayan internet, 1990'larda Tim Berners-Lee'nin Dünya Çapında Ağı (World Wide Web) geliştirmesiyle halka açıldı. Bilgiye erişim, iletişim ve ticaret alanlarında eşi benzeri görülmemiş bir dönüşüme yol açtı." },
+                    { title: "Akıllı Telefon", date: "2007", sortDate: 2007, text: "Apple tarafından piyasaya sürülen ilk iPhone ile akıllı telefonlar, cep telefonu, müzik çalar, kamera ve interneti tek bir cihazda birleştirdi. Dijital çağın en önemli araçlarından biri haline geldi." }
+                ],
+                publicSectionHeading: "Halk Tarafına Açık Kısım",
+                publicSectionText: "Burada fikirlerinizi, projelerinizi ve kanıtlarınızı sunarak bu büyük projeye katkıda bulunabilirsiniz.",
+                formLabelIdea: "Fikir veya Proje Başlığı",
+                formLabelProof: "Kanıt ve Açıklamalar",
+                formLabelFile: "Dosya/Fotoğraf Ekle",
+                submitButton: "Fikrimi Gönder",
+                footerText: "Tarih, gelecek için bir rehberdir.",
+                messageText: "E-posta uygulamanız açılıyor..."
+            },
+            en: {
+                title: "BIG BANG",
+                subTitle: "From humanity's first ideas to the technologies of the future.",
+                themeText: "Dark/Light Mode",
+                inventionsHeading: "Inventions from Past to Present",
+                inventions: [
+                    { title: "Invention of the Wheel", date: "c. 3500 BC", sortDate: -3500, text: "Originating in Mesopotamia, the wheel revolutionized transport and laid the foundation for modern technology." },
+                    { title: "Invention of Paper", date: "105 AD", sortDate: 105, text: "Invented by Cai Lun in China, paper fundamentally changed methods of storing and disseminating information, greatly contributing to the advancement of science and education." },
+                    { title: "Invention of the Printing Press", date: "1440", sortDate: 1440, text: "Developed by Johannes Gutenberg in Germany, the printing press enabled the rapid and inexpensive spread of books and knowledge, paving the way for the Renaissance and Reformation." },
+                    { title: "The Telescope", date: "1608", sortDate: 1608, text: "Invented by Hans Lippershey in the Netherlands, the telescope revolutionized astronomy and allowed us to understand the universe. It led to major discoveries like Galileo's moons of Jupiter." },
+                    { title: "The Steam Engine", date: "1770s", sortDate: 1770, text: "Developed by James Watt in Great Britain, the steam engine was a cornerstone of the Industrial Revolution. It powered factories, trains, and ships, making industrialization possible." },
+                    { title: "Vaccines", date: "1796", sortDate: 1796, text: "The first vaccine, developed by Edward Jenner in England against smallpox, began a new era in the fight against epidemics. It saved millions of lives and laid the foundation for modern medical science." },
+                    { title: "The Telegraph", date: "1837", sortDate: 1837, text: "Invented by Samuel Morse in the United States, the telegraph made instant long-distance communication possible. It accelerated the flow of information as one of the first modern telecommunication systems." },
+                    { title: "The Telephone", date: "1876", sortDate: 1876, text: "Invented by Alexander Graham Bell in the USA, the telephone made voice communication instantaneous. This invention completely transformed personal and business communication." },
+                    { title: "The Automobile", date: "1886", sortDate: 1886, text: "Patented by Karl Benz in Germany, the automobile fundamentally changed personal transportation. It became an indispensable part of modern life, accelerating the development of cities and infrastructure." },
+                    { title: "Penicillin", date: "1928", sortDate: 1928, text: "Discovered by Alexander Fleming in England, penicillin revolutionized the fight against bacterial infections, ushering in the age of modern medicine and antibiotics. It has saved millions of lives." },
+                    { title: "The Transistor", date: "1947", sortDate: 1947, text: "Invented at Bell Laboratories by John Bardeen, Walter Brattain, and William Shockley, the transistor enabled miniaturization in electronics, forming the basis for modern computers and electronic devices." },
+                    { title: "Artificial Intelligence (AI)", date: "1950s", sortDate: 1950, text: "A subfield of computer science, AI aims to create machines that think and learn like humans. Although the initial concepts emerged in the 1950s, its rapid development in recent years is reshaping many industries." },
+                    { title: "The Internet", date: "1960s", sortDate: 1960, text: "Starting as ARPANET during the Cold War, the internet became publicly accessible in the 1990s with Tim Berners-Lee's development of the World Wide Web. It led to an unprecedented transformation in information, communication, and commerce." },
+                    { title: "The Smartphone", date: "2007", sortDate: 2007, text: "Launched by Apple with the first iPhone, smartphones combined a mobile phone, music player, camera, and the internet into a single device. It became one of the most important tools of the digital age." }
+                ],
+                publicSectionHeading: "Open Section for the Public",
+                publicSectionText: "You can contribute to this great project by submitting your ideas, projects, and evidence here.",
+                formLabelIdea: "Idea or Project Title",
+                formLabelProof: "Proof and Explanations",
+                formLabelFile: "Add File/Photo",
+                submitButton: "Submit My Idea",
+                footerText: "History is a guide for the future.",
+                messageText: "Your email application is opening..."
+            }
+        };
+
+        const elementsToTranslate = {
+            'title': 'title',
+            'main-title': 'title',
+            'sub-title': 'subTitle',
+            'theme-text': 'themeText',
+            'inventions-heading': 'inventionsHeading',
+            'public-section-heading': 'publicSectionHeading',
+            'public-section-text': 'publicSectionText',
+            'form-label-idea': 'formLabelIdea',
+            'form-label-proof': 'formLabelProof',
+            'form-label-file': 'formLabelFile',
+            'submit-button': 'submitButton',
+            'footer-text': 'footerText',
+            'message-text': 'messageText'
+        };
+
+        // Dili güncelleyen ana fonksiyon
+        function updateContent(lang) {
+            const currentData = languageData[lang];
+            document.documentElement.lang = lang; // HTML dil özelliğini güncelle
+
+            for (const id in elementsToTranslate) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = currentData[elementsToTranslate[id]];
+                }
+            }
+
+            // İcat kutularını dinamik olarak oluştur
+            const inventionsList = document.getElementById('inventions-list');
+            inventionsList.innerHTML = '';
+            // İcatları tarihe göre sırala
+            const sortedInventions = currentData.inventions.sort((a, b) => a.sortDate - b.sortDate);
+            sortedInventions.forEach(invention => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-6 rounded-xl shadow-md border border-gray-200 transition-colors duration-500";
+                div.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-900 mb-1">${invention.title} <span class="text-sm font-normal text-gray-500">(${invention.date})</span></h3>
+                    <p class="text-gray-700">${invention.text}</p>
+                `;
+                inventionsList.appendChild(div);
+            });
+        }
+
+        // Dil değiştirme butonları
+        document.getElementById('tr-flag').addEventListener('click', () => updateContent('tr'));
+        document.getElementById('en-flag').addEventListener('click', () => updateContent('en'));
+
+        // Sayfa yüklendiğinde varsayılan dili ayarla
+        document.addEventListener('DOMContentLoaded', () => {
+            updateContent('tr');
+        });
+
+        // Karanlık modu yerel depolama ile yönetme
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const loadTheme = () => {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'dark') {
+                body.classList.add('dark');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark');
+                themeToggle.checked = false;
+            }
+        };
+
+        const saveTheme = (isDark) => {
+            if (isDark) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        themeToggle.addEventListener('change', () => {
+            body.classList.toggle('dark');
+            saveTheme(body.classList.contains('dark'));
+        });
+
+        // Sayfa yüklendiğinde temayı yükle
+        window.addEventListener('load', loadTheme);
+
+        // Dosya yükleme ve silme işlemleri
+        const fileInput = document.getElementById('file-upload');
+        const deleteButton = document.getElementById('delete-file-button');
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                deleteButton.style.display = 'block';
+            } else {
+                deleteButton.style.display = 'none';
+            }
+        });
+
+        deleteButton.addEventListener('click', () => {
+            fileInput.value = ''; // Dosya girişini sıfırla
+            deleteButton.style.display = 'none'; // Çöp kutusu simgesini gizle
+        });
+
+        // Form gönderimini ele alma (değiştirilmiş kısım)
+        document.getElementById('idea-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Varsayılan form gönderimini engelle
+
+            const idea = document.getElementById('idea-project').value;
+            const proof = document.getElementById('proof').value;
+            const email = 'burakbilec123@gmail.com';
+            const subject = encodeURIComponent(idea);
+            const bodyContent = encodeURIComponent(proof);
+
+            // Gmail linkini oluştur
+            const gmailLink = `https://mail.google.com/mail/u/0/?fs=1&to=${email}&su=${subject}&body=${bodyContent}&tf=cm`;
+
+            // Mesaj kutusunu göster
+            const messageBox = document.getElementById('message-box');
+            messageBox.style.display = 'block';
+
+            // Yeni sekmede Gmail'i aç
+            window.open(gmailLink, '_blank');
+
+            // 3 saniye sonra mesaj kutusunu gizle
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        });
+    </script>
+
+</body>
+</html>
