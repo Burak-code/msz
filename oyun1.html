@@ -2,72 +2,417 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bayrak Tahmin Oyunu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-color-light: #f0f4f8;
+      --bg-color-dark: #1a202c;
+      --card-bg-light: #ffffff;
+      --card-bg-dark: #2d3748;
+      --text-color-light: #2d3748;
+      --text-color-dark: #e2e8f0;
+      --border-color-light: #cbd5e0;
+      --border-color-dark: #4a5568;
+      --neon-red: #ff073a;
+      --option-bg-light: #d0eaff;
+      --option-bg-dark: #4a5568;
+      --option-border-light: #0077cc;
+      --option-border-dark: #2c5282;
+      --option-hover-light: #a6d4ff;
+      --option-hover-dark: #636d80;
+    }
     body {
-      font-family: Arial;
+      font-family: 'Inter', sans-serif;
       display: flex;
-      background: #f0f0f0;
+      background: var(--bg-color-light);
+      color: var(--text-color-light);
+      transition: background-color 0.3s, color 0.3s;
+      margin: 0;
+      min-height: 100vh;
+      box-sizing: border-box;
+      flex-direction: column;
+    }
+    .dark-mode {
+      background: var(--bg-color-dark);
+      color: var(--text-color-dark);
+    }
+    #main-container {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
     }
     #sidebar {
-      width: 440px; /* 2x büyütüldü */
-      padding: 40px; /* Daha ferah görünüm */
-      background-color: #ffffff;
-      border-right: 2px solid #ccc;
-      font-size: 18px;
+      width: 300px;
+      padding: 20px;
+      background-color: var(--card-bg-light);
+      border-right: 2px solid var(--border-color-light);
+      font-size: 16px;
+      position: relative;
+      transition: background-color 0.3s, border-color 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+    .dark-mode #sidebar {
+      background-color: var(--card-bg-dark);
+      border-color: var(--border-color-dark);
+    }
+    #sidebar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    #logo {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      color: var(--neon-red);
+      text-shadow: 0 0 5px var(--neon-red), 0 0 10px var(--neon-red), 0 0 20px var(--neon-red);
+      animation: neon-glow 1.5s ease-in-out infinite alternate;
+      user-select: none;
+    }
+    @keyframes neon-glow {
+      from { text-shadow: 0 0 5px var(--neon-red), 0 0 10px var(--neon-red), 0 0 15px var(--neon-red); }
+      to { text-shadow: 0 0 7px var(--neon-red), 0 0 14px var(--neon-red), 0 0 21px var(--neon-red); }
+    }
+    .switch-container {
+      display: flex;
+      align-items: center;
+    }
+    .theme-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .theme-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
     }
     #game {
       flex: 1;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
+      text-align: center;
+      min-height: 100%;
+      box-sizing: border-box;
+    }
+    #topbar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+    #topbar span {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0 10px;
+    }
+    #difficulty, #game-over {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    #difficulty h1, #difficulty h2 {
+      margin-bottom: 15px;
+    }
+    #difficulty button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      margin: 10px;
+      border-radius: 10px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    #difficulty button:hover {
+      background-color: #005f99;
+      transform: translateY(-2px);
     }
     #flag {
-      width: 200px;
-      height: 120px;
+      width: 320px;
+      height: 180px;
       margin: 20px auto;
-      border: 2px solid #000;
+      border: 2px solid var(--border-color-light);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .dark-mode #flag {
+      border-color: var(--border-color-dark);
+    }
+    #options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 600px;
+      margin-top: 20px;
     }
     .option {
       display: inline-block;
       margin: 10px;
-      padding: 10px 20px;
-      background-color: #d0eaff;
-      border: 1px solid #0077cc;
+      padding: 12px 24px;
+      background-color: var(--option-bg-light);
+      border: 1px solid var(--option-border-light);
       cursor: pointer;
       border-radius: 10px;
+      transition: background-color 0.2s, transform 0.2s;
+      user-select: none;
+      font-weight: 500;
+    }
+    .dark-mode .option {
+      background-color: var(--option-bg-dark);
+      border-color: var(--option-border-dark);
     }
     .option:hover {
-      background-color: #a6d4ff;
+      background-color: var(--option-hover-light);
+      transform: translateY(-2px);
     }
-    #topbar {
-      font-size: 18px;
-      text-align: center;
-      margin-bottom: 10px;
+    .dark-mode .option:hover {
+      background-color: var(--option-hover-dark);
     }
-    #category {
+    #result {
+      margin-top: 15px;
       font-weight: bold;
-      color: #444;
+      font-size: 1.1em;
+      transition: color 0.3s;
     }
-    #timer {
-      color: red;
-      font-weight: bold;
-    }
+    #result.correct { color: #28a745; }
+    #result.incorrect { color: var(--neon-red); }
     .cat-table {
       font-size: 16px;
       margin-top: 20px;
+      flex-grow: 1;
     }
     .cat-table h3 {
       margin-bottom: 5px;
-    }
-    #difficulty {
       text-align: center;
-      margin-top: 200px; /* 2.5x büyütme için yukarıya kaydırıldı */
-      font-size: 2em; /* Yazı büyüklüğü arttırıldı */
+      font-size: 1.2em;
     }
-    #difficulty button {
-      padding: 15px 30px; /* Butonlar daha büyük yapıldı */
-      font-size: 1.5em; /* Buton yazı büyüklüğü arttırıldı */
-      margin: 20px;
+    .cat-table p {
+      margin: 5px 0;
+      padding: 4px 0;
+    }
+    .heart {
+      color: var(--neon-red);
+      font-size: 1.5em;
+      margin-right: 5px;
+    }
+    #language-selector {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .lang-flag {
+      width: 40px;
+      height: 24px;
+      border: 1px solid var(--border-color-light);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .dark-mode .lang-flag {
+      border-color: var(--border-color-dark);
+    }
+    .lang-flag:hover {
+      transform: scale(1.1);
+    }
+    #game-over {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      text-align: center;
+    }
+    #game-over-content {
+      background: var(--card-bg-light);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      color: var(--text-color-light);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark-mode #game-over-content {
+      background: var(--card-bg-dark);
+      color: var(--text-color-dark);
+    }
+    #game-over h2 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    #game-over p {
+      font-size: 1.5em;
+      margin: 5px 0;
+    }
+    #game-over button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border-radius: 8px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    #game-over button:hover {
+      background-color: #218838;
+    }
+
+    .settings-group {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .settings-group label {
+      font-weight: bold;
+    }
+    .settings-group input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 8px;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      transition: opacity .2s;
+    }
+    .settings-group input[type="range"]:hover {
+      opacity: 1;
+    }
+    .settings-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #0077cc;
+      cursor: pointer;
+    }
+    .settings-group input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #0077cc;
+      cursor: pointer;
+    }
+    .exit-btn {
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+      background-color: var(--neon-red);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.2s;
+    }
+    .exit-btn:hover {
+      background-color: #c00028;
+    }
+
+    @media (max-width: 768px) {
+      #main-container {
+        flex-direction: column;
+      }
+      #sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid var(--border-color-light);
+        padding: 10px 20px;
+      }
+      .dark-mode #sidebar {
+        border-color: var(--border-color-dark);
+      }
+      #sidebar-top {
+        margin-bottom: 10px;
+      }
+      #logo {
+        font-size: 24px;
+      }
+      #difficulty, #game {
+        min-height: auto;
+      }
+      #difficulty h1 {
+        font-size: 1.5em;
+      }
+      #difficulty h2 {
+        font-size: 1.2em;
+      }
+      #difficulty button {
+        padding: 10px 20px;
+        font-size: 1em;
+      }
+      #flag {
+        width: 200px;
+        height: 112.5px;
+      }
+      #options {
+        flex-direction: column;
+        width: 90%;
+      }
+      .option {
+        width: 100%;
+        margin: 5px 0;
+      }
+      #language-selector {
+        position: static;
+        margin-top: 20px;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -75,84 +420,233 @@
 
 <div id="difficulty">
   <h1>Bayrak Tahmin Oyunu</h1>
-  <h2>Seviye Seçin:</h2>
-  <button onclick="startGame('easy')">Kolay</button>
-  <button onclick="startGame('normal')">Normal</button>
-  <button onclick="startGame('hard')">Zor</button>
-  <button onclick="startGame('insane')">Efsane</button>
+  <h2 id="difficulty-title">Seviye Seçin:</h2>
+  <button id="easy-btn" onclick="startGame('easy')">Kolay</button>
+  <button id="normal-btn" onclick="startGame('normal')">Normal</button>
+  <button id="hard-btn" onclick="startGame('hard')">Zor</button>
+  <button id="insane-btn" onclick="startGame('insane')">Efsane</button>
 </div>
 
-<div id="sidebar" style="display: none;">
-  <div><strong>Rank:</strong> <span id="category">🕹️ Acemi</span></div>
-  <div><strong>Puan:</strong> <span id="scoreDisplay">0</span></div>
-  <div><strong>Süre:</strong> <span id="timer">03:00</span></div>
-  <div class="cat-table">
-    <h3>🏆 Rank Bilgileri</h3>
-    <p>100+ 🥉 Bronz</p>
-    <p>200+ 💠 Platin</p>
-    <p>300+ 🟧 Altın</p>
-    <p>350+ 👑 Taç</p>
-    <p>500+ 💎 Elmas</p>
-    <p>1000+ 🟥 Fatih</p>
+<div id="main-container" style="display: none;">
+  <div id="sidebar">
+    <div id="sidebar-top">
+      <div id="logo">MSZ</div>
+      <label class="switch-container">
+        <span id="theme-text">Aydınlık</span>
+        <label class="theme-switch">
+          <input type="checkbox" id="theme-toggle">
+          <span class="slider"></span>
+        </label>
+      </label>
+    </div>
+    <div><strong id="rank-label">Rank:</strong> <span id="category">🕹️ Acemi</span></div>
+    <div><strong id="score-label">Puan:</strong> <span id="scoreDisplay">0</span></div>
+    <div><strong id="timer-label">Süre:</strong> <span id="timer">03:00</span></div>
+    <div class="cat-table">
+      <h3 id="rank-info-title">🏆 Rank Bilgileri</h3>
+      <p>100+ <span id="rank-100">🥉 Bronz</span></p>
+      <p>200+ <span id="rank-200">💠 Platin</span></p>
+      <p>300+ <span id="rank-300">🟧 Altın</span></p>
+      <p>350+ <span id="rank-350">👑 Taç</span></p>
+      <p>500+ <span id="rank-500">💎 Elmas</span></p>
+      <p>1000+ <span id="rank-1000">🟥 Fatih</span></p>
+    </div>
+    <div class="settings-group">
+      <label for="delay-slider" id="delay-label">Geçiş Süresi: <span id="delay-value">1.0</span>s</label>
+      <input type="range" id="delay-slider" min="0.1" max="2" value="1" step="0.1">
+    </div>
+    <button id="exit-btn" class="exit-btn" onclick="exitGame()"></button>
+  </div>
+
+  <div id="game">
+    <div id="topbar">
+      <div id="game-title-container">
+        <h1 id="game-title">Bayrak Tahmin Oyunu</h1>
+      </div>
+    </div>
+    <img id="flag" src="" alt="Bayrak">
+    <div id="options"></div>
+    <p id="result"></p>
   </div>
 </div>
 
-<div id="game" style="display: none;">
-  <h1>Bayrak Tahmin Oyunu</h1>
-  <img id="flag" src="" alt="Bayrak">
-  <div id="options"></div>
-  <p id="result"></p>
+<div id="language-selector">
+  <img src="https://flagcdn.com/w40/tr.png" class="lang-flag" onclick="setLanguage('tr')" alt="Türkçe">
+  <img src="https://flagcdn.com/w40/gb.png" class="lang-flag" onclick="setLanguage('en')" alt="English">
+</div>
+
+<div id="game-over">
+  <div id="game-over-content">
+    <h2 id="game-over-title"></h2>
+    <p id="final-score"></p>
+    <button id="play-again-btn" onclick="location.reload()"></button>
+  </div>
 </div>
 
 <script>
+  // Bayrak verilerini hem Türkçe hem de İngilizce isimlerle güncelledim.
   const flags = [
-    {country: "Türkiye", img: "https://flagcdn.com/w320/tr.png"},
-    {country: "Almanya", img: "https://flagcdn.com/w320/de.png"},
-    {country: "Fransa", img: "https://flagcdn.com/w320/fr.png"},
-    {country: "İtalya", img: "https://flagcdn.com/w320/it.png"},
-    {country: "İspanya", img: "https://flagcdn.com/w320/es.png"},
-    {country: "Polonya", img: "https://flagcdn.com/w320/pl.png"},
-    {country: "Belçika", img: "https://flagcdn.com/w320/be.png"},
-    {country: "Lüksemburg", img: "https://flagcdn.com/w320/lu.png"},
-    {country: "Portekiz", img: "https://flagcdn.com/w320/pt.png"},
-    {country: "Uruguay", img: "https://flagcdn.com/w320/uy.png"},
-    {country: "ABD", img: "https://flagcdn.com/w320/us.png"},
-    {country: "Kanada", img: "https://flagcdn.com/w320/ca.png"},
-    {country: "Meksika", img: "https://flagcdn.com/w320/mx.png"},
-    {country: "Brezilya", img: "https://flagcdn.com/w320/br.png"},
-    {country: "Arjantin", img: "https://flagcdn.com/w320/ar.png"},
-    {country: "Şili", img: "https://flagcdn.com/w320/cl.png"},
-    {country: "Kolombiya", img: "https://flagcdn.com/w320/co.png"},
-    {country: "Peru", img: "https://flagcdn.com/w320/pe.png"},
-    {country: "Hollanda", img: "https://flagcdn.com/w320/nl.png"},
-    {country: "İsveç", img: "https://flagcdn.com/w320/se.png"},
-    {country: "Norveç", img: "https://flagcdn.com/w320/no.png"},
-    {country: "Finlandiya", img: "https://flagcdn.com/w320/fi.png"},
-    {country: "Danimarka", img: "https://flagcdn.com/w320/dk.png"},
-    {country: "Yunanistan", img: "https://flagcdn.com/w320/gr.png"},
-    {country: "Japonya", img: "https://flagcdn.com/w320/jp.png"},
-    {country: "Çin", img: "https://flagcdn.com/w320/cn.png"},
-    {country: "Hindistan", img: "https://flagcdn.com/w320/in.png"},
-    {country: "Avustralya", img: "https://flagcdn.com/w320/au.png"},
-    {country: "Güney Kore", img: "https://flagcdn.com/w320/kr.png"},
-    {country: "Rusya", img: "https://flagcdn.com/w320/ru.png"},
+    { country_tr: "Filistin", country_en: "Palestine", img: "https://flagcdn.com/w320/ps.png" },
+    { country_tr: "Türkiye", country_en: "Türkiye", img: "https://flagcdn.com/w320/tr.png" },
+    { country_tr: "Almanya", country_en: "Germany", img: "https://flagcdn.com/w320/de.png" },
+    { country_tr: "Fransa", country_en: "France", img: "https://flagcdn.com/w320/fr.png" },
+    { country_tr: "İtalya", country_en: "Italy", img: "https://flagcdn.com/w320/it.png" },
+    { country_tr: "İspanya", country_en: "Spain", img: "https://flagcdn.com/w320/es.png" },
+    { country_tr: "Polonya", country_en: "Poland", img: "https://flagcdn.com/w320/pl.png" },
+    { country_tr: "Belçika", country_en: "Belgium", img: "https://flagcdn.com/w320/be.png" },
+    { country_tr: "Lüksemburg", country_en: "Luxembourg", img: "https://flagcdn.com/w320/lu.png" },
+    { country_tr: "Portekiz", country_en: "Portugal", img: "https://flagcdn.com/w320/pt.png" },
+    { country_tr: "Uruguay", country_en: "Uruguay", img: "https://flagcdn.com/w320/uy.png" },
+    { country_tr: "ABD", country_en: "USA", img: "https://flagcdn.com/w320/us.png" },
+    { country_tr: "Kanada", country_en: "Canada", img: "https://flagcdn.com/w320/ca.png" },
+    { country_tr: "Meksika", country_en: "Mexico", img: "https://flagcdn.com/w320/mx.png" },
+    { country_tr: "Brezilya", country_en: "Brazil", img: "https://flagcdn.com/w320/br.png" },
+    { country_tr: "Arjantin", country_en: "Argentina", img: "https://flagcdn.com/w320/ar.png" },
+    { country_tr: "Şili", country_en: "Chile", img: "https://flagcdn.com/w320/cl.png" },
+    { country_tr: "Kolombiya", country_en: "Colombia", img: "https://flagcdn.com/w320/co.png" },
+    { country_tr: "Peru", country_en: "Peru", img: "https://flagcdn.com/w320/pe.png" },
+    { country_tr: "Hollanda", country_en: "Netherlands", img: "https://flagcdn.com/w320/nl.png" },
+    { country_tr: "İsveç", country_en: "Sweden", img: "https://flagcdn.com/w320/se.png" },
+    { country_tr: "Norveç", country_en: "Norway", img: "https://flagcdn.com/w320/no.png" },
+    { country_tr: "Finlandiya", country_en: "Finland", img: "https://flagcdn.com/w320/fi.png" },
+    { country_tr: "Danimarka", country_en: "Denmark", img: "https://flagcdn.com/w320/dk.png" },
+    { country_tr: "Yunanistan", country_en: "Greece", img: "https://flagcdn.com/w320/gr.png" },
+    { country_tr: "Japonya", country_en: "Japan", img: "https://flagcdn.com/w320/jp.png" },
+    { country_tr: "Çin", country_en: "China", img: "https://flagcdn.com/w320/cn.png" },
+    { country_tr: "Hindistan", country_en: "India", img: "https://flagcdn.com/w320/in.png" },
+    { country_tr: "Avustralya", country_en: "Australia", img: "https://flagcdn.com/w320/au.png" },
+    { country_tr: "Güney Kore", country_en: "South Korea", img: "https://flagcdn.com/w320/kr.png" },
+    { country_tr: "Rusya", country_en: "Russia", img: "https://flagcdn.com/w320/ru.png" },
+    { country_tr: "Birleşik Krallık", country_en: "United Kingdom", img: "https://flagcdn.com/w320/gb.png" },
+    { country_tr: "Mısır", country_en: "Egypt", img: "https://flagcdn.com/w320/eg.png" },
+    { country_tr: "Suudi Arabistan", country_en: "Saudi Arabia", img: "https://flagcdn.com/w320/sa.png" },
+    { country_tr: "Irak", country_en: "Iraq", img: "https://flagcdn.com/w320/iq.png" },
+    { country_tr: "İran", country_en: "Iran", img: "https://flagcdn.com/w320/ir.png" },
+    { country_tr: "Pakistan", country_en: "Pakistan", img: "https://flagcdn.com/w320/pk.png" },
+    { country_tr: "Vietnam", country_en: "Vietnam", img: "https://flagcdn.com/w320/vn.png" },
+    { country_tr: "Tayland", country_en: "Thailand", img: "https://flagcdn.com/w320/th.png" },
+    { country_tr: "Ukrayna", country_en: "Ukraine", img: "https://flagcdn.com/w320/ua.png" },
+    { country_tr: "İrlanda", country_en: "Ireland", img: "https://flagcdn.com/w320/ie.png" },
+    { country_tr: "İzlanda", country_en: "Iceland", img: "https://flagcdn.com/w320/is.png" },
+    { country_tr: "Çek Cumhuriyeti", country_en: "Czech Republic", img: "https://flagcdn.com/w320/cz.png" },
+    { country_tr: "Macaristan", country_en: "Hungary", img: "https://flagcdn.com/w320/hu.png" },
   ];
 
+  const translations = {
+    tr: {
+      title: "Bayrak Tahmin Oyunu",
+      difficultyTitle: "Seviye Seçin:",
+      easy: "Kolay",
+      normal: "Normal",
+      hard: "Zor",
+      insane: "Efsane",
+      rank: "Rank:",
+      score: "Puan:",
+      timer: "Süre:",
+      rankInfoTitle: "🏆 Rank Bilgileri",
+      rank100: "🥉 Bronz",
+      rank200: "💠 Platin",
+      rank300: "🟧 Altın",
+      rank350: "👑 Taç",
+      rank500: "💎 Elmas",
+      rank1000: "🟥 Fatih",
+      correct: "✅ Doğru! +25",
+      incorrect: "❌ Yanlış! -15 | Doğru: ",
+      gameOverTime: "💔 Süre Bitti! Kaybettin!",
+      gameOverWin: "🎉 Tebrikler! Fatih oldun!",
+      playAgain: "Tekrar Oyna",
+      rookieRank: "🕹️ Acemi",
+      lightTheme: "Aydınlık",
+      darkTheme: "Karanlık",
+      exit: "Çıkış",
+      delay: "Geçiş Süresi:",
+    },
+    en: {
+      title: "Flag Guessing Game",
+      difficultyTitle: "Select Difficulty:",
+      easy: "Easy",
+      normal: "Normal",
+      hard: "Hard",
+      insane: "Insane",
+      rank: "Rank:",
+      score: "Score:",
+      timer: "Time:",
+      rankInfoTitle: "🏆 Rank Information",
+      rank100: "🥉 Bronze",
+      rank200: "💠 Platinum",
+      rank300: "🟧 Gold",
+      rank350: "👑 Crown",
+      rank500: "💎 Diamond",
+      rank1000: "🟥 Conqueror",
+      correct: "✅ Correct! +25",
+      incorrect: "❌ Incorrect! -15 | Correct: ",
+      gameOverTime: "💔 Time's Up! You Lost!",
+      gameOverWin: "🎉 Congratulations! You are a Conqueror!",
+      playAgain: "Play Again",
+      rookieRank: "🕹️ Rookie",
+      lightTheme: "Light",
+      darkTheme: "Dark",
+      exit: "Exit",
+      delay: "Transition Delay:",
+    }
+  };
+
+  let currentLang = 'tr';
   let currentFlag;
   let score = 0;
   let timeLeft;
   let timerInterval;
-  let difficulty;
+  let answerDelay = 1.0;
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    const t = translations[currentLang];
+    document.getElementById("difficulty-title").textContent = t.difficultyTitle;
+    document.getElementById("easy-btn").textContent = t.easy;
+    document.getElementById("normal-btn").textContent = t.normal;
+    document.getElementById("hard-btn").textContent = t.hard;
+    document.getElementById("insane-btn").textContent = t.insane;
+    document.getElementById("rank-label").textContent = t.rank;
+    document.getElementById("score-label").textContent = t.score;
+    document.getElementById("timer-label").textContent = t.timer;
+    document.getElementById("rank-info-title").textContent = t.rankInfoTitle;
+    document.getElementById("rank-100").textContent = t.rank100;
+    document.getElementById("rank-200").textContent = t.rank200;
+    document.getElementById("rank-300").textContent = t.rank300;
+    document.getElementById("rank-350").textContent = t.rank350;
+    document.getElementById("rank-500").textContent = t.rank500;
+    document.getElementById("rank-1000").textContent = t.rank1000;
+    document.getElementById("game-title").textContent = t.title;
+    document.getElementById("theme-text").textContent = document.body.classList.contains('dark-mode') ? t.darkTheme : t.lightTheme;
+    document.getElementById("exit-btn").textContent = t.exit;
+    document.getElementById("delay-label").textContent = `${t.delay} ${answerDelay.toFixed(1)}s`;
+    updateCategory();
+  }
+
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle.addEventListener('change', function() {
+    document.body.classList.toggle('dark-mode');
+    const t = translations[currentLang];
+    document.getElementById("theme-text").textContent = this.checked ? t.darkTheme : t.lightTheme;
+  });
+
+  const delaySlider = document.getElementById('delay-slider');
+  delaySlider.addEventListener('input', function() {
+    answerDelay = parseFloat(this.value);
+    const t = translations[currentLang];
+    document.getElementById("delay-value").textContent = this.value;
+  });
 
   function updateCategory() {
+    const t = translations[currentLang];
     const categoryEl = document.getElementById("category");
-    if (score >= 1000) categoryEl.textContent = "🟥 Fatih";
-    else if (score >= 500) categoryEl.textContent = "💎 Elmas";
-    else if (score >= 350) categoryEl.textContent = "👑 Taç";
-    else if (score >= 300) categoryEl.textContent = "🟧 Altın";
-    else if (score >= 200) categoryEl.textContent = "💠 Platin";
-    else if (score >= 100) categoryEl.textContent = "🥉 Bronz";
-    else categoryEl.textContent = "🕹️ Acemi";
+    if (score >= 1000) categoryEl.textContent = t.rank1000;
+    else if (score >= 500) categoryEl.textContent = t.rank500;
+    else if (score >= 350) categoryEl.textContent = t.rank350;
+    else if (score >= 300) categoryEl.textContent = t.rank300;
+    else if (score >= 200) categoryEl.textContent = t.rank200;
+    else if (score >= 100) categoryEl.textContent = t.rank100;
+    else categoryEl.textContent = t.rookieRank;
   }
 
   function updateScoreDisplay() {
@@ -175,9 +669,10 @@
     currentFlag = flags[randomIndex];
     document.getElementById("flag").src = currentFlag.img;
 
-    const options = [currentFlag.country];
+    const countryKey = `country_${currentLang}`;
+    const options = [currentFlag[countryKey]];
     while (options.length < 4) {
-      const rand = flags[Math.floor(Math.random() * flags.length)].country;
+      const rand = flags[Math.floor(Math.random() * flags.length)][countryKey];
       if (!options.includes(rand)) options.push(rand);
     }
 
@@ -191,53 +686,95 @@
   }
 
   function checkAnswer(answer) {
-    if (answer === currentFlag.country) {
+    const t = translations[currentLang];
+    const resultEl = document.getElementById("result");
+    
+    // Doğru cevap için hangi anahtarı kullanacağımızı belirle
+    const countryKey = `country_${currentLang}`;
+    const correctAnswer = currentFlag[countryKey];
+
+    if (answer === correctAnswer) {
       score += 25;
-      document.getElementById("result").textContent = "✅ Doğru! +25";
+      resultEl.textContent = t.correct;
+      resultEl.className = "correct";
     } else {
       score -= 15;
-      document.getElementById("result").textContent = "❌ Yanlış! -15 | Doğru: " + currentFlag.country;
+      resultEl.textContent = t.incorrect + correctAnswer;
+      resultEl.className = "incorrect";
     }
 
     updateScoreDisplay();
     updateCategory();
+    
+    if (score >= 1000) {
+      endGame(t.gameOverWin);
+      return;
+    }
 
     setTimeout(() => {
-      document.getElementById("result").textContent = "";
+      resultEl.textContent = "";
       newQuestion();
-    }, 1000);
+    }, answerDelay * 1000);
   }
 
   function updateTimer() {
+    const t = translations[currentLang];
     let minutes = Math.floor(timeLeft / 60);
     let seconds = timeLeft % 60;
     document.getElementById("timer").textContent =
       `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      alert(score >= 1000 ? "✅ Başardın! Fatih Ranga Ulaştın!" : "💔 Süre Bitti! Kaybettin!");
-      location.reload();
+      if (score < 1000) {
+        endGame(t.gameOverTime);
+      } else {
+        endGame(t.gameOverWin);
+      }
     } else {
       timeLeft--;
     }
   }
 
+  function endGame(message) {
+    const t = translations[currentLang];
+    clearInterval(timerInterval);
+    document.getElementById("game-over-title").textContent = message;
+    document.getElementById("final-score").textContent = `${t.score} ${score}`;
+    document.getElementById("play-again-btn").textContent = t.playAgain;
+    document.getElementById("game-over").style.display = "flex";
+  }
+
   function startGame(selectedDifficulty) {
-    difficulty = selectedDifficulty;
-    if (difficulty === "easy") timeLeft = 300;
-    else if (difficulty === "normal") timeLeft = 240;
-    else if (difficulty === "hard") timeLeft = 120;
-    else if (difficulty === "insane") timeLeft = 60;
+    let timeLeftInSeconds = 0;
+    if (selectedDifficulty === "easy") timeLeftInSeconds = 300;
+    else if (selectedDifficulty === "normal") timeLeftInSeconds = 240;
+    else if (selectedDifficulty === "hard") timeLeftInSeconds = 120;
+    else if (selectedDifficulty === "insane") timeLeftInSeconds = 60;
 
+    timeLeft = timeLeftInSeconds;
+    
     document.getElementById("difficulty").style.display = "none";
-    document.getElementById("sidebar").style.display = "block";
-    document.getElementById("game").style.display = "block";
+    document.getElementById("main-container").style.display = "flex";
+    document.getElementById("language-selector").style.display = "none";
+    
+    const t = translations[currentLang];
+    document.getElementById("exit-btn").textContent = t.exit;
+    document.getElementById("delay-label").textContent = `${t.delay} ${answerDelay.toFixed(1)}s`;
 
+    score = 0;
     updateCategory();
     updateScoreDisplay();
     newQuestion();
+    updateTimer();
 
     timerInterval = setInterval(updateTimer, 1000);
+  }
+  
+  function exitGame() {
+    clearInterval(timerInterval);
+    document.getElementById("main-container").style.display = "none";
+    document.getElementById("difficulty").style.display = "flex";
+    document.getElementById("language-selector").style.display = "flex";
   }
 </script>
 
