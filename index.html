@@ -3,25 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSZ</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <title>MSZ | Burak'ın Portfolyosu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Tailwind Configuration (Optional: To use 'Inter' font and custom colors if needed, but keeping default for simplicity) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#007bff', // Mavi
+                        darkbg: '#121212',
+                        darkcard: '#1e1e1e',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* CSS Kodları */
+        /* Ana CSS'i koruduk ve üzerine iyileştirmeler ekledik */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
             transition: background-color 0.5s, color 0.5s;
         }
         header {
-            background: #fff;
-            padding: 1.5rem 2rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         .main-nav a {
             text-decoration: none;
@@ -31,7 +42,7 @@
             transition: color 0.3s;
         }
         .main-nav a:hover {
-            color: #007bff;
+            color: var(--primary, #007bff);
         }
         main {
             padding: 2rem;
@@ -52,49 +63,76 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
         }
+        /* Project Card Geliştirmesi */
         .project-card {
             background: #f9f9f9;
             border-radius: 8px;
             padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.5s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            /* 3D Eğilim Efekti */
         }
         .project-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Buton Geliştirmesi */
         .btn {
-            background-color: #007bff;
+            background-color: var(--primary, #007bff);
             color: white;
-            padding: 5px 10px;
+            padding: 8px 16px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            border-radius: 5px;
+            border-radius: 9999px; /* Full rounded */
             margin-left: 10px;
-            transition: background-color 0.3s;
+            font-weight: 700;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
         }
         .btn:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
         }
-        /* Neon efekti geri eklendi */
+
+        /* Neon efekti Geliştirmesi (Daha canlı ve animasyonlu) */
         .neon-text {
             color: #fff;
-            text-shadow:
-                0 0 7px #fff,
-                0 0 10px #fff,
-                0 0 21px #fff,
-                0 0 42px #f00,
-                0 0 82px #f00,
-                0 0 92px #f00,
-                0 0 102px #f00,
-                0 0 151px #f00;
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
             font-style: italic;
-            font-weight: bold;
+            font-weight: 900; /* Daha kalın */
+            font-size: 2rem;
+            letter-spacing: 2px;
+            padding: 0 0.5rem;
+            border-radius: 5px;
+        }
+
+        @keyframes neonGlow {
+            from {
+                text-shadow:
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 15px #007bff,
+                    0 0 20px #007bff,
+                    0 0 30px #007bff;
+            }
+            to {
+                text-shadow:
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 30px #007bff,
+                    0 0 40px #007bff,
+                    0 0 50px #007bff;
+            }
         }
 
         /* Dil ve ayar butonları için yeni CSS kodları */
@@ -108,18 +146,19 @@
         }
 
         .bottom-right .flag-btn {
-            width: 40px;
-            height: 40px;
+            width: 45px; /* Biraz büyütüldü */
+            height: 45px;
             background-size: cover;
             background-position: center;
-            border: 2px solid #fff;
+            border: 3px solid #fff;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .bottom-right .flag-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(3deg);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
         #tr-flag {
             background-image: url('https://flagcdn.com/tr.svg');
@@ -135,17 +174,19 @@
             z-index: 1000;
         }
 
+        /* Dark Mode Toggle Geliştirmesi */
         .dark-mode-toggle {
             width: 60px;
             height: 30px;
-            background-color: #ccc;
+            background-color: #a0aec0; /* Açık gri */
             border-radius: 15px;
             position: relative;
             cursor: pointer;
             transition: background-color 0.5s;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
         }
         .dark-mode-toggle.active {
-            background-color: #4CAF50;
+            background-color: #48bb78; /* Yeşil tonu */
         }
         .dark-mode-toggle .toggle-ball {
             width: 26px;
@@ -155,10 +196,11 @@
             position: absolute;
             top: 2px;
             left: 2px;
-            transition: transform 0.5s, background-color 0.5s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), background-color 0.5s;
         }
         .dark-mode-toggle.active .toggle-ball {
-            transform: translateX(30px);
+            transform: translateX(30px) rotate(360deg);
         }
         
         /* Tema değişiklikleri için CSS */
@@ -166,37 +208,93 @@
             background-color: #f0f2f5;
             color: #333;
         }
+        body.light-mode header {
+            background: #fff;
+        }
         body.light-mode .page-section {
             background: #fff;
             color: #333;
         }
+        body.light-mode .project-card {
+             background: #f9f9f9;
+        }
 
         body.dark-mode {
-            background-color: #121212;
+            background-color: #0d0d0d; /* Daha koyu arka plan */
             color: #e0e0e0;
         }
         body.dark-mode header {
-            background: #1e1e1e;
+            background: #1a1a1a;
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
         }
         body.dark-mode .page-section {
-            background: #1e1e1e;
+            background: #1a1a1a;
             color: #e0e0e0;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
         }
         body.dark-mode .main-nav a {
             color: #ccc;
         }
         body.dark-mode .main-nav a:hover {
-            color: #007bff;
+            color: #38bdf8; /* Açık mavi hover */
         }
         body.dark-mode .project-card {
             background: #2a2a2a;
+            border-color: #444;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        body.dark-mode .project-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
         }
         body.dark-mode footer {
             color: #888;
         }
+        /* Neon text in Dark Mode */
+        body.dark-mode .neon-text {
+             animation-name: neonGlowDark;
+        }
+        @keyframes neonGlowDark {
+            from {
+                text-shadow:
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 15px #38bdf8,
+                    0 0 20px #38bdf8,
+                    0 0 30px #38bdf8;
+            }
+            to {
+                text-shadow:
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 30px #38bdf8,
+                    0 0 40px #38bdf8,
+                    0 0 50px #38bdf8;
+            }
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem 1rem;
+            }
+            .main-nav {
+                margin-top: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .main-nav a {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            main {
+                padding: 1rem;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="light-mode">
 
     <header>
         <h1 class="neon-text">MSZ</h1>
@@ -212,7 +310,7 @@
     <main id="app-content">
     </main>
 
-    <footer>
+    <footer class="text-center py-4 mt-8 border-t border-gray-200 dark:border-gray-700 transition-colors duration-500">
         <p>&copy; 2025 Burak. Tüm Hakları Saklıdır.</p>
     </footer>
 
@@ -258,7 +356,9 @@
                             <div class="page-section">
                                 <h2>Hakkımda</h2>
                                 <p>
-                                    Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca ingilizcem B2 C1 civarıdır.<p>                                                 Kodlama ile oyun yapmayı, youtubeda yürümeyi, ve hatta müzik yapmayı bile denedim.<p>                                                                                                       Tabii ki herşeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek, ve ileride belkide dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum MSZ. Bu grup için hedeflerim portfolyo kısmındadır.<p>                Bu arada youtube kanallarımı iletişim kısmından bulabilirsiniz.<p>                                                                                                                Müziklerimi şimdilik paylaşmak istemiyorum☺ bunlar özel deneyimler.<p>
+                                    Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca İngilizcem B1 B2 civarıdır.
+                                    <p>Kodlama ile oyun yapmayı, YouTube'da yürümeyi ve hatta müzik yapmayı bile denedim.</p>
+                                    <p>Tabii ki her şeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek ve ileride belki de dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum: MSZ. Bu grup için hedeflerim portfolyo kısmındadır.</p>
                                 </p>
                             </div>
                         `,
@@ -268,36 +368,43 @@
                                 <p>Yaptığım ve kodladığım bazı HTML oyunlarıma buradan ulaşabilirsiniz.</p>
                                 <div class="grid-container">
                                     <div class="project-card">
-                                        <h3>Bayrak tahmın et</h3>
-                                        <p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et. İnternet ile çalışıyor en azından şimdilik. Her zorluğun ayrı bir zaman aralığı vardır. Ayrıca rekabetli olması için birazda rank sistemi ekledim.</p>
+                                        <h3>Bayrak Tahmin Et</h3>
+                                        <p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et. İnternet ile çalışıyor en azından şimdilik. Her zorluğun ayrı bir zaman aralığı vardır. Ayrıca rekabetli olması için biraz da rank sistemi ekledim.</p>
                                         <a href="oyun1.html" class="btn" target="_blank">Oyna</a>
                                     </div>
                                     <div class="project-card">
                                         <h3>MSZ Trade</h3>
-                                        <p>Bu oyunda kendini bir ticaret adamı gibi düşün.Telefon ev araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiyede olduğu gibi paran arttıkça giderinde artacak.</p>
+                                        <p>Bu oyunda kendini bir ticaret adamı gibi düşün. Telefon, ev, araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiye'de olduğu gibi paran arttıkça giderin de artacak.</p>
                                         <a href="oyun2.html" class="btn" target="_blank">Oyna</a>
+                                    </div>
+                                   <div class="project-card">
+                                        <h3>Üniversite Planı</h3>
+                                        <p>Üniversite hayatınızı kolaylaştırmak için.</p>
+                                        <a href="oyun3.html" class="btn" target="_blank">Git</a>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>MSZ Game Studio</h3>
+                                        <p>Yakın zamanda kurmayı planladığım oyun stüdyosu. Burası sadece küçük bir deneme kartıdır.</p>
+                                        <a href="#" class="btn" disabled>Çok Yakında</a>
                                     </div>
                                 </div>
                             </div>
                         `,
                         portfolio: `
                             <div class="page-section">
-                                <h2>Portfolyo</h2>
+                                <h2>Portfolyo (MSZ Hedefleri)</h2>
                                 <div class="grid-container">
                                     <div class="project-card">
                                         <h3>Gerçekçi Oyun</h3>
-                                        <p>Bu projede amacım:<p>
-                                            Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak ve oyuncuların gerçeklik içinde bir oyun keyfi sürmeleri. Tabii ki bu çok çok zor olacak. Ama bu projemi şimdilik yapmaya kararlı değilim. Eğer ekibim gerçekten üstün olabilirse bu projeyi düşüneceğim.</p>
+                                        <p>Bu projede amacım: Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak ve oyuncuların gerçeklik içinde bir oyun keyfi sürmeleri. Tabii ki bu çok çok zor olacak. Ama bu projemi şimdilik yapmaya kararlı değilim. Eğer ekibim gerçekten üstün olabilirse bu projeyi düşüneceğim.</p>
                                     </div>
                                     <div class="project-card">
                                         <h3>Bilgilendirme Formu</h3>
-                                        <p>Bu projede amacım:<p>
-                                            İnsanların her olaydan haberdar olması. Bu projede bir uygulama yapılacak. Bu uygulamada iki bölüm olacak. 1- Gerçek bilgi araştırılmış ve kanıtlı bilgiler olarak ben ve ekibim tarafından yayınlanacak. 2-Halk tarafından varsayım veya bir çıkarım olarak veya bir öneri olarak halktan yourmlar olacak. Bu projeyi yakın zamanda gerçekleştirmeyi umuyorum.</p>
+                                        <p>Bu projede amacım: İnsanların her olaydan haberdar olması. Bu projede bir uygulama yapılacak. Bu uygulamada iki bölüm olacak. 1- Gerçek bilgi araştırılmış ve kanıtlı bilgiler olarak ben ve ekibim tarafından yayınlanacak. 2- Halk tarafından varsayım veya bir çıkarım olarak veya bir öneri olarak halktan yorumlar olacak. Bu projeyi yakın zamanda gerçekleştirmeyi umuyorum.</p>
                                     </div>
                                     <div class="project-card">
                                         <h3>BİG BANG</h3>
-                                        <p>Bu projede amacım:<p>
-                                            İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını, icatlarını, teknolojik gelişmeleri yazacağız. Böylece yeni fikirler eskiden örnek alıp yeni, insanlığı kurtaracak bilgiler üretebilecek. Tabii bir de Halk tarafına açık kısım olacak burada insanlar önerilerini kanıt ve projeleri ile birlikte sunacak.</p>
+                                        <p>Bu projede amacım: İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını, icatlarını, teknolojik gelişmeleri yazacağız. Böylece yeni fikirler eskiden örnek alıp yeni, insanlığı kurtaracak bilgiler üretebilecek. Tabii bir de Halk tarafına açık kısım olacak burada insanlar önerilerini kanıt ve projeleri ile birlikte sunacak.</p>
                                         <a href="bigbang.html" class="btn" target="_blank">Aç</a>
                                     </div>
                                 </div>
@@ -308,22 +415,18 @@
                                 <h2>İletişim</h2>
                                 <p>Bana ulaşmak için aşağıdaki bilgilere göz atabilirsiniz:</p>
                                 <ul>
-                                    <li>
+                                    <li class="mb-4">
                                         <strong>Gmail:</strong>
-                                        <a href="mailto:burakbilec123@gmail.com">burakbilec123@gmail.com</a>
+                                        <a href="mailto:burakbilec123@gmail.com" class="text-primary hover:underline">burakbilec123@gmail.com</a>
                                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Git</a>
                                     </li>
-                                    <li>
+                                    <li class="mb-4">
                                         <strong>İnstagram:</strong>
-                                        <a href="https://www.instagram.com/burak_msz/" target="_blank">https://www.instagram.com/burak_msz/</a>
+                                        <a href="https://www.instagram.com/burak_msz/" target="_blank" class="text-primary hover:underline">burak_msz/</a>
                                     </li>
-                                    <li>
-                                        <strong>Youtube (Oyun):</strong>
-                                        <a href="https://www.youtube.com/@ONEtheMSZ" target="_blank">https://www.youtube.com/@ONEtheMSZ</a>
-                                    </li>
-                                    <li>
-                                        <strong>Youtube (Müzik):</strong>
-                                        <a href="https://www.youtube.com/@msz_burak" target="_blank">https://www.youtube.com/@msz_burak</a>
+                                    <li class="mb-4">
+                                        <strong>Youtube:</strong>
+                                        <a href="https://www.youtube.com/@tekno_market_gaziantep" target="_blank" class="text-primary hover:underline">@tekno_market_gaziantep</a>
                                     </li>
                                 </ul>
                             </div>
@@ -350,7 +453,9 @@
                             <div class="page-section">
                                 <h2>About Me</h2>
                                 <p>
-                                    You should know that I know a little bit of coding. My English is also around A2 B1 level. I've tried making games, walking on YouTube, and even making music with coding. Of course, a steel body is needed before anything else. That's why I'll need a group that will grow, learn, and maybe one day create the world's best design with me. I've even found a name for this group, MSZ. My goals for this group are in the portfolio section. By the way, you can find my YouTube channels in the contact section. I don't want to share my music for now ☺ these are special experiences.
+                                    You should know that I know a little bit of coding. My English is also around B1 B2 level.
+                                    <p>I've tried making games, walking on YouTube, and even making music with coding.</p>
+                                    <p>Of course, a steel body is needed before anything else. That's why I'll need a group that will grow, learn, and maybe one day create the world's best design with me. I've even found a name for this group: MSZ. My goals for this group are in the portfolio section.</p>
                                 </p>
                             </div>
                         `,
@@ -369,12 +474,22 @@
                                         <p>In this game, think of yourself as a businessman. You buy and sell phones, houses, and cars. But be careful, you can only sell at most 1.5 times the price. And also, you will have some expenses every month. As in Turkey, your expenses will increase as your money increases.</p>
                                         <a href="oyun2.html" class="btn" target="_blank">Play</a>
                                     </div>
+                                   <div class="project-card">
+                                        <h3>Unıversity Plan</h3>
+                                        <p>To make your university life easier.</p>
+                                        <a href="oyun3.html" class="btn" target="_blank">Go</a>
+                                    </div>
+                                    <div class="project-card">
+                                        <h3>MSZ Game Studio</h3>
+                                        <p>The game studio I plan to establish soon. This is just a small trial card.</p>
+                                        <a href="#" class="btn" disabled>Coming Soon</a>
+                                    </div>
                                 </div>
                             </div>
                         `,
                         portfolio: `
                             <div class="page-section">
-                                <h2>Portfolio</h2>
+                                <h2>Portfolio (MSZ Goals)</h2>
                                 <div class="grid-container">
                                     <div class="project-card">
                                         <h3>Realistic Game</h3>
@@ -397,22 +512,18 @@
                                 <h2>Contact</h2>
                                 <p>You can check the information below to reach me:</p>
                                 <ul>
-                                    <li>
+                                    <li class="mb-4">
                                         <strong>Gmail:</strong>
-                                        <a href="mailto:burakbilec123@gmail.com">burakbilec123@gmail.com</a>
+                                        <a href="mailto:burakbilec123@gmail.com" class="text-primary hover:underline">burakbilec123@gmail.com</a>
                                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Go</a>
                                     </li>
-                                    <li>
+                                    <li class="mb-4">
                                         <strong>Instagram:</strong>
-                                        <a href="https://www.instagram.com/burak_msz/" target="_blank">https://www.instagram.com/burak_msz/</a>
+                                        <a href="https://www.instagram.com/burak_msz/" target="_blank" class="text-primary hover:underline">burak_msz/</a>
                                     </li>
-                                    <li>
-                                        <strong>YouTube (Gaming):</strong>
-                                        <a href="https://www.youtube.com/@ONEtheMSZ" target="_blank">https://www.youtube.com/@ONEtheMSZ</a>
-                                    </li>
-                                    <li>
-                                        <strong>YouTube (Music):</strong>
-                                        <a href="https://www.youtube.com/@msz_burak" target="_blank">https://www.youtube.com/@msz_burak</a>
+                                    <li class="mb-4">
+                                        <strong>YouTube:</strong>
+                                        <a href="https://www.youtube.com/@tekno_market_gaziantep" target="_blank" class="text-primary hover:underline">@tekno_market_gaziantep</a>
                                     </li>
                                 </ul>
                             </div>
@@ -424,7 +535,7 @@
             
             let currentLanguage = 'tr';
             let currentPage = 'home';
-            let isDarkMode = false;
+            let isDarkMode = false; // Default should match the body class
 
             const updateContent = (lang) => {
                 currentLanguage = lang;
@@ -442,6 +553,7 @@
 
             const loadPage = (pageName, lang = currentLanguage) => {
                 currentPage = pageName;
+                // İçerik objesindeki paragrafların `<p>` etiketlerinin düzgün kapanmasını sağladık
                 const pageContent = content[lang].pages[pageName] || content[lang].pages.home;
                 mainContent.innerHTML = pageContent;
                 document.querySelector('footer p').textContent = content[lang].pages.footer;
@@ -468,9 +580,11 @@
 
             // Başlangıçta ana sayfayı ve varsayılan temayı yükle
             loadPage('home');
-            body.classList.add('light-mode');
+            // Sayfa yüklendiğinde varsayılan olarak Light Mode'u ayarlıyoruz
+            if (!body.classList.contains('dark-mode')) {
+                body.classList.add('light-mode');
+            }
         });
     </script>
 </body>
 </html>
-
