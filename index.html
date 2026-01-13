@@ -6,7 +6,7 @@
     <title>MSZ | Burak'ın Portfolyosu</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom Tailwind Configuration (Optional: To use 'Inter' font and custom colors if needed, but keeping default for simplicity) -->
+    <!-- Custom Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -15,7 +15,7 @@
                         sans: ['Inter', 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#007bff', // Mavi
+                        primary: '#007bff',
                         darkbg: '#121212',
                         darkcard: '#1e1e1e',
                     }
@@ -24,7 +24,6 @@
         }
     </script>
     <style>
-        /* Ana CSS'i koruduk ve üzerine iyileştirmeler ekledik */
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
@@ -63,7 +62,6 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
         }
-        /* Project Card Geliştirmesi */
         .project-card {
             background: #f9f9f9;
             border-radius: 8px;
@@ -72,7 +70,6 @@
             text-align: center;
             transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.5s;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            /* 3D Eğilim Efekti */
         }
         .project-card:hover {
             transform: translateY(-8px) rotateX(1deg) rotateY(1deg);
@@ -84,7 +81,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Buton Geliştirmesi */
         .btn {
             background-color: var(--primary, #007bff);
             color: white;
@@ -92,7 +88,7 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            border-radius: 9999px; /* Full rounded */
+            border-radius: 9999px;
             margin-left: 10px;
             font-weight: 700;
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
@@ -104,12 +100,11 @@
             box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
         }
 
-        /* Neon efekti Geliştirmesi (Daha canlı ve animasyonlu) */
         .neon-text {
             color: #fff;
             animation: neonGlow 1.5s ease-in-out infinite alternate;
             font-style: italic;
-            font-weight: 900; /* Daha kalın */
+            font-weight: 900;
             font-size: 2rem;
             letter-spacing: 2px;
             padding: 0 0.5rem;
@@ -118,24 +113,13 @@
 
         @keyframes neonGlow {
             from {
-                text-shadow:
-                    0 0 5px #fff,
-                    0 0 10px #fff,
-                    0 0 15px #007bff,
-                    0 0 20px #007bff,
-                    0 0 30px #007bff;
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #007bff, 0 0 20px #007bff, 0 0 30px #007bff;
             }
             to {
-                text-shadow:
-                    0 0 10px #fff,
-                    0 0 20px #fff,
-                    0 0 30px #007bff,
-                    0 0 40px #007bff,
-                    0 0 50px #007bff;
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #007bff, 0 0 40px #007bff, 0 0 50px #007bff;
             }
         }
 
-        /* Dil ve ayar butonları için yeni CSS kodları */
         .bottom-right {
             position: fixed;
             bottom: 20px;
@@ -146,7 +130,7 @@
         }
 
         .bottom-right .flag-btn {
-            width: 45px; /* Biraz büyütüldü */
+            width: 45px;
             height: 45px;
             background-size: cover;
             background-position: center;
@@ -160,12 +144,8 @@
             transform: scale(1.15) rotate(3deg);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
-        #tr-flag {
-            background-image: url('https://flagcdn.com/tr.svg');
-        }
-        #en-flag {
-            background-image: url('https://flagcdn.com/gb.svg');
-        }
+        #tr-flag { background-image: url('https://flagcdn.com/tr.svg'); }
+        #en-flag { background-image: url('https://flagcdn.com/gb.svg'); }
 
         .bottom-left {
             position: fixed;
@@ -174,20 +154,17 @@
             z-index: 1000;
         }
 
-        /* Dark Mode Toggle Geliştirmesi */
         .dark-mode-toggle {
             width: 60px;
             height: 30px;
-            background-color: #a0aec0; /* Açık gri */
+            background-color: #a0aec0;
             border-radius: 15px;
             position: relative;
             cursor: pointer;
             transition: background-color 0.5s;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
         }
-        .dark-mode-toggle.active {
-            background-color: #48bb78; /* Yeşil tonu */
-        }
+        .dark-mode-toggle.active { background-color: #48bb78; }
         .dark-mode-toggle .toggle-ball {
             width: 26px;
             height: 26px;
@@ -199,105 +176,97 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), background-color 0.5s;
         }
-        .dark-mode-toggle.active .toggle-ball {
-            transform: translateX(30px) rotate(360deg);
-        }
+        .dark-mode-toggle.active .toggle-ball { transform: translateX(30px) rotate(360deg); }
         
-        /* Tema değişiklikleri için CSS */
-        body.light-mode {
-            background-color: #f0f2f5;
-            color: #333;
-        }
-        body.light-mode header {
-            background: #fff;
-        }
-        body.light-mode .page-section {
-            background: #fff;
-            color: #333;
-        }
-        body.light-mode .project-card {
-             background: #f9f9f9;
-        }
+        body.light-mode { background-color: #f0f2f5; color: #333; }
+        body.light-mode header { background: #fff; }
+        body.light-mode .page-section { background: #fff; color: #333; }
+        body.light-mode .project-card { background: #f9f9f9; }
 
-        body.dark-mode {
-            background-color: #0d0d0d; /* Daha koyu arka plan */
-            color: #e0e0e0;
-        }
-        body.dark-mode header {
-            background: #1a1a1a;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
-        }
-        body.dark-mode .page-section {
-            background: #1a1a1a;
-            color: #e0e0e0;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
-        }
-        body.dark-mode .main-nav a {
-            color: #ccc;
-        }
-        body.dark-mode .main-nav a:hover {
-            color: #38bdf8; /* Açık mavi hover */
-        }
-        body.dark-mode .project-card {
-            background: #2a2a2a;
-            border-color: #444;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-        body.dark-mode .project-card:hover {
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
-        }
-        body.dark-mode footer {
-            color: #888;
-        }
-        /* Neon text in Dark Mode */
-        body.dark-mode .neon-text {
-             animation-name: neonGlowDark;
-        }
+        body.dark-mode { background-color: #0d0d0d; color: #e0e0e0; }
+        body.dark-mode header { background: #1a1a1a; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05); }
+        body.dark-mode .page-section { background: #1a1a1a; color: #e0e0e0; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05); }
+        body.dark-mode .main-nav a { color: #ccc; }
+        body.dark-mode .main-nav a:hover { color: #38bdf8; }
+        body.dark-mode .project-card { background: #2a2a2a; border-color: #444; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+        body.dark-mode footer { color: #888; }
+        body.dark-mode .neon-text { animation-name: neonGlowDark; }
+        
         @keyframes neonGlowDark {
-            from {
-                text-shadow:
-                    0 0 5px #fff,
-                    0 0 10px #fff,
-                    0 0 15px #38bdf8,
-                    0 0 20px #38bdf8,
-                    0 0 30px #38bdf8;
-            }
-            to {
-                text-shadow:
-                    0 0 10px #fff,
-                    0 0 20px #fff,
-                    0 0 30px #38bdf8,
-                    0 0 40px #38bdf8,
-                    0 0 50px #38bdf8;
-            }
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #38bdf8, 0 0 20px #38bdf8, 0 0 30px #38bdf8; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #38bdf8, 0 0 40px #38bdf8, 0 0 50px #38bdf8; }
         }
 
-        /* Mobile Responsive Adjustments */
+        /* --- YENİ AI BUTON CSS --- */
+        .ai-floating-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .ai-glow-effect {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.6) 0%, rgba(56, 189, 248, 0) 70%);
+            border-radius: 50%;
+            animation: pulse-ai 2s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        .ai-btn-circle {
+            width: 65px;
+            height: 65px;
+            background: #000;
+            border: 2px solid #38bdf8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            position: relative;
+        }
+
+        .ai-btn-circle:hover {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.8);
+            border-color: #fff;
+        }
+
+        .ai-btn-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes pulse-ai {
+            0% { transform: scale(0.85); opacity: 0.4; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(0.85); opacity: 0.4; }
+        }
+
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 1rem 1rem;
-            }
-            .main-nav {
-                margin-top: 1rem;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .main-nav a {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.9rem;
-            }
-            main {
-                padding: 1rem;
-            }
+            header { flex-direction: column; padding: 1rem; }
+            .main-nav { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; }
+            .main-nav a { padding: 0.5rem 0.75rem; font-size: 0.9rem; }
+            main { padding: 1rem; }
+            .ai-floating-container { bottom: 15px; }
+            .ai-btn-circle { width: 55px; height: 55px; }
         }
     </style>
    <link rel="icon" href="favicon.png" type="image/png">
 </head>
 <body class="light-mode">
 
-    <header>
+    <header class="flex justify-between items-center px-8 py-4 bg-white transition-colors duration-500">
         <h1 class="neon-text">MSZ</h1>
         <nav class="main-nav">
             <a href="#" data-page="home">Ana Sayfa</a>
@@ -308,8 +277,15 @@
         </nav>
     </header>
 
-    <main id="app-content">
-    </main>
+    <main id="app-content"></main>
+
+    <!-- YENİ AI BUTON YAPISI -->
+    <div class="ai-floating-container">
+        <div class="ai-glow-effect"></div>
+        <a href="https://burak-code.github.io/msz_ai/" target="_blank" class="ai-btn-circle" title="MSZ AI Keşfet">
+            <img src="ai.png" alt="AI" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103801.png'">
+        </a>
+    </div>
 
     <footer class="text-center py-4 mt-8 border-t border-gray-200 dark:border-gray-700 transition-colors duration-500">
         <p>&copy; 2025 Burak. Tüm Hakları Saklıdır.</p>
@@ -327,7 +303,6 @@
     </div>
     
     <script>
-        // JavaScript Kodları
         document.addEventListener('DOMContentLoaded', () => {
             const mainContent = document.getElementById('app-content');
             const navLinks = document.querySelectorAll('.main-nav a');
@@ -336,199 +311,26 @@
             const modeToggle = document.getElementById('mode-toggle');
             const body = document.body;
 
-            // Türkçe ve İngilizce içeriklerin bulunduğu obje
             const content = {
                 tr: {
-                    nav: {
-                        home: "Ana Sayfa",
-                        about: "Hakkımda",
-                        experiences: "Deneyimler",
-                        portfolio: "Portfolyo",
-                        contact: "İletişim"
-                    },
+                    nav: { home: "Ana Sayfa", about: "Hakkımda", experiences: "Deneyimler", portfolio: "Portfolyo", contact: "İletişim" },
                     pages: {
-                        home: `
-                            <div class="page-section">
-                                <h2>Merhaba, ben Burak.</h2>
-                                <p>Web geliştirme ve teknoloji tutkunuyum. Projelerimi, deneyimlerimi ve benim hakkımdaki bilgileri bu sitede bulabilirsiniz.</p>
-                            </div>
-                        `,
-                        about: `
-                            <div class="page-section">
-                                <h2>Hakkımda</h2>
-                                <p>
-                                    Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca İngilizcem B1 B2 civarıdır.
-                                    <p>Kodlama ile oyun yapmayı, YouTube'da yürümeyi ve hatta müzik yapmayı bile denedim.</p>
-                                    <p>Tabii ki her şeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek ve ileride belki de dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum: MSZ. Bu grup için hedeflerim portfolyo kısmındadır.</p>
-                                </p>
-                            </div>
-                        `,
-                        experiences: `
-                            <div class="page-section">
-                                <h2>Deneyimler</h2>
-                                <p>Yaptığım ve kodladığım bazı HTML oyunlarıma buradan ulaşabilirsiniz.</p>
-                                <div class="grid-container">
-                                    <div class="project-card">
-                                        <h3>Bayrak Tahmin Et</h3>
-                                        <p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et. İnternet ile çalışıyor en azından şimdilik. Her zorluğun ayrı bir zaman aralığı vardır. Ayrıca rekabetli olması için biraz da rank sistemi ekledim.</p>
-                                        <a href="oyun1.html" class="btn" target="_blank">Oyna</a>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>MSZ Trade</h3>
-                                        <p>Bu oyunda kendini bir ticaret adamı gibi düşün. Telefon, ev, araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiye'de olduğu gibi paran arttıkça giderin de artacak.</p>
-                                        <a href="oyun2.html" class="btn" target="_blank">Oyna</a>
-                                    </div>
-                                   <div class="project-card">
-                                        <h3>Üniversite Planı</h3>
-                                        <p>Üniversite hayatınızı kolaylaştırmak için.</p>
-                                        <a href="oyun3.html" class="btn" target="_blank">Git</a>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>MSZ Game Studio</h3>
-                                        <p>Yakın zamanda kurmayı planladığım oyun stüdyosu. Burası sadece küçük bir deneme kartıdır.</p>
-                                        <a href="#" class="btn" disabled>Çok Yakında</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `,
-                        portfolio: `
-                            <div class="page-section">
-                                <h2>Portfolyo (MSZ Hedefleri)</h2>
-                                <div class="grid-container">
-                                    <div class="project-card">
-                                        <h3>Gerçekçi Oyun</h3>
-                                        <p>Bu projede amacım: Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak ve oyuncuların gerçeklik içinde bir oyun keyfi sürmeleri. Tabii ki bu çok çok zor olacak. Ama bu projemi şimdilik yapmaya kararlı değilim. Eğer ekibim gerçekten üstün olabilirse bu projeyi düşüneceğim.</p>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>Bilgilendirme Formu</h3>
-                                        <p>Bu projede amacım: İnsanların her olaydan haberdar olması. Bu projede bir uygulama yapılacak. Bu uygulamada iki bölüm olacak. 1- Gerçek bilgi araştırılmış ve kanıtlı bilgiler olarak ben ve ekibim tarafından yayınlanacak. 2- Halk tarafından varsayım veya bir çıkarım olarak veya bir öneri olarak halktan yorumlar olacak. Bu projeyi yakın zamanda gerçekleştirmeyi umuyorum.</p>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>BİG BANG</h3>
-                                        <p>Bu projede amacım: İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını, icatlarını, teknolojik gelişmeleri yazacağız. Böylece yeni fikirler eskiden örnek alıp yeni, insanlığı kurtaracak bilgiler üretebilecek. Tabii bir de Halk tarafına açık kısım olacak burada insanlar önerilerini kanıt ve projeleri ile birlikte sunacak.</p>
-                                        <a href="bigbang.html" class="btn" target="_blank">Aç</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `,
-                        contact: `
-                            <div class="page-section">
-                                <h2>İletişim</h2>
-                                <p>Bana ulaşmak için aşağıdaki bilgilere göz atabilirsiniz:</p>
-                                <ul>
-                                    <li class="mb-4">
-                                        <strong>Gmail:</strong>
-                                        <a href="mailto:burakbilec123@gmail.com" class="text-primary hover:underline">burakbilec123@gmail.com</a>
-                                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Git</a>
-                                    </li>
-                                    <li class="mb-4">
-                                        <strong>İnstagram:</strong>
-                                        <a href="https://www.instagram.com/burak_msz/" target="_blank" class="text-primary hover:underline">burak_msz/</a>
-                                    </li>
-                                    <li class="mb-4">
-                                        <strong>Youtube:</strong>
-                                        <a href="https://www.youtube.com/@tekno_market_gaziantep" target="_blank" class="text-primary hover:underline">@tekno_market_gaziantep</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        `,
+                        home: `<div class="page-section"><h2>Merhaba, ben Burak.</h2><p>Web geliştirme ve teknoloji tutkunuyum. Projelerimi, deneyimlerimi ve benim hakkımdaki bilgileri bu sitede bulabilirsiniz.</p></div>`,
+                        about: `<div class="page-section"><h2>Hakkımda</h2><p>Bunu bilmelisin ki ben az da olsa kodlama biliyorum. Ayrıca İngilizcem B1 B2 civarıdır.</p><p>Kodlama ile oyun yapmayı, YouTube'da yürümeyi ve hatta müzik yapmayı bile denedim.</p><p>Tabii ki her şeyden önce demir vücut gerekir. Bu yüzden benimle birlikte gelişecek, öğrenecek ve ileride belki de dünyanın en iyi tasarımını yapacak bir gruba ihtiyacım olacak. Bu gruba isim bile buldum: MSZ. Bu grup için hedeflerim portfolyo kısmındadır.</p></div>`,
+                        experiences: `<div class="page-section"><h2>Deneyimler</h2><p>Yaptığım ve kodladığım bazı HTML oyunlarıma buradan ulaşabilirsiniz.</p><div class="grid-container"><div class="project-card"><h3>Bayrak Tahmin Et</h3><p>Bu oyunda sadece gelen bayrakların hangi ülkeye ait olduğunu tahmin et.</p><a href="oyun1.html" class="btn" target="_blank">Oyna</a></div><div class="project-card"><h3>MSZ Trade</h3><p>Bu oyunda kendini bir ticaret adamı gibi düşün.</p><a href="oyun2.html" class="btn" target="_blank">Oyna</a></div><div class="project-card"><h3>Üniversite Planı</h3><p>Üniversite hayatınızı kolaylaştırmak için.</p><a href="oyun3.html" class="btn" target="_blank">Git</a></div><div class="project-card"><h3>MSZ Game Studio</h3><p>Yakın zamanda kurmayı planladığım oyun stüdyosu.</p><a href="#" class="btn" disabled>Çok Yakında</a></div></div></div>`,
+                        portfolio: `<div class="page-section"><h2>Portfolyo (MSZ Hedefleri)</h2><div class="grid-container"><div class="project-card"><h3>Gerçekçi Oyun</h3><p>Gerçek dünyayı birebir olarak tamamıyla bir oyuna aktarmak.</p></div><div class="project-card"><h3>Bilgilendirme Formu</h3><p>İnsanların her olaydan haberdar olması.</p></div><div class="project-card"><h3>BİG BANG</h3><p>İnsanlığın ilk çağlardan beri süregelmiş alışkanlıklarını yazacağız.</p><a href="bigbang.html" class="btn" target="_blank">Aç</a></div></div></div>`,
+                        contact: `<div class="page-section"><h2>İletişim</h2><ul><li class="mb-4"><strong>Gmail:</strong> <a href="mailto:burakbilec123@gmail.com" class="text-primary hover:underline">burakbilec123@gmail.com</a> <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Git</a></li><li class="mb-4"><strong>İnstagram:</strong> <a href="https://www.instagram.com/burak_msz/" target="_blank" class="text-primary hover:underline">burak_msz/</a></li><li class="mb-4"><strong>Youtube:</strong> <a href="https://www.youtube.com/@tekno_market_gaziantep" target="_blank" class="text-primary hover:underline">@tekno_market_gaziantep</a></li></ul></div>`,
                         footer: "&copy; 2025 Burak. Tüm Hakları Saklıdır."
                     }
                 },
                 en: {
-                    nav: {
-                        home: "Home",
-                        about: "About",
-                        experiences: "Experiences",
-                        portfolio: "Portfolio",
-                        contact: "Contact"
-                    },
+                    nav: { home: "Home", about: "About", experiences: "Experiences", portfolio: "Portfolio", contact: "Contact" },
                     pages: {
-                        home: `
-                            <div class="page-section">
-                                <h2>Hello, I'm Burak.</h2>
-                                <p>I'm passionate about web development and technology. You can find my projects, experiences, and information about me on this site.</p>
-                            </div>
-                        `,
-                        about: `
-                            <div class="page-section">
-                                <h2>About Me</h2>
-                                <p>
-                                    You should know that I know a little bit of coding. My English is also around B1 B2 level.
-                                    <p>I've tried making games, walking on YouTube, and even making music with coding.</p>
-                                    <p>Of course, a steel body is needed before anything else. That's why I'll need a group that will grow, learn, and maybe one day create the world's best design with me. I've even found a name for this group: MSZ. My goals for this group are in the portfolio section.</p>
-                                </p>
-                            </div>
-                        `,
-                        experiences: `
-                            <div class="page-section">
-                                <h2>Experiences</h2>
-                                <p>You can access some of the HTML games I've made and coded here.</p>
-                                <div class="grid-container">
-                                    <div class="project-card">
-                                        <h3>Guess the Flag</h3>
-                                        <p>In this game, you just have to guess which country the flags belong to. It works with the internet, at least for now. Each difficulty has a separate time interval. I also added a rank system to make it competitive.</p>
-                                        <a href="oyun1.html" class="btn" target="_blank">Play</a>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>MSZ Trade</h3>
-                                        <p>In this game, think of yourself as a businessman. You buy and sell phones, houses, and cars. But be careful, you can only sell at most 1.5 times the price. And also, you will have some expenses every month. As in Turkey, your expenses will increase as your money increases.</p>
-                                        <a href="oyun2.html" class="btn" target="_blank">Play</a>
-                                    </div>
-                                   <div class="project-card">
-                                        <h3>Unıversity Plan</h3>
-                                        <p>To make your university life easier.</p>
-                                        <a href="oyun3.html" class="btn" target="_blank">Go</a>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>MSZ Game Studio</h3>
-                                        <p>The game studio I plan to establish soon. This is just a small trial card.</p>
-                                        <a href="#" class="btn" disabled>Coming Soon</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `,
-                        portfolio: `
-                            <div class="page-section">
-                                <h2>Portfolio (MSZ Goals)</h2>
-                                <div class="grid-container">
-                                    <div class="project-card">
-                                        <h3>Realistic Game</h3>
-                                        <p>My goal in this project is to transfer the real world entirely to a game and for players to enjoy a game experience within reality. Of course, this will be very, very difficult. But I'm not determined to do this project for now. If my team can really be superior, I'll consider this project.</p>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>Information Form</h3>
-                                        <p>My goal in this project is for people to be informed about every event. An application will be made in this project. There will be two sections in this application. 1- Real information will be published by me and my team as researched and proven information. 2- There will be comments from the public as assumptions or inferences or suggestions. I hope to realize this project soon.</p>
-                                    </div>
-                                    <div class="project-card">
-                                        <h3>BIG BANG</h3>
-                                        <p>My goal in this project is to write down the habits, inventions, and technological developments that have continued since the first ages of humanity. Thus, new ideas can be based on the old ones to produce new information that will save humanity. Of course, there will also be a section open to the public where people can present their suggestions with proof and projects.</p>
-                                        <a href="bigbang.html" class="btn" target="_blank">Open</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `,
-                        contact: `
-                            <div class="page-section">
-                                <h2>Contact</h2>
-                                <p>You can check the information below to reach me:</p>
-                                <ul>
-                                    <li class="mb-4">
-                                        <strong>Gmail:</strong>
-                                        <a href="mailto:burakbilec123@gmail.com" class="text-primary hover:underline">burakbilec123@gmail.com</a>
-                                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="btn">Go</a>
-                                    </li>
-                                    <li class="mb-4">
-                                        <strong>Instagram:</strong>
-                                        <a href="https://www.instagram.com/burak_msz/" target="_blank" class="text-primary hover:underline">burak_msz/</a>
-                                    </li>
-                                    <li class="mb-4">
-                                        <strong>YouTube:</strong>
-                                        <a href="https://www.youtube.com/@tekno_market_gaziantep" target="_blank" class="text-primary hover:underline">@tekno_market_gaziantep</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        `,
+                        home: `<div class="page-section"><h2>Hello, I'm Burak.</h2><p>I'm passionate about web development and technology.</p></div>`,
+                        about: `<div class="page-section"><h2>About Me</h2><p>I know a little bit of coding. My English is around B1 B2 level.</p></div>`,
+                        experiences: `<div class="page-section"><h2>Experiences</h2><div class="grid-container"><div class="project-card"><h3>Guess the Flag</h3><a href="oyun1.html" class="btn" target="_blank">Play</a></div><div class="project-card"><h3>MSZ Trade</h3><a href="oyun2.html" class="btn" target="_blank">Play</a></div></div></div>`,
+                        portfolio: `<div class="page-section"><h2>Portfolio</h2><div class="grid-container"><div class="project-card"><h3>Realistic Game</h3></div><div class="project-card"><h3>BİG BANG</h3><a href="bigbang.html" class="btn" target="_blank">Open</a></div></div></div>`,
+                        contact: `<div class="page-section"><h2>Contact</h2><ul><li><strong>Gmail:</strong> burakbilec123@gmail.com</li></ul></div>`,
                         footer: "&copy; 2025 Burak. All Rights Reserved."
                     }
                 }
@@ -536,28 +338,23 @@
             
             let currentLanguage = 'tr';
             let currentPage = 'home';
-            let isDarkMode = false; // Default should match the body class
+            let isDarkMode = false;
 
             const updateContent = (lang) => {
                 currentLanguage = lang;
                 document.querySelector('html').lang = lang;
-                
-                // Menü linklerini güncelle
                 navLinks.forEach(link => {
                     const pageName = link.dataset.page;
                     link.textContent = content[lang].nav[pageName];
                 });
-                
-                // Sayfa içeriğini tekrar yükle
                 loadPage(currentPage, lang);
             };
 
             const loadPage = (pageName, lang = currentLanguage) => {
                 currentPage = pageName;
-                // İçerik objesindeki paragrafların `<p>` etiketlerinin düzgün kapanmasını sağladık
                 const pageContent = content[lang].pages[pageName] || content[lang].pages.home;
                 mainContent.innerHTML = pageContent;
-                document.querySelector('footer p').textContent = content[lang].pages.footer;
+                document.querySelector('footer p').textContent = content[lang].pages.footer || content[lang].footer;
             };
 
             const toggleDarkMode = () => {
@@ -570,8 +367,7 @@
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const page = e.target.dataset.page;
-                    loadPage(page);
+                    loadPage(e.target.dataset.page);
                 });
             });
 
@@ -579,12 +375,8 @@
             enFlag.addEventListener('click', () => updateContent('en'));
             modeToggle.addEventListener('click', toggleDarkMode);
 
-            // Başlangıçta ana sayfayı ve varsayılan temayı yükle
             loadPage('home');
-            // Sayfa yüklendiğinde varsayılan olarak Light Mode'u ayarlıyoruz
-            if (!body.classList.contains('dark-mode')) {
-                body.classList.add('light-mode');
-            }
+            if (!body.classList.contains('dark-mode')) { body.classList.add('light-mode'); }
         });
     </script>
 </body>
