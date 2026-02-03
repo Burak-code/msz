@@ -6,7 +6,7 @@
     <title>MSZ | Burak'ın Portfolyosu</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom Tailwind Configuration (Optional: To use 'Inter' font and custom colors if needed, but keeping default for simplicity) -->
+    <!-- Custom Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -33,6 +33,10 @@
         }
         header {
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
         }
         .main-nav a {
             text-decoration: none;
@@ -72,7 +76,6 @@
             text-align: center;
             transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.5s;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            /* 3D Eğilim Efekti */
         }
         .project-card:hover {
             transform: translateY(-8px) rotateX(1deg) rotateY(1deg);
@@ -104,16 +107,18 @@
             box-shadow: 0 6px 10px rgba(0, 123, 255, 0.5);
         }
 
-        /* Neon efekti Geliştirmesi (Daha canlı ve animasyonlu) */
+        /* Neon efekti Geliştirmesi */
         .neon-text {
             color: #fff;
             animation: neonGlow 1.5s ease-in-out infinite alternate;
             font-style: italic;
-            font-weight: 900; /* Daha kalın */
+            font-weight: 900; 
             font-size: 2rem;
             letter-spacing: 2px;
             padding: 0 0.5rem;
             border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
         }
 
         @keyframes neonGlow {
@@ -135,7 +140,7 @@
             }
         }
 
-        /* Dil ve ayar butonları için yeni CSS kodları */
+        /* Dil butonları */
         .bottom-right {
             position: fixed;
             bottom: 20px;
@@ -146,7 +151,7 @@
         }
 
         .bottom-right .flag-btn {
-            width: 45px; /* Biraz büyütüldü */
+            width: 45px;
             height: 45px;
             background-size: cover;
             background-position: center;
@@ -167,42 +172,6 @@
             background-image: url('https://flagcdn.com/gb.svg');
         }
 
-        .bottom-left {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-
-        /* Dark Mode Toggle Geliştirmesi */
-        .dark-mode-toggle {
-            width: 60px;
-            height: 30px;
-            background-color: #a0aec0; /* Açık gri */
-            border-radius: 15px;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.5s;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        .dark-mode-toggle.active {
-            background-color: #48bb78; /* Yeşil tonu */
-        }
-        .dark-mode-toggle .toggle-ball {
-            width: 26px;
-            height: 26px;
-            background-color: #fff;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), background-color 0.5s;
-        }
-        .dark-mode-toggle.active .toggle-ball {
-            transform: translateX(30px) rotate(360deg);
-        }
-        
         /* Tema değişiklikleri için CSS */
         body.light-mode {
             background-color: #f0f2f5;
@@ -220,7 +189,7 @@
         }
 
         body.dark-mode {
-            background-color: #0d0d0d; /* Daha koyu arka plan */
+            background-color: #0d0d0d;
             color: #e0e0e0;
         }
         body.dark-mode header {
@@ -236,7 +205,7 @@
             color: #ccc;
         }
         body.dark-mode .main-nav a:hover {
-            color: #38bdf8; /* Açık mavi hover */
+            color: #38bdf8;
         }
         body.dark-mode .project-card {
             background: #2a2a2a;
@@ -272,7 +241,6 @@
             }
         }
 
-        /* Mobile Responsive Adjustments */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -298,7 +266,7 @@
 <body class="light-mode">
 
     <header>
-        <h1 class="neon-text">MSZ</h1>
+        <h1 class="neon-text" id="logo-toggle">MSZ</h1>
         <nav class="main-nav">
             <a href="#" data-page="home">Ana Sayfa</a>
             <a href="#" data-page="about">Hakkımda</a>
@@ -319,24 +287,16 @@
         <div class="flag-btn" id="tr-flag"></div>
         <div class="flag-btn" id="en-flag"></div>
     </div>
-
-    <div class="bottom-left">
-        <div class="dark-mode-toggle" id="mode-toggle">
-            <div class="toggle-ball"></div>
-        </div>
-    </div>
     
     <script>
-        // JavaScript Kodları
         document.addEventListener('DOMContentLoaded', () => {
             const mainContent = document.getElementById('app-content');
             const navLinks = document.querySelectorAll('.main-nav a');
             const trFlag = document.getElementById('tr-flag');
             const enFlag = document.getElementById('en-flag');
-            const modeToggle = document.getElementById('mode-toggle');
+            const logoToggle = document.getElementById('logo-toggle');
             const body = document.body;
 
-            // Türkçe ve İngilizce içeriklerin bulunduğu obje
             const content = {
                 tr: {
                     nav: {
@@ -378,7 +338,7 @@
                                         <p>Bu oyunda kendini bir ticaret adamı gibi düşün. Telefon, ev, araba alıp satıyorsun. Ama dikkat et en fazla 1.5 katına satabilirsin. Ve ayrıca her ay biraz giderin olacak. Türkiye'de olduğu gibi paran arttıkça giderin de artacak.</p>
                                         <a href="oyun2.html" class="btn" target="_blank">Oyna</a>
                                     </div>
-                                   <div class="project-card">
+                                    <div class="project-card">
                                         <h3>Üniversite Planı</h3>
                                         <p>Üniversite hayatınızı kolaylaştırmak için.</p>
                                         <a href="oyun3.html" class="btn" target="_blank">Git</a>
@@ -475,7 +435,7 @@
                                         <p>In this game, think of yourself as a businessman. You buy and sell phones, houses, and cars. But be careful, you can only sell at most 1.5 times the price. And also, you will have some expenses every month. As in Turkey, your expenses will increase as your money increases.</p>
                                         <a href="oyun2.html" class="btn" target="_blank">Play</a>
                                     </div>
-                                   <div class="project-card">
+                                    <div class="project-card">
                                         <h3>Unıversity Plan</h3>
                                         <p>To make your university life easier.</p>
                                         <a href="oyun3.html" class="btn" target="_blank">Go</a>
@@ -536,25 +496,20 @@
             
             let currentLanguage = 'tr';
             let currentPage = 'home';
-            let isDarkMode = false; // Default should match the body class
+            let isDarkMode = false;
 
             const updateContent = (lang) => {
                 currentLanguage = lang;
                 document.querySelector('html').lang = lang;
-                
-                // Menü linklerini güncelle
                 navLinks.forEach(link => {
                     const pageName = link.dataset.page;
                     link.textContent = content[lang].nav[pageName];
                 });
-                
-                // Sayfa içeriğini tekrar yükle
                 loadPage(currentPage, lang);
             };
 
             const loadPage = (pageName, lang = currentLanguage) => {
                 currentPage = pageName;
-                // İçerik objesindeki paragrafların `<p>` etiketlerinin düzgün kapanmasını sağladık
                 const pageContent = content[lang].pages[pageName] || content[lang].pages.home;
                 mainContent.innerHTML = pageContent;
                 document.querySelector('footer p').textContent = content[lang].pages.footer;
@@ -562,7 +517,6 @@
 
             const toggleDarkMode = () => {
                 isDarkMode = !isDarkMode;
-                modeToggle.classList.toggle('active');
                 body.classList.toggle('dark-mode', isDarkMode);
                 body.classList.toggle('light-mode', !isDarkMode);
             };
@@ -577,11 +531,9 @@
 
             trFlag.addEventListener('click', () => updateContent('tr'));
             enFlag.addEventListener('click', () => updateContent('en'));
-            modeToggle.addEventListener('click', toggleDarkMode);
+            logoToggle.addEventListener('click', toggleDarkMode);
 
-            // Başlangıçta ana sayfayı ve varsayılan temayı yükle
             loadPage('home');
-            // Sayfa yüklendiğinde varsayılan olarak Light Mode'u ayarlıyoruz
             if (!body.classList.contains('dark-mode')) {
                 body.classList.add('light-mode');
             }
