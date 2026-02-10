@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Kare Macerası</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #0f172a;
+            font-family: 'Inter', sans-serif;
+            touch-action: none;
+        }
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(0,255,255,0.5);
+        }
+        #menu {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menu">
+        <h1 class="text-5xl font-bold text-cyan-400 mb-4 tracking-tighter">NEON KARE</h1>
+        <p class="text-slate-400 mb-8 px-6 text-center">Kırmızı engellerden kaç, sarı yıldızları topla!</p>
+        <button id="startBtn" class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 px-8 py-3 rounded-full font-bold transition-all transform hover:scale-105 active:scale-95">
+            OYUNA BAŞLA
+        </button>
+    </div>
+
+    <div class="ui-overlay">
+        <div class="text-2xl font-bold">Skor: <span id="score">0</span></div>
+        <div class="text-sm opacity-70">En Yüksek: <span id="highScore">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('highScore');
+        const menu = document.getElementById('menu');
+        const startBtn = document.getElementById('startBtn');
+
+        let score = 0;
+        let highScore = 0;
+        let gameActive = false;
+        let animationId;
+
+        const player = {
+            x: 0,
+            y: 0,
+            size: 30,
+            color: '#22d3ee',
+            targetX: 0,
+            targetY: 0,
+            speed: 0.15
+        };
+
+        let enemies = [];
+        let particles = [];
+        let collectibles = [];
+        let spawnTimer = 0;
+        let difficulty = 1;
+
+        function init() {
+            resize();
+            player.x = canvas.width / 2;
+            player.y = canvas.height / 2;
+            player.targetX = player.x;
+            player.targetY = player.y;
+            score = 0;
+            difficulty = 1;
+            enemies = [];
+            collectibles = [];
+            scoreEl.innerText = score;
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+
+        // Kontroller
+        const handleMove = (e) => {
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            player.targetX = x;
+            player.targetY = y;
+        };
+
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            handleMove(e);
+        }, { passive: false });
+
+        function createEnemy() {
+            const size = 20 + Math.random() * 30;
+            let x, y, vx, vy;
+
+            const side = Math.floor(Math.random() * 4);
+            if (side === 0) { // Üst
+                x = Math.random() * canvas.width;
+                y = -size;
+                vx = (Math.random() - 0.5) * 2;
+                vy = Math.random() * 2 + difficulty;
+            } else if (side === 1) { // Sağ
+                x = canvas.width + size;
+                y = Math.random() * canvas.height;
+                vx = -(Math.random() * 2 + difficulty);
+                vy = (Math.random() - 0.5) * 2;
+            } else if (side === 2) { // Alt
+                x = Math.random() * canvas.width;
+                y = canvas.height + size;
+                vx = (Math.random() - 0.5) * 2;
+                vy = -(Math.random() * 2 + difficulty);
+            } else { // Sol
+                x = -size;
+                y = Math.random() * canvas.height;
+                vx = Math.random() * 2 + difficulty;
+                vy = (Math.random() - 0.5) * 2;
+            }
+
+            enemies.push({ x, y, size, vx, vy, color: '#f87171' });
+        }
+
+        function createCollectible() {
+            collectibles.push({
+                x: Math.random() * (canvas.width - 40) + 20,
+                y: Math.random() * (canvas.height - 40) + 20,
+                size: 15,
+                pulse: 0
+            });
+        }
+
+        function spawnParticles(x, y, color) {
+            for(let i=0; i<10; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    life: 1.0,
+                    color
+                });
+            }
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            // Oyuncu hareketi (yumuşak takip)
+            player.x += (player.targetX - player.x) * player.speed;
+            player.y += (player.targetY - player.y) * player.speed;
+
+            // Düşman üretimi
+            spawnTimer++;
+            if (spawnTimer > Math.max(10, 60 - difficulty * 2)) {
+                createEnemy();
+                if (Math.random() > 0.8) createCollectible();
+                spawnTimer = 0;
+                difficulty += 0.05;
+            }
+
+            // Düşman güncelleme
+            enemies.forEach((enemy, index) => {
+                enemy.x += enemy.vx;
+                enemy.y += enemy.vy;
+
+                // Çarpışma kontrolü
+                const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                if (dist < (player.size/2 + enemy.size/2)) {
+                    gameOver();
+                }
+
+                // Ekran dışı temizlik
+                if (enemy.x < -100 || enemy.x > canvas.width + 100 || enemy.y < -100 || enemy.y > canvas.height + 100) {
+                    enemies.splice(index, 1);
+                }
+            });
+
+            // Toplanabilir eşyalar
+            collectibles.forEach((c, index) => {
+                c.pulse += 0.1;
+                const dist = Math.hypot(player.x - c.x, player.y - c.y);
+                if (dist < (player.size/2 + c.size)) {
+                    score += 10;
+                    scoreEl.innerText = score;
+                    spawnParticles(c.x, c.y, '#fbbf24');
+                    collectibles.splice(index, 1);
+                }
+            });
+
+            // Partiküller
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                if (p.life <= 0) particles.splice(index, 1);
+            });
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Oyuncu
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = player.color;
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.roundRect(player.x - player.size/2, player.y - player.size/2, player.size, player.size, 5);
+            ctx.fill();
+
+            // Düşmanlar
+            enemies.forEach(enemy => {
+                ctx.shadowColor = enemy.color;
+                ctx.fillStyle = enemy.color;
+                ctx.beginPath();
+                ctx.arc(enemy.x, enemy.y, enemy.size/2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Eşyalar
+            collectibles.forEach(c => {
+                const s = c.size + Math.sin(c.pulse) * 5;
+                ctx.shadowColor = '#fbbf24';
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, s/2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Partiküller
+            particles.forEach(p => {
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.life})`;
+                ctx.fillRect(p.x, p.y, 2, 2);
+            });
+
+            ctx.shadowBlur = 0;
+            animationId = requestAnimationFrame(() => {
+                update();
+                draw();
+            });
+        }
+
+        function gameOver() {
+            gameActive = false;
+            cancelAnimationFrame(animationId);
+            if (score > highScore) {
+                highScore = score;
+                highScoreEl.innerText = highScore;
+            }
+            menu.style.display = 'flex';
+            document.querySelector('h1').innerText = "OYUN BİTTİ!";
+            document.querySelector('p').innerText = `Skorun: ${score}`;
+            startBtn.innerText = "TEKRAR DENE";
+        }
+
+        startBtn.onclick = () => {
+            menu.style.display = 'none';
+            init();
+            gameActive = true;
+            draw();
+        };
+
+        // İlk kareyi çiz
+        init();
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+</body>
+</html>
