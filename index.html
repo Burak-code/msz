@@ -93,9 +93,8 @@
             width: 100%;
         }
 
-        .project-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -116,6 +115,7 @@
                 MSZ
             </h1>
             
+            <!-- Desktop Nav -->
             <nav class="hidden md:flex space-x-8 font-semibold">
                 <span class="nav-link" onclick="updateUI('home')">Ana Sayfa</span>
                 <span class="nav-link" onclick="updateUI('about')">Hakkımda</span>
@@ -124,11 +124,26 @@
                 <span class="nav-link" onclick="updateUI('contact')">İletişim</span>
             </nav>
 
-            <div class="text-sm opacity-50 hidden sm:block">
+            <!-- Mobile Toggle -->
+            <button id="menu-btn" class="md:hidden text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="text-sm opacity-50 hidden md:block">
                 Burak
             </div>
         </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white dark:bg-darkbg flex flex-col items-center justify-center space-y-8 text-2xl font-bold translate-x-full md:hidden">
+        <button id="close-menu" class="absolute top-6 right-6 text-3xl">&times;</button>
+        <span onclick="toggleMenu(); updateUI('home')">Ana Sayfa</span>
+        <span onclick="toggleMenu(); updateUI('about')">Hakkımda</span>
+        <span onclick="toggleMenu(); updateUI('experiences')">Deneyimler</span>
+        <span onclick="toggleMenu(); updateUI('portfolio')">Portfolyo</span>
+        <span onclick="toggleMenu(); updateUI('contact')">İletişim</span>
+    </div>
 
     <main id="app-content" class="pt-32 pb-20 px-6 max-w-6xl mx-auto min-h-screen">
         <!-- JS enjeksiyon alanı -->
@@ -174,14 +189,14 @@
             `,
             experiences: `
                 <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">Dijital Deneyimler</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     ${[
                         {title: "MSZ AI", desc: "Ücretsiz ve güncel yapay zeka botu.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
                         {title: "Stumble Boys", desc: "HTML tabanlı, akıcı platform oyunu.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
                         {title: "Bayrak Tahmin Et", desc: "Rank sistemli coğrafya oyunu.", link: "oyun1.html", icon: "fa-flag"},
                         {title: "MSZ Trade", desc: "Ekonomi odaklı strateji simülasyonu.", link: "oyun2.html", icon: "fa-chart-line"},
                         {title: "Üniversite Planı", desc: "Öğrenciler için dijital asistan.", link: "oyun3.html", icon: "fa-university"},
-                        {title: "Skor oyunu", desc: "Vakit geçirilebilecek, mouse testi yapılabilecek güzel bi oyun.", link: "plazma.html", icon: "fa-plazma"},
+                        {title: "Skor Oyunu", desc: "Mouse testi ve hız odaklı mini oyun.", link: "plazma.html", icon: "fa-bolt"},
                         {title: "Game Studio", desc: "Geleceğin oyun stüdyosunun temelleri.", link: "#", disabled: true, icon: "fa-rocket"}
                     ].map(p => `
                         <div class="glass-card project-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
@@ -212,17 +227,15 @@
                 <div class="max-w-3xl mx-auto glass-card p-10 rounded-3xl text-center" data-aos="zoom-in">
                     <h2 class="text-4xl font-bold mb-8">Bağlantı Kur</h2>
                     <p class="mb-10 opacity-70">Projeleriniz veya tanışmak için bana ulaşın.</p>
-                    <div class="grid gap-6">
-                        <!-- Gmail Düzeltildi: target="_blank" eklendi -->
+                    <div class="grid gap-6 text-left">
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                            <div class="flex items-center"><i class="fas fa-envelope text-red-400 mr-4 text-2xl"></i> <span>@gmail</span></div>
+                            <div class="flex items-center"><i class="fas fa-envelope text-red-400 mr-4 text-2xl"></i> <span>Gmail</span></div>
                             <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </a>
                         <a href="https://instagram.com/burak_msz/" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
                             <div class="flex items-center"><i class="fab fa-instagram text-pink-500 mr-4 text-2xl"></i> <span>@burak_msz</span></div>
                             <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </a>
-                        <!-- YouTube Geri Eklendi -->
                         <a href="https://youtube.com/@msz-burak" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
                             <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-4 text-2xl"></i> <span>MSZ Burak</span></div>
                             <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
@@ -239,6 +252,14 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
+        const toggleMenu = () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        };
+
+        document.getElementById('menu-btn').addEventListener('click', toggleMenu);
+        document.getElementById('close-menu').addEventListener('click', toggleMenu);
+
         document.getElementById('logo-theme-toggle').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
         });
@@ -250,4 +271,3 @@
     </script>
 </body>
 </html>
-
