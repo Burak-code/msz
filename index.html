@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSZ</title>
-    
+
     <!-- Fonts & Icons -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -72,8 +73,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(0.98); }
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(0.98);
+            }
         }
 
         .nav-link {
@@ -98,11 +106,47 @@
             transition: transform 0.3s ease-in-out;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
         ::-webkit-scrollbar-thumb {
             background: #3b82f6;
             border-radius: 10px;
+        }
+
+        /* HTML demo card image overlay */
+        .demo-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.5rem;
+        }
+        .demo-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .demo-card:hover img {
+            transform: scale(1.05);
+        }
+        .demo-card .card-body {
+            padding: 1.5rem;
+        }
+        .demo-card .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+        }
+        .demo-card:hover .card-overlay {
+            opacity: 1;
         }
     </style>
 </head>
@@ -115,9 +159,10 @@
             <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">
                 MSZ
             </h1>
-            
+
             <!-- Desktop Nav -->
             <nav class="hidden md:flex space-x-8 font-semibold">
+                <span class="nav-link" onclick="updateUI('html')">HTML</span>
                 <span class="nav-link" onclick="updateUI('home')">Ana Sayfa</span>
                 <span class="nav-link" onclick="updateUI('about')">Hakkımda</span>
                 <span class="nav-link" onclick="updateUI('experiences')">Deneyimler</span>
@@ -139,6 +184,7 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-40 bg-white dark:bg-darkbg flex flex-col items-center justify-center space-y-8 text-2xl font-bold translate-x-full md:hidden">
         <button id="close-menu" class="absolute top-6 right-6 text-3xl">&times;</button>
+        <span onclick="toggleMenu(); updateUI('html')">HTML</span>
         <span onclick="toggleMenu(); updateUI('home')">Ana Sayfa</span>
         <span onclick="toggleMenu(); updateUI('about')">Hakkımda</span>
         <span onclick="toggleMenu(); updateUI('experiences')">Deneyimler</span>
@@ -159,91 +205,137 @@
         </div>
     </footer>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js">
+    </script>
     <script>
         const pages = {
             home: `
-                <div class="text-center py-20" data-aos="zoom-out">
-                    <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-                        Merhaba, ben <span class="text-blue-600 dark:text-blue-400">Burak</span>.
-                    </h2>
-                    <p class="text-xl md:text-2xl opacity-80 max-w-2xl mx-auto mb-10">
-                        Geleceği kodlayan bir teknoloji tutkunu. Web geliştirme, oyun tasarımı ve dijital dünyanın her köşesindeyim.
-                    </p>
-                    <button onclick="updateUI('experiences')" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all inline-block">Projelere Göz At</button>
-                </div>
-            `,
+                    <div class="text-center py-20" data-aos="zoom-out">
+                        <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                            Merhaba, ben <span class="text-blue-600 dark:text-blue-400">Burak</span>.
+                        </h2>
+                        <p class="text-xl md:text-2xl opacity-80 max-w-2xl mx-auto mb-10">
+                            Geleceği kodlayan bir teknoloji tutkunu. Web geliştirme, oyun tasarımı ve dijital dünyanın her köşesindeyim.
+                        </p>
+                        <button onclick="updateUI('experiences')" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all inline-block">Projelere Göz At</button>
+                    </div>
+                `,
             about: `
-                <div class="glass-card rounded-3xl p-8 md:p-12" data-aos="fade-up">
-                    <h2 class="text-4xl font-bold mb-8 flex items-center"><i class="fas fa-user-astronaut mr-4 text-blue-500"></i> Hakkımda</h2>
-                    <div class="grid md:grid-cols-2 gap-10 text-lg leading-relaxed opacity-90">
-                        <div>
-                            <p class="mb-4">Kodlama dünyasına adım atmış, kendini sürekli geliştiren bir geliştiriciyim. İngilizcem B1-B2 seviyesinde ve teknik dökümanları rahatlıkla tarayabiliyorum.</p>
-                            <p>Oyun yapımından müzik prodüksiyonuna, YouTube içeriklerinden web tasarıma kadar birçok alanda aktifim.</p>
-                        </div>
-                        <div class="bg-blue-500/10 rounded-2xl p-6 border border-blue-500/20">
-                            <h3 class="font-bold text-xl mb-4 text-blue-600 dark:text-blue-400">MSZ Vizyonu</h3>
-                            <p>Her şeyden önce sarsılmaz bir disiplin gerekir. MSZ, dünyanın en iyi tasarımlarını ve teknolojilerini üretmek için kurduğum bir vizyondur.</p>
+                    <div class="glass-card rounded-3xl p-8 md:p-12" data-aos="fade-up">
+                        <h2 class="text-4xl font-bold mb-8 flex items-center"><i class="fas fa-user-astronaut mr-4 text-blue-500"></i> Hakkımda</h2>
+                        <div class="grid md:grid-cols-2 gap-10 text-lg leading-relaxed opacity-90">
+                            <div>
+                                <p class="mb-4">Kodlama dünyasına adım atmış, kendini sürekli geliştiren bir geliştiriciyim. İngilizcem B1-B2 seviyesinde ve teknik dökümanları rahatlıkla tarayabiliyorum.</p>
+                                <p>Oyun yapımından müzik prodüksiyonuna, YouTube içeriklerinden web tasarıma kadar birçok alanda aktifim.</p>
+                            </div>
+                            <div class="bg-blue-500/10 rounded-2xl p-6 border border-blue-500/20">
+                                <h3 class="font-bold text-xl mb-4 text-blue-600 dark:text-blue-400">MSZ Vizyonu</h3>
+                                <p>Her şeyden önce sarsılmaz bir disiplin gerekir. MSZ, dünyanın en iyi tasarımlarını ve teknolojilerini üretmek için kurduğum bir vizyondur.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `,
+                `,
             experiences: `
-                <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">Dijital Deneyimler</h2>
-                <div class="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    ${[
-                        {title: "MSZ AI", desc: "Ücretsiz ve güncel yapay zeka botu.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
-                        {title: "Stumble Boys", desc: "HTML tabanlı, akıcı platform oyunu.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
-                        {title: "Bayrak Tahmin Et", desc: "Rank sistemli coğrafya oyunu.", link: "oyun1.html", icon: "fa-flag"},
-                        {title: "MSZ Trade", desc: "Ekonomi odaklı strateji simülasyonu.", link: "oyun2.html", icon: "fa-chart-line"},
-                        {title: "Üniversite Planı", desc: "Öğrenciler için dijital asistan.", link: "oyun3.html", icon: "fa-university"},
-                        {title: "Skor Oyunu", desc: "Mouse testi ve hız odaklı mini oyun.", link: "plazma.html", icon: "fa-bolt"},
-                        {title: "Game Studio", desc: "Geleceğin oyun stüdyosunun temelleri.", link: "#", disabled: true, icon: "fa-rocket"}
-                    ].map(p => `
-                        <div class="glass-card project-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
-                            <i class="fas ${p.icon} text-4xl text-blue-500 mb-4 opacity-80 group-hover:scale-110 transition-transform"></i>
-                            <h3 class="text-2xl font-bold mb-3">${p.title}</h3>
-                            <p class="opacity-70 mb-6 text-sm">${p.desc}</p>
-                            <a href="${p.link}" class="inline-flex items-center font-bold text-blue-500 hover:text-blue-700 ${p.disabled ? 'opacity-50 cursor-not-allowed' : ''}" ${p.disabled ? 'onclick="return false"' : 'target="_blank"'}>
-                                ${p.disabled ? 'Çok Yakında' : 'İncele <i class="fas fa-arrow-right ml-2"></i>'}
+                    <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">Dijital Deneyimler</h2>
+                    <div class="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        ${[
+                            {title: "MSZ AI", desc: "Ücretsiz ve güncel yapay zeka botu.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
+                            {title: "Stumble Boys", desc: "HTML tabanlı, akıcı platform oyunu.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
+                            {title: "Bayrak Tahmin Et", desc: "Rank sistemli coğrafya oyunu.", link: "oyun1.html", icon: "fa-flag"},
+                            {title: "MSZ Trade", desc: "Ekonomi odaklı strateji simülasyonu.", link: "oyun2.html", icon: "fa-chart-line"},
+                            {title: "Üniversite Planı", desc: "Öğrenciler için dijital asistan.", link: "oyun3.html", icon: "fa-university"},
+                            {title: "Skor Oyunu", desc: "Mouse testi ve hız odaklı mini oyun.", link: "plazma.html", icon: "fa-bolt"},
+                            {title: "Game Studio", desc: "Geleceğin oyun stüdyosunun temelleri.", link: "#", disabled: true, icon: "fa-rocket"}
+                        ].map(p => `
+                                <div class="glass-card project-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
+                                    <i class="fas ${p.icon} text-4xl text-blue-500 mb-4 opacity-80 group-hover:scale-110 transition-transform"></i>
+                                    <h3 class="text-2xl font-bold mb-3">${p.title}</h3>
+                                    <p class="opacity-70 mb-6 text-sm">${p.desc}</p>
+                                    <a href="${p.link}" class="inline-flex items-center font-bold text-blue-500 hover:text-blue-700 ${p.disabled ? 'opacity-50 cursor-not-allowed' : ''}" ${p.disabled ? 'onclick="return false"' : 'target="_blank"'}>
+                                        ${p.disabled ? 'Çok Yakında' : 'İncele <i class="fas fa-arrow-right ml-2"></i>'}
+                                    </a>
+                                </div>
+                            `).join('')}
+                    </div>
+                `,
+            portfolio: `
+                    <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">MSZ Gelecek Hedefleri</h2>
+                    <div class="space-y-8">
+                        <div class="glass-card p-8 rounded-3xl border-l-8 border-blue-600" data-aos="fade-left">
+                            <h3 class="text-2xl font-bold mb-3">Realistic Game</h3>
+                            <p class="opacity-80">Dünyayı birebir dijital ortama aktarmak. Bir oyun değil, tam teşekküllü bir yaşam simülasyonu hedefi.</p>
+                        </div>
+                        <div class="glass-card p-8 rounded-3xl border-l-8 border-purple-500" data-aos="fade-right">
+                            <h3 class="text-2xl font-bold mb-3">BİG BANG</h3>
+                            <p class="opacity-80">İnsanlık tarihinin icatlarını analiz edip, geleceği kurtaracak fikirler üretmeyi hedefleyen inovasyon merkezi.</p>
+                        </div>
+                    </div>
+                `,
+            contact: `
+                    <div class="max-w-3xl mx-auto glass-card p-10 rounded-3xl text-center" data-aos="zoom-in">
+                        <h2 class="text-4xl font-bold mb-8">Bağlantı Kur</h2>
+                        <p class="mb-10 opacity-70">Projeleriniz veya tanışmak için bana ulaşın.</p>
+                        <div class="grid gap-6 text-left">
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
+                                <div class="flex items-center"><i class="fas fa-envelope text-red-400 mr-4 text-2xl"></i> <span>Gmail</span></div>
+                                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </a>
+                            <a href="https://instagram.com/burak_msz/" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
+                                <div class="flex items-center"><i class="fab fa-instagram text-pink-500 mr-4 text-2xl"></i> <span>@burak_msz</span></div>
+                                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            </a>
+                            <a href="https://youtube.com/@msz-burak" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
+                                <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-4 text-2xl"></i> <span>MSZ Burak</span></div>
+                                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             </a>
                         </div>
-                    `).join('')}
-                </div>
-            `,
-            portfolio: `
-                <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">MSZ Gelecek Hedefleri</h2>
-                <div class="space-y-8">
-                    <div class="glass-card p-8 rounded-3xl border-l-8 border-blue-600" data-aos="fade-left">
-                        <h3 class="text-2xl font-bold mb-3">Realistic Game</h3>
-                        <p class="opacity-80">Dünyayı birebir dijital ortama aktarmak. Bir oyun değil, tam teşekküllü bir yaşam simülasyonu hedefi.</p>
                     </div>
-                    <div class="glass-card p-8 rounded-3xl border-l-8 border-purple-500" data-aos="fade-right">
-                        <h3 class="text-2xl font-bold mb-3">BİG BANG</h3>
-                        <p class="opacity-80">İnsanlık tarihinin icatlarını analiz edip, geleceği kurtaracak fikirler üretmeyi hedefleyen inovasyon merkezi.</p>
+                `,
+            html: `
+                    <div class="space-y-10">
+                        <div class="text-center" data-aos="fade-down">
+                            <h2 class="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
+                                <i class="fab fa-html5 text-orange-500"></i> HTML Demoları
+                            </h2>
+                            <p class="text-lg md:text-xl opacity-80 max-w-2xl mx-auto leading-relaxed">
+                                Selam burada yapmış olduğum html demoları görebilirsiniz. Sizin için uyarlayarak web sitenizi yapabilirim.
+                            </p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                            ${[
+                                {title: "Restoran", file: "restoran.html", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&crop=center", icon: "fa-utensils"},
+                                {title: "Berber", file: "berber.html", img: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&crop=center", icon: "fa-cut"},
+                                {title: "Spor", file: "spor.html", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop&crop=center", icon: "fa-dumbbell"},
+                                {title: "Emlakçı", file: "emlakçı.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center", icon: "fa-building"},
+                                {title: "Fotoğrafçı", file: "fotoğrafçı.html", img: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&h=400&fit=crop&crop=center", icon: "fa-camera"}
+                            ].map((item, index) => `
+                                    <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10" data-aos="fade-up" data-aos-delay="${index * 80}">
+                                        <div class="relative overflow-hidden h-48">
+                                            <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                            <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-bold text-white flex items-center gap-1.5">
+                                                <i class="fas ${item.icon}"></i> ${item.title}
+                                            </div>
+                                        </div>
+                                        <div class="p-5 flex items-center justify-between">
+                                            <div>
+                                                <h3 class="text-xl font-bold">${item.title}</h3>
+                                                <p class="text-sm opacity-60">HTML demosu</p>
+                                            </div>
+                                            <a href="${item.file}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:shadow-lg hover:shadow-blue-500/40 flex items-center gap-2">
+                                                İncele <i class="fas fa-arrow-right text-xs"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                        </div>
+
+                        <div class="text-center pt-6 opacity-60 text-sm" data-aos="fade-up">
+                            <i class="fas fa-external-link-alt mr-1"></i> Tıkladığınızda yeni sekmede açılır.
+                        </div>
                     </div>
-                </div>
-            `,
-            contact: `
-                <div class="max-w-3xl mx-auto glass-card p-10 rounded-3xl text-center" data-aos="zoom-in">
-                    <h2 class="text-4xl font-bold mb-8">Bağlantı Kur</h2>
-                    <p class="mb-10 opacity-70">Projeleriniz veya tanışmak için bana ulaşın.</p>
-                    <div class="grid gap-6 text-left">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                            <div class="flex items-center"><i class="fas fa-envelope text-red-400 mr-4 text-2xl"></i> <span>Gmail</span></div>
-                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                        </a>
-                        <a href="https://instagram.com/burak_msz/" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                            <div class="flex items-center"><i class="fab fa-instagram text-pink-500 mr-4 text-2xl"></i> <span>@burak_msz</span></div>
-                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                        </a>
-                        <a href="https://youtube.com/@msz-burak" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                            <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-4 text-2xl"></i> <span>MSZ Burak</span></div>
-                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                        </a>
-                    </div>
-                </div>
-            `
+                `
         };
 
         const updateUI = (page) => {
