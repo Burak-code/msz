@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Burak Emlak | Hayalinizdeki Ev</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ---------- RESET & GENEL ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f5f3f0;
+            color: #1e1e1e;
+            padding-bottom: 80px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ---------- NAVBAR ---------- */
+        .navbar {
+            background: #0f172a;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            color: #facc15;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .logo i {
+            margin-right: 8px;
+            color: #facc15;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.2rem;
+            font-weight: 500;
+        }
+        .nav-links a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: 0.2s;
+            padding: 6px 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+        .nav-links a:hover {
+            color: #facc15;
+            border-bottom-color: #facc15;
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #fff;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        .hero h1 span {
+            color: #facc15;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* ---------- BÖLÜMLER (section-box) ---------- */
+        .section-container {
+            max-width: 1300px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .section-box {
+            background: #fff;
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2.5rem;
+            display: none;
+            animation: fadeSlide 0.4s ease;
+        }
+        .section-box.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-box h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            border-left: 8px solid #facc15;
+            padding-left: 18px;
+        }
+
+        .section-box h2 i {
+            color: #facc15;
+            margin-right: 12px;
+        }
+
+        /* ---------- EMLAK GRID ---------- */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .property-card {
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 2px solid #f0ece4;
+        }
+        .property-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        }
+        .property-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .property-card .property-content {
+            padding: 1.5rem;
+        }
+        .property-card .property-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .property-card .property-content .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #facc15;
+            margin: 6px 0;
+        }
+        .property-card .property-content .desc {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+        .property-card .property-content .meta {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .property-card .property-content .meta span i {
+            margin-right: 4px;
+            color: #facc15;
+        }
+        .property-card .property-content .badge {
+            display: inline-block;
+            background: #facc15;
+            color: #0f172a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .property-card .property-content .badge.sale {
+            background: #22c55e;
+            color: #fff;
+        }
+        .property-card .property-content .badge.rent {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        /* ---------- İLETİŞİM ---------- */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.2rem 1.5rem;
+            background: #f8f6f2;
+            border-radius: 16px;
+            transition: 0.2s;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: #1e1e1e;
+        }
+        .contact-item:hover {
+            background: #f0ece4;
+            transform: translateX(6px);
+        }
+        .contact-item i {
+            font-size: 2rem;
+            color: #facc15;
+            width: 40px;
+            text-align: center;
+        }
+        .contact-item .contact-label {
+            font-weight: 600;
+            min-width: 100px;
+        }
+        .contact-item .contact-value {
+            color: #555;
+        }
+        .contact-item a {
+            color: #1e1e1e;
+            text-decoration: none;
+        }
+        .contact-item a:hover {
+            color: #facc15;
+        }
+
+        /* ---------- MOBİL UYUM ---------- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            .nav-links {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .section-box {
+                padding: 1.5rem;
+            }
+            .contact-item {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-building"></i> Burak Emlak
+        </div>
+        <nav class="nav-links">
+            <a href="#" data-target="home">Ana Sayfa</a>
+            <a href="#" data-target="property">Emlakçılık</a>
+            <a href="#" data-target="contact">İletişim</a>
+        </nav>
+    </header>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="home">
+        <h1><span>🏠</span> Burak <span>Emlak</span></h1>
+        <p>Hayalinizdeki evi bulun, geleceğinizi inşa edin.</p>
+    </section>
+
+    <!-- ========== BÖLÜMLER ========== -->
+    <div class="section-container">
+
+        <!-- Emlakçılık -->
+        <div class="section-box" id="propertySection">
+            <h2><i class="fas fa-home"></i> Satılık & Kiralık Emlaklar</h2>
+
+            <!-- Satılık -->
+            <h3 style="margin-top: 0.5rem; font-size: 1.6rem; color: #22c55e;">
+                <i class="fas fa-tag"></i> Satılık
+            </h3>
+            <div class="property-grid" id="saleGrid"></div>
+
+            <!-- Kiralık -->
+            <h3 style="margin-top: 2.5rem; font-size: 1.6rem; color: #3b82f6;">
+                <i class="fas fa-calendar-alt"></i> Kiralık
+            </h3>
+            <div class="property-grid" id="rentGrid"></div>
+        </div>
+
+        <!-- İletişim -->
+        <div class="section-box" id="contactSection">
+            <h2><i class="fas fa-envelope"></i> İletişim</h2>
+            <p style="margin-bottom:1.5rem;">Bize aşağıdaki kanallardan ulaşabilirsiniz.</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <span class="contact-label">Instagram</span>
+                    <span class="contact-value">
+                        <a href="https://www.instagram.com/burak_msz" target="_blank" rel="noopener noreferrer">@burak_msz</a>
+                    </span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span class="contact-label">E-posta</span>
+                    <span class="contact-value">
+                        <a href="https://mail.google.com/mail/u/0/?fs=1&to=burakbilec123@gmail.com&tf=cm" target="_blank" rel="noopener noreferrer">burakbilec123@gmail.com</a>
+                    </span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span class="contact-label">Telefon</span>
+                    <span class="contact-value">
+                        <a href="tel:">NOT RECOGNİZED- PLZ DONT TOUCH🛑</a>
+                    </span>
+                </div>
+                <div class="contact-item" style="background:transparent; border:2px dashed #eaeaea; justify-content:center; gap:0.5rem; flex-wrap:wrap;">
+                    <span style="opacity:0.5;">🔑</span>
+                    <span style="font-size:0.9rem; color:#888;">7/24 randevu için arayın.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---------- EMLAK VERİLERİ ----------
+            const properties = [{
+                id: 1,
+                title: '3+1 Satılık Daire',
+                price: '1.250.000 ₺',
+                desc: 'Merkezi konumda, geniş balkonlu, manzaralı daire.',
+                location: 'Kadıköy, İstanbul',
+                m2: '140 m²',
+                rooms: '3+1',
+                type: 'sale',
+                image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 2,
+                title: '2+1 Satılık Daire',
+                price: '850.000 ₺',
+                desc: 'Yeni yapı, asansörlü, otoparklı, aile apartmanı.',
+                location: 'Beşiktaş, İstanbul',
+                m2: '95 m²',
+                rooms: '2+1',
+                type: 'sale',
+                image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 3,
+                title: 'Dükkan Satılık',
+                price: '1.800.000 ₺',
+                desc: 'İşlek caddede, 2 katlı, vitrinli dükkan.',
+                location: 'Şişli, İstanbul',
+                m2: '120 m²',
+                rooms: 'Dükkan',
+                type: 'sale',
+                image: 'https://images.unsplash.com/photo-1555431189-0fabf2667795?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 4,
+                title: '4+1 Satılık Villa',
+                price: '3.750.000 ₺',
+                desc: 'Havuzlu, bahçeli, geniş arazide lüks villa.',
+                location: 'Beykoz, İstanbul',
+                m2: '280 m²',
+                rooms: '4+1',
+                type: 'sale',
+                image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 5,
+                title: '1+1 Kiralık Daire',
+                price: '12.000 ₺/ay',
+                desc: 'Merkezi, eşyalı, ulaşım kolay, yeni bina.',
+                location: 'Beyoğlu, İstanbul',
+                m2: '65 m²',
+                rooms: '1+1',
+                type: 'rent',
+                image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 6,
+                title: '3+1 Kiralık Daire',
+                price: '18.500 ₺/ay',
+                desc: 'Geniş salon, amerikan mutfak, manzaralı.',
+                location: 'Kadıköy, İstanbul',
+                m2: '135 m²',
+                rooms: '3+1',
+                type: 'rent',
+                image: 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 7,
+                title: 'Dükkan Kiralık',
+                price: '8.500 ₺/ay',
+                desc: 'Cadde üzeri, geniş camlı, depolu.',
+                location: 'Kadıköy, İstanbul',
+                m2: '80 m²',
+                rooms: 'Dükkan',
+                type: 'rent',
+                image: 'https://images.unsplash.com/photo-1555431189-0fabf2667795?w=600&h=400&fit=crop&crop=center'
+            }, {
+                id: 8,
+                title: '2+1 Kiralık Daire',
+                price: '14.000 ₺/ay',
+                desc: 'Sessiz sitede, otoparklı, çocuk parkı yanında.',
+                location: 'Beşiktaş, İstanbul',
+                m2: '100 m²',
+                rooms: '2+1',
+                type: 'rent',
+                image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=600&h=400&fit=crop&crop=center'
+            }];
+
+            // ---------- DOM ----------
+            const saleGrid = document.getElementById('saleGrid');
+            const rentGrid = document.getElementById('rentGrid');
+
+            // Bölümler
+            const propertySection = document.getElementById('propertySection');
+            const contactSection = document.getElementById('contactSection');
+
+            // Navbar linkleri
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            // ---------- FONKSİYONLAR ----------
+
+            // Bölüm göster/gizle
+            function showSection(target) {
+                propertySection.classList.remove('active');
+                contactSection.classList.remove('active');
+
+                if (target === 'property') {
+                    propertySection.classList.add('active');
+                    propertySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (target === 'contact') {
+                    contactSection.classList.add('active');
+                    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    // home
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            // Navbar tıklama
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = this.dataset.target;
+                    showSection(target);
+                });
+            });
+
+            // ---------- EMLAKLARI RENDER ET ----------
+            function renderProperties() {
+                const saleItems = properties.filter(p => p.type === 'sale');
+                const rentItems = properties.filter(p => p.type === 'rent');
+
+                // Satılık
+                saleGrid.innerHTML = '';
+                saleItems.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'property-card';
+                    card.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}" loading="lazy" />
+                        <div class="property-content">
+                            <h3>${item.title}</h3>
+                            <div class="price">${item.price}</div>
+                            <div class="desc">${item.desc}</div>
+                            <div class="meta">
+                                <span><i class="fas fa-map-pin"></i> ${item.location}</span>
+                                <span><i class="fas fa-ruler-combined"></i> ${item.m2}</span>
+                                <span><i class="fas fa-bed"></i> ${item.rooms}</span>
+                            </div>
+                            <span class="badge sale">🔑 Satılık</span>
+                        </div>
+                    `;
+                    saleGrid.appendChild(card);
+                });
+
+                // Kiralık
+                rentGrid.innerHTML = '';
+                rentItems.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'property-card';
+                    card.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}" loading="lazy" />
+                        <div class="property-content">
+                            <h3>${item.title}</h3>
+                            <div class="price">${item.price}</div>
+                            <div class="desc">${item.desc}</div>
+                            <div class="meta">
+                                <span><i class="fas fa-map-pin"></i> ${item.location}</span>
+                                <span><i class="fas fa-ruler-combined"></i> ${item.m2}</span>
+                                <span><i class="fas fa-bed"></i> ${item.rooms}</span>
+                            </div>
+                            <span class="badge rent">🏠 Kiralık</span>
+                        </div>
+                    `;
+                    rentGrid.appendChild(card);
+                });
+            }
+
+            // ---------- BAŞLAT ----------
+            renderProperties();
+
+            // Sayfa yüklendiğinde sadece hero görünür.
+            // İsteğe bağlı: hash ile açma eklenebilir.
+
+        })();
+    </script>
+
+</body>
+</html>
