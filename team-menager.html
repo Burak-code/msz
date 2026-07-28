@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Team Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0b0e14;
+            color: #eef2f7;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .glass {
+            background: rgba(20, 28, 40, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 1200px;
+            transition: all 0.3s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ----- MENU ----- */
+        #menu {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        #menu h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f0b843, #f7d875);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        #menu .sub {
+            color: #9aaec9;
+            font-size: 1.1rem;
+            margin-bottom: 36px;
+        }
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        .menu-buttons button {
+            padding: 16px 20px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.06);
+            color: #eef2f7;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .menu-buttons button:hover {
+            background: rgba(255, 215, 100, 0.15);
+            border-color: rgba(255, 215, 100, 0.3);
+            transform: scale(1.02);
+        }
+        .menu-buttons button.primary {
+            background: linear-gradient(135deg, #f0b843, #e09d30);
+            color: #0b0e14;
+            border: none;
+        }
+        .menu-buttons button.primary:hover {
+            background: linear-gradient(135deg, #f7c85e, #e09d30);
+        }
+
+        /* ----- TEAM SELECT ----- */
+        #teamSelect {
+            padding: 20px 0;
+        }
+        #teamSelect h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .team-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .team-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 100, 0.3);
+            border-radius: 10px;
+        }
+        .team-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 16px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .team-card:hover {
+            background: rgba(255, 215, 100, 0.08);
+            border-color: rgba(255, 215, 100, 0.2);
+            transform: translateY(-2px);
+        }
+        .team-card .flag-icon {
+            width: 40px;
+            height: auto;
+            display: block;
+            margin: 0 auto 4px;
+            border-radius: 4px;
+        }
+        .team-card .name {
+            font-weight: 600;
+            margin-top: 4px;
+            font-size: 0.95rem;
+        }
+        .team-card .power {
+            font-size: 0.85rem;
+            color: #9aaec9;
+        }
+        .team-card .budget {
+            font-size: 0.8rem;
+            color: #7ecf9e;
+        }
+
+        /* ----- GAME DASHBOARD ----- */
+        #game {
+            padding: 6px 0;
+        }
+        .game-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .game-header .team-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .game-header .team-badge .flag-icon {
+            width: 36px;
+            height: auto;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .game-header .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 0.95rem;
+        }
+        .game-header .stats span {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 6px 14px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .game-header .stats .val {
+            color: #f7d875;
+            font-weight: 700;
+        }
+        .game-body {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 800px) {
+            .game-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .news-feed {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 16px 18px;
+            min-height: 300px;
+            max-height: 420px;
+            overflow-y: auto;
+        }
+        .news-feed::-webkit-scrollbar {
+            width: 4px;
+        }
+        .news-feed::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 100, 0.2);
+            border-radius: 10px;
+        }
+        .news-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.95rem;
+            line-height: 1.4;
+            animation: fadeIn 0.4s ease;
+        }
+        .news-item .time {
+            color: #7e91b0;
+            font-size: 0.75rem;
+            margin-right: 10px;
+        }
+        .news-item .highlight {
+            color: #f7d875;
+        }
+        .news-item .flag-icon {
+            width: 20px;
+            height: auto;
+            vertical-align: middle;
+            border-radius: 2px;
+            margin: 0 2px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .actions button {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #eef2f7;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .actions button:hover {
+            background: rgba(255, 215, 100, 0.08);
+            border-color: rgba(255, 215, 100, 0.15);
+        }
+        .actions button .icon {
+            font-size: 1.4rem;
+        }
+        .actions button.advance {
+            background: linear-gradient(135deg, #2a3a4a, #1f2b38);
+            border-color: #3a5066;
+            justify-content: center;
+        }
+        .actions button.advance:hover {
+            background: linear-gradient(135deg, #3a5066, #2a3a4a);
+        }
+        .match-counter {
+            font-size: 0.8rem;
+            color: #9aaec9;
+            margin-left: auto;
+            padding: 2px 12px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 30px;
+        }
+
+        /* ----- MODAL OVERLAY ----- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-box {
+            background: #1a2430;
+            border-radius: 36px;
+            padding: 32px 28px;
+            max-width: 560px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-box h3 {
+            font-size: 1.6rem;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .modal-box .matchup {
+            text-align: center;
+            font-size: 1.3rem;
+            margin: 12px 0 20px;
+        }
+        .modal-box .matchup .vs {
+            color: #7e91b0;
+            margin: 0 12px;
+        }
+        .modal-box .matchup .flag-icon {
+            width: 32px;
+            height: auto;
+            vertical-align: middle;
+            border-radius: 4px;
+        }
+        .modal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .modal-options button {
+            padding: 14px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.04);
+            color: #eef2f7;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-options button:hover {
+            background: rgba(255, 215, 100, 0.1);
+        }
+        .modal-options button .mod-desc {
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: #9aaec9;
+        }
+        .modal-close {
+            margin-top: 16px;
+            text-align: center;
+        }
+        .modal-close button {
+            background: transparent;
+            border: none;
+            color: #7e91b0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: underline;
+        }
+
+        .invest-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+            justify-content: center;
+        }
+        .invest-grid button {
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
+            color: #eef2f7;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .invest-grid button:hover {
+            background: rgba(255, 215, 100, 0.1);
+        }
+        .invest-result {
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 16px;
+            border-radius: 16px;
+        }
+        .settings-row label {
+            font-weight: 500;
+        }
+        .settings-row input {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            padding: 6px 16px;
+            color: #eef2f7;
+            width: 120px;
+            font-size: 0.95rem;
+        }
+        .settings-row input:focus {
+            outline: none;
+            border-color: #f7d875;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin: 20px 0;
+        }
+        .stats-grid .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 18px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .stats-grid .stat-card .num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f7d875;
+        }
+        .stats-grid .stat-card .label {
+            font-size: 0.85rem;
+            color: #9aaec9;
+            margin-top: 2px;
+        }
+
+        /* Dünya Kupası özel stilleri */
+        .wc-group {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 12px 16px;
+        }
+        .wc-group h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #f7d875;
+        }
+        .wc-team {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .wc-team .flag-icon {
+            width: 20px;
+            height: auto;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .wc-team .pts {
+            font-weight: 600;
+        }
+        .wc-match {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: background 0.2s;
+            border-radius: 8px;
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+        .wc-match:hover {
+            background: rgba(255, 215, 100, 0.04);
+        }
+        .wc-match .flag-icon {
+            width: 20px;
+            height: auto;
+            margin: 0 4px;
+            vertical-align: middle;
+        }
+        .wc-match .score {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f7d875;
+            min-width: 40px;
+            text-align: center;
+        }
+        .wc-match .watch-btn {
+            background: rgba(255, 215, 100, 0.1);
+            border: 1px solid rgba(255, 215, 100, 0.2);
+            border-radius: 30px;
+            padding: 2px 12px;
+            color: #f7d875;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .wc-match .watch-btn:hover {
+            background: rgba(255, 215, 100, 0.2);
+        }
+
+        .wc-knockout {
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: rgba(255, 215, 100, 0.05);
+            border-radius: 12px;
+            border-left: 3px solid #f7d875;
+        }
+        .wc-knockout .round-title {
+            font-weight: 700;
+            color: #f7d875;
+            margin-bottom: 6px;
+        }
+
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: #9aaec9;
+        }
+        .text-gold {
+            color: #f7d875;
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #eef2f7;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Hızlı simülasyon sonuçları */
+        .sim-result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 12px 0;
+            text-align: center;
+        }
+        .sim-result-grid .item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 8px;
+        }
+        .sim-result-grid .item .num {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f7d875;
+        }
+        .sim-result-grid .item .label {
+            font-size: 0.8rem;
+            color: #9aaec9;
+        }
+
+        .match-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+        .match-list .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .match-list .row .flag-icon {
+            width: 18px;
+            height: auto;
+            vertical-align: middle;
+            margin: 0 2px;
+        }
+
+        /* Takım güçleri listesi */
+        .team-power-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .team-power-item:hover {
+            background: rgba(255,215,100,0.04);
+        }
+        .team-power-item .flag-icon {
+            width: 24px;
+            height: auto;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .team-power-item .power-val {
+            font-weight: 700;
+            color: #f7d875;
+        }
+        .team-power-item .rank {
+            color: #7e91b0;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+
+        /* Ateş efekti (Power > 180) */
+        .fire-glow {
+            animation: firePulse 1.2s ease-in-out infinite;
+            border-radius: 4px;
+            padding: 2px;
+        }
+        @keyframes firePulse {
+            0% { filter: drop-shadow(0 0 5px #ff4500) drop-shadow(0 0 10px #ff8c00); }
+            50% { filter: drop-shadow(0 0 15px #ff4500) drop-shadow(0 0 25px #ff8c00) drop-shadow(0 0 35px #ff0000); }
+            100% { filter: drop-shadow(0 0 5px #ff4500) drop-shadow(0 0 10px #ff8c00); }
+        }
+
+        /* Pasif gelir gösterge */
+        .passive-income-badge {
+            background: rgba(76, 175, 80, 0.15) !important;
+            border-color: rgba(76, 175, 80, 0.3) !important;
+            color: #81c784 !important;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scorePop {
+            0% { transform: scale(0.5); opacity: 0.2; }
+            60% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .score-anim {
+            animation: scorePop 0.4s ease-out;
+        }
+
+        .goal-flash {
+            animation: goalFlash 0.6s ease;
+        }
+        @keyframes goalFlash {
+            0% { background: rgba(255, 215, 0, 0.3); }
+            100% { background: transparent; }
+        }
+
+        @media (max-width: 480px) {
+            .glass {
+                padding: 16px 12px;
+            }
+            #menu h1 {
+                font-size: 2.2rem;
+            }
+            .game-header .stats span {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .sim-result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass" id="app">
+
+        <!-- ========== MENU ========== -->
+        <div id="menu">
+            <h1>⚽ National Team Manager</h1>
+            <p class="sub">Dünya Kupası'na giden yolda teknik direktör ol!</p>
+            <div class="menu-buttons">
+                <button class="primary" id="btnNewCareer">🚀 Yeni Kariyer</button>
+                <button id="btnContinue">📂 Devam Et</button>
+                <button id="btnSettings">⚙️ Ayarlar</button>
+                <button id="btnStats">📊 İstatistikler</button>
+            </div>
+        </div>
+
+        <!-- ========== TEAM SELECT ========== -->
+        <div id="teamSelect" class="hidden">
+            <h2>🏆 Takımını Seç</h2>
+            <div class="team-grid" id="teamGrid"></div>
+            <div class="flex-center mt-16">
+                <button class="btn-ghost" id="btnBackMenu">← Geri</button>
+            </div>
+        </div>
+
+        <!-- ========== GAME ========== -->
+        <div id="game" class="hidden">
+            <div class="game-header">
+                <div class="team-badge">
+                    <img class="flag-icon" id="gFlag" src="" alt="">
+                    <span id="gName">Türkiye</span>
+                    <span style="font-size:0.9rem; color:#9aaec9;">Güç: <span id="gPower" class="val">82</span></span>
+                    <button id="btnUpgradePower" style="background:rgba(255,215,100,0.1); border:1px solid rgba(255,215,100,0.2); border-radius:30px; padding:4px 14px; color:#f7d875; font-weight:bold; cursor:pointer; margin-left:8px;">⚡+</button>
+                </div>
+                <div class="stats">
+                    <span>💰 <span id="gBudget" class="val">250k€</span></span>
+                    <span id="passiveIncomeSpan" class="passive-income-badge" style="display:none;">💵 <span id="gPassiveIncome" class="val">0k€</span></span>
+                    <span>📅 Sezon <span id="gSeason" class="val">2026</span></span>
+                    <span>📆 Ay <span id="gMonth" class="val">1</span></span>
+                    <span id="gNegMonth" style="display:none;"></span>
+                </div>
+            </div>
+            <div class="game-body">
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="font-weight:600; font-size:1.1rem;">📰 Haberler</span>
+                        <span style="font-size:0.8rem; color:#7e91b0;" id="newsCount">0 haber</span>
+                    </div>
+                    <div class="news-feed" id="newsFeed"></div>
+                </div>
+                <div class="actions">
+                    <button id="btnFriendlyMatch">
+                        <span class="icon">🤝</span> Dostluk Maçı
+                        <span class="match-counter" id="matchCounter">0/10</span>
+                    </button>
+                    <button id="btnSimulate10">
+                        <span class="icon">⚡</span> 10 Maçı Simüle Et
+                        <span class="match-counter" id="simCounter">0/10</span>
+                    </button>
+                    <button id="btnInvest"><span class="icon">📈</span> Yatırım Yap</button>
+                    <button id="btnPassiveIncome"><span class="icon">💵</span> Pasif Gelir Yatırımı</button>
+                    <button id="btnSponsor"><span class="icon">🤝</span> Sponsorluk Talebi</button>
+                    <button id="btnAid"><span class="icon">🎁</span> Yardım Gönder</button>
+                    <button id="btnTeamPowers"><span class="icon">📊</span> Takım Güçleri</button>
+                    <button id="btnWorldCup"><span class="icon">🏆</span> Dünya Kupası Fikstürü</button>
+                    <button id="btnAdvanceMonth" class="advance"><span class="icon">⏩</span> Ayı İlerlet</button>
+                    <button id="btnQuit" style="margin-top:8px; background:rgba(255,70,70,0.08); border-color:rgba(255,70,70,0.15);"><span class="icon">🚪</span> İstifa Et</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== MODALS ========== -->
+        <!-- Match Modal (seçim) -->
+        <div id="matchModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>⚔️ Dostluk Maçı</h3>
+                <div class="matchup" id="matchupDisplay"></div>
+                <p class="text-muted text-center mb-8">Maç modunu seç:</p>
+                <div class="modal-options">
+                    <button data-mod="attack">💪 Ofansif <span class="mod-desc">(Kazanma şansı ↑, kart riski ↑)</span></button>
+                    <button data-mod="normal">💦 Normal <span class="mod-desc">(Dengeli)</span></button>
+                    <button data-mod="defense">🐔 Defansif <span class="mod-desc">(Kart riski ↓, beraberlik ↑)</span></button>
+                </div>
+                <div class="modal-close"><button id="closeMatchModal">Vazgeç</button></div>
+            </div>
+        </div>
+
+        <!-- Match Result Modal (animasyonlu) -->
+        <div id="matchResultModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>⚽ Maç Sonucu</h3>
+                <div id="matchResultContent"></div>
+                <div class="modal-close"><button id="closeMatchResult">Tamam</button></div>
+            </div>
+        </div>
+
+        <!-- Hızlı Simülasyon Modal (mod seçimi) -->
+        <div id="simModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>⚡ 10 Maç Hızlı Simülasyon</h3>
+                <p class="text-muted text-center">Tüm maçlar hangi modda oynansın?</p>
+                <div class="modal-options" id="simModOptions">
+                    <button data-mod="attack">💪 Ofansif <span class="mod-desc">(Kazanma şansı ↑, kart riski ↑)</span></button>
+                    <button data-mod="normal">💦 Normal <span class="mod-desc">(Dengeli)</span></button>
+                    <button data-mod="defense">🐔 Defansif <span class="mod-desc">(Kart riski ↓, beraberlik ↑)</span></button>
+                </div>
+                <div class="modal-close"><button id="closeSimModal">Vazgeç</button></div>
+            </div>
+        </div>
+
+        <!-- Hızlı Simülasyon Sonuç Modalı -->
+        <div id="simResultModal" class="modal-overlay hidden">
+            <div class="modal-box" style="max-width:600px;">
+                <h3>📊 10 Maç Simülasyon Sonucu</h3>
+                <div id="simResultContent"></div>
+                <div class="modal-close"><button id="closeSimResult">Tamam</button></div>
+            </div>
+        </div>
+
+        <!-- Investment Modal -->
+        <div id="investModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>📈 Yatırım Yap</h3>
+                <p class="text-muted text-center">Ne kadar yatırmak istersin?</p>
+                <div class="invest-grid" id="investOptions"></div>
+                <div id="investResult" class="invest-result hidden"></div>
+                <div class="modal-close"><button id="closeInvestModal">Kapat</button></div>
+            </div>
+        </div>
+
+        <!-- Passive Income Modal -->
+        <div id="passiveModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>💵 Pasif Gelir Yatırımı</h3>
+                <p class="text-muted text-center">Yatırdığınız miktarın %10'u her ay gelir olarak döner.</p>
+                <div class="invest-grid" id="passiveOptions"></div>
+                <div id="passiveResult" class="invest-result hidden"></div>
+                <div class="modal-close"><button id="closePassiveModal">Kapat</button></div>
+            </div>
+        </div>
+
+        <!-- Sponsor Modal -->
+        <div id="sponsorModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>🤝 Sponsorluk</h3>
+                <div id="sponsorContent" class="text-center" style="padding:20px 0;">
+                    <p>Sponsorluk teklifi aranıyor...</p>
+                </div>
+                <div class="modal-close"><button id="closeSponsorModal">Kapat</button></div>
+            </div>
+        </div>
+
+        <!-- Aid Modal -->
+        <div id="aidModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3>🎁 Yardım Gönder</h3>
+                <p class="text-muted text-center">Hangi takıma ve ne kadar yardım göndermek istersin?</p>
+                <div style="margin:16px 0;">
+                    <select id="aidTeamSelect" style="width:100%; padding:12px; border-radius:30px; background:rgba(255,255,255,0.05); color:#eef2f7; border:1px solid rgba(255,255,255,0.1); font-size:1rem;"></select>
+                </div>
+                <div class="invest-grid" id="aidOptions"></div>
+                <div id="aidResult" class="invest-result hidden"></div>
+                <div class="modal-close"><button id="closeAidModal">Kapat</button></div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal-overlay hidden">
+            <div class="modal-box" style="max-width:560px;">
+                <h3>⚙️ Ayarlar</h3>
+                <div class="settings-group">
+                    <div class="settings-row">
+                        <label>0-99 Güç Fiyatı (k€)</label>
+                        <input type="number" id="setPrice1" value="400" min="50" step="10">
+                    </div>
+                    <div class="settings-row">
+                        <label>100-149 Güç Fiyatı (k€)</label>
+                        <input type="number" id="setPrice2" value="7000" min="100" step="100">
+                    </div>
+                    <div class="settings-row">
+                        <label>150-199 Güç Fiyatı (k€)</label>
+                        <input type="number" id="setPrice3" value="10000" min="100" step="100">
+                    </div>
+                    <div class="settings-row">
+                        <label>200-210 Güç Fiyatı (k€)</label>
+                        <input type="number" id="setPrice4" value="15000" min="100" step="100">
+                    </div>
+                    <div class="settings-row">
+                        <label>Yatırım Süresi (ay)</label>
+                        <input type="number" id="setInvestDuration" value="3" min="1" max="6" step="1">
+                    </div>
+                </div>
+                <div class="flex-center mt-16">
+                    <button class="btn-ghost" id="saveSettings">💾 Kaydet</button>
+                    <button class="btn-ghost" id="closeSettings">Kapat</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Modal -->
+        <div id="statsModal" class="modal-overlay hidden">
+            <div class="modal-box" style="max-width:560px;">
+                <h3>📊 İstatistikler</h3>
+                <div id="statsContent"></div>
+                <div class="modal-close"><button id="closeStats">Kapat</button></div>
+            </div>
+        </div>
+
+        <!-- World Cup Fixture Modal -->
+        <div id="worldCupModal" class="modal-overlay hidden">
+            <div class="modal-box" style="max-width:720px;">
+                <h3>🏆 Dünya Kupası Fikstürü</h3>
+                <div id="worldCupContent" style="max-height:500px; overflow-y:auto;"></div>
+                <div class="modal-close"><button id="closeWorldCup">Kapat</button></div>
+            </div>
+        </div>
+
+        <!-- World Cup Match Viewer (animasyonlu maç izleme) -->
+        <div id="wcMatchViewer" class="modal-overlay hidden">
+            <div class="modal-box" style="max-width:600px;">
+                <h3>🏆 Dünya Kupası Maçı</h3>
+                <div id="wcMatchContent" style="text-align:center; padding:10px 0;">
+                    <div style="display:flex; justify-content:center; align-items:center; gap:30px; font-size:2rem; font-weight:700;">
+                        <div><img class="flag-icon" id="wcTeamAFlag" src="" style="width:48px; display:block; margin:0 auto;"><span id="wcTeamAName"></span></div>
+                        <div style="display:flex; gap:16px; align-items:center;">
+                            <span id="wcScoreA" style="font-size:3rem; min-width:60px;">0</span>
+                            <span style="color:#7e91b0; font-size:1.5rem;">-</span>
+                            <span id="wcScoreB" style="font-size:3rem; min-width:60px;">0</span>
+                        </div>
+                        <div><img class="flag-icon" id="wcTeamBFlag" src="" style="width:48px; display:block; margin:0 auto;"><span id="wcTeamBName"></span></div>
+                    </div>
+                    <div id="wcMatchEvents" style="margin-top:16px; font-size:0.9rem; color:#9aaec9; min-height:40px;"></div>
+                    <div class="modal-close"><button id="closeWcMatch">Kapat</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Takım Güçleri Modal -->
+        <div id="teamPowersModal" class="modal-overlay hidden">
+            <div class="modal-box" style="max-width:600px;">
+                <h3>📊 Takım Güçleri</h3>
+                <div id="teamPowersContent" style="max-height:500px; overflow-y:auto;"></div>
+                <div class="modal-close"><button id="closeTeamPowers">Kapat</button></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA (Güncellendi)
+        // ============================================================
+        const TEAM_DATA = [
+            { id: 'tr', name: 'Türkiye', flag: '🇹🇷', power: 82, budget: 250 },
+            { id: 'jp', name: 'Japonya', flag: '🇯🇵', power: 65, budget: 180 },
+            { id: 'pt', name: 'Portekiz', flag: '🇵🇹', power: 95, budget: 400 },
+            { id: 'ar', name: 'Arjantin', flag: '🇦🇷', power: 96, budget: 500, wcBonus: 0.05 },
+            { id: 'br', name: 'Brezilya', flag: '🇧🇷', power: 98, budget: 600 },
+            { id: 'gb', name: 'İngiltere', flag: '🇬🇧', power: 92, budget: 550 },
+            { id: 'es', name: 'İspanya', flag: '🇪🇸', power: 97, budget: 480, wcBonus: 0.07 },
+            { id: 'fr', name: 'Fransa', flag: '🇫🇷', power: 95, budget: 520 },
+            { id: 'de', name: 'Almanya', flag: '🇩🇪', power: 89, budget: 470 },
+            { id: 'it', name: 'İtalya', flag: '🇮🇹', power: 86, budget: 430 },
+            { id: 'nl', name: 'Hollanda', flag: '🇳🇱', power: 84, budget: 380 },
+            { id: 'be', name: 'Belçika', flag: '🇧🇪', power: 87, budget: 410 },
+            { id: 'hr', name: 'Hırvatistan', flag: '🇭🇷', power: 89, budget: 310 },
+            { id: 'dk', name: 'Danimarka', flag: '🇩🇰', power: 78, budget: 290 },
+            { id: 'se', name: 'İsveç', flag: '🇸🇪', power: 76, budget: 270 },
+            { id: 'no', name: 'Norveç', flag: '🇳🇴', power: 73, budget: 250 },
+            { id: 'ru', name: 'Rusya', flag: '🇷🇺', power: 72, budget: 230 },
+            { id: 'ua', name: 'Ukrayna', flag: '🇺🇦', power: 71, budget: 220 },
+            { id: 'pl', name: 'Polonya', flag: '🇵🇱', power: 74, budget: 260 },
+            { id: 'cz', name: 'Çekya', flag: '🇨🇿', power: 70, budget: 210 },
+            { id: 'at', name: 'Avusturya', flag: '🇦🇹', power: 69, budget: 200 },
+            { id: 'ch', name: 'İsviçre', flag: '🇨🇭', power: 77, budget: 280 },
+            { id: 'wls', name: 'Galler', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿', power: 66, budget: 190 },
+            { id: 'sco', name: 'İskoçya', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', power: 67, budget: 195 },
+            { id: 'ir', name: 'İrlanda', flag: '🇮🇪', power: 64, budget: 175 },
+            { id: 'gr', name: 'Yunanistan', flag: '🇬🇷', power: 68, budget: 200 },
+            { id: 'eg', name: 'Mısır', flag: '🇪🇬', power: 72, budget: 240 },
+            { id: 'ng', name: 'Nijerya', flag: '🇳🇬', power: 75, budget: 260 },
+            { id: 'cm', name: 'Kamerun', flag: '🇨🇲', power: 70, budget: 220 },
+            { id: 'sn', name: 'Senegal', flag: '🇸🇳', power: 74, budget: 250 },
+            { id: 'ci', name: 'Fildişi Sahili', flag: '🇨🇮', power: 69, budget: 210 },
+            { id: 'gh', name: 'Gana', flag: '🇬🇭', power: 68, budget: 200 },
+            { id: 'dz', name: 'Cezayir', flag: '🇩🇿', power: 71, budget: 230 },
+            { id: 'ma', name: 'Fas', flag: '🇲🇦', power: 76, budget: 270 },
+            { id: 'za', name: 'Güney Afrika', flag: '🇿🇦', power: 65, budget: 180 },
+            { id: 'au', name: 'Avustralya', flag: '🇦🇺', power: 77, budget: 280 },
+            { id: 'nz', name: 'Yeni Zelanda', flag: '🇳🇿', power: 62, budget: 160 },
+            { id: 'kr', name: 'Güney Kore', flag: '🇰🇷', power: 70, budget: 220 },
+            { id: 'sa', name: 'Suudi Arabistan', flag: '🇸🇦', power: 67, budget: 200 },
+            { id: 'irn', name: 'İran', flag: '🇮🇷', power: 68, budget: 210 },
+            { id: 'iq', name: 'Irak', flag: '🇮🇶', power: 61, budget: 150 },
+            { id: 'qa', name: 'Katar', flag: '🇶🇦', power: 66, budget: 190 },
+            { id: 'ae', name: 'BAE', flag: '🇦🇪', power: 63, budget: 170 },
+            { id: 'mx', name: 'Meksika', flag: '🇲🇽', power: 78, budget: 290 },
+            { id: 'us', name: 'ABD', flag: '🇺🇸', power: 80, budget: 320 },
+            { id: 'ca', name: 'Kanada', flag: '🇨🇦', power: 72, budget: 240 },
+            { id: 'cr', name: 'Kosta Rika', flag: '🇨🇷', power: 64, budget: 170 },
+            { id: 'co', name: 'Kolombiya', flag: '🇨🇴', power: 79, budget: 300 },
+            { id: 'cl', name: 'Şili', flag: '🇨🇱', power: 74, budget: 260 },
+            { id: 'pe', name: 'Peru', flag: '🇵🇪', power: 68, budget: 210 },
+            { id: 'uy', name: 'Uruguay', flag: '🇺🇾', power: 82, budget: 340 },
+            { id: 'py', name: 'Paraguay', flag: '🇵🇾', power: 66, budget: 190 },
+            { id: 'ec', name: 'Ekvador', flag: '🇪🇨', power: 70, budget: 220 },
+        ];
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let G = null;
+
+        // Güç fiyatları (k€)
+        let PRICE_1 = 400;   // 0-99
+        let PRICE_2 = 7000;  // 100-149
+        let PRICE_3 = 10000; // 150-199
+        let PRICE_4 = 15000; // 200-210
+        let INVEST_DURATION = 3;
+
+        // ============================================================
+        //  UTILITY
+        // ============================================================
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function randf(min, max) { return Math.random() * (max - min) + min; }
+
+        function pick(arr) { return arr[rand(0, arr.length - 1)]; }
+
+        function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+        function kFormat(val) {
+            if (val >= 1000) return (val / 1000).toFixed(1) + 'M€';
+            return Math.round(val) + 'k€';
+        }
+
+        function flagImg(team, size = 24) {
+            if (!team) return '';
+            const cls = team.power > 180 ? 'flag-icon fire-glow' : 'flag-icon';
+            return `<img class="${cls}" src="https://flagcdn.com/w${size}/${team.id}.png" alt="${team.id}" style="width:${size}px; height:auto; display:inline-block; vertical-align:middle; border-radius:2px;">`;
+        }
+
+        function getTeamById(id) {
+            return G ? G.teams.find(t => t.id === id) : null;
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = rand(0, i);
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function getPowerPrice(power) {
+            if (power < 100) return PRICE_1;
+            if (power < 150) return PRICE_2;
+            if (power < 200) return PRICE_3;
+            return PRICE_4;
+        }
+
+        // ============================================================
+        //  GAME STATE FACTORY
+        // ============================================================
+        function createGameState(userTeamId) {
+            const teams = TEAM_DATA.map(t => ({
+                ...t,
+                budget: t.budget || 200,
+                power: t.power || 70,
+                wins: 0,
+                losses: 0,
+                draws: 0,
+                cups: 0,
+                totalPrize: 0,
+                maxPower: t.power || 70,
+                investments: [],
+                passiveInvestments: [], // { amount, monthlyReturn, startMonth }
+                totalPassiveIncome: 0,
+                sponsorCooldown: 0,
+                injury: 0,
+                redCard: 0,
+                eliminated: false,
+                wcBonus: t.wcBonus || 0,
+                budgetCelebrated: false,
+            }));
+
+            const userTeam = teams.find(t => t.id === userTeamId);
+            if (!userTeam) return null;
+
+            return {
+                userTeamId: userTeamId,
+                teams: teams,
+                season: 2026,
+                month: 1,
+                news: [],
+                matchHistory: [],
+                monthCounter: 0,
+                worldCupYear: 2026,
+                worldCupStage: 'idle',
+                worldCupData: null,
+                gameOver: false,
+                friendlyMatchesThisMonth: 0,
+                negativeBudgetMonths: 0,
+            };
+        }
+
+        // ============================================================
+        //  LOCAL STORAGE
+        // ============================================================
+        function saveGame() {
+            if (!G) return;
+            try {
+                localStorage.setItem('ntm_save', JSON.stringify(G));
+            } catch (e) { console.warn('Save failed'); }
+        }
+
+        function loadGame() {
+            try {
+                const raw = localStorage.getItem('ntm_save');
+                if (!raw) return null;
+                const data = JSON.parse(raw);
+                return data;
+            } catch (e) { return null; }
+        }
+
+        function deleteSave() {
+            localStorage.removeItem('ntm_save');
+        }
+
+        // ============================================================
+        //  MATCH SIMULATION (güç + bonuslar + ateş efekti >180)
+        // ============================================================
+        function getWinMultiplier(team) {
+            let mul = 1.0;
+            if (team.power > 180) mul += 0.45;
+            if (team.wcBonus) mul += team.wcBonus;
+            return mul;
+        }
+
+        function simulateMatch(teamA, teamB, mode) {
+            let mulA = getWinMultiplier(teamA);
+            let mulB = getWinMultiplier(teamB);
+            let aPower = teamA.power * mulA;
+            let bPower = teamB.power * mulB;
+
+            let aBonus = 0,
+                bBonus = 0;
+            if (mode === 'attack') { aBonus = rand(3, 10);
+                bBonus = rand(-4, 3); } else if (mode === 'defense') { aBonus = rand(-3, 4);
+                bBonus = rand(-2, 5); } else { aBonus = rand(-2, 4);
+                bBonus = rand(-2, 4); }
+
+            aPower = Math.max(10, aPower + aBonus);
+            bPower = Math.max(10, bPower + bBonus);
+
+            const surprise = randf(0.7, 1.3);
+            const total = aPower + bPower;
+            const aExpected = (aPower / total) * 3.5 + 0.5;
+            const bExpected = (bPower / total) * 3.5 + 0.5;
+
+            let aScore = Math.round(randf(0.6, 1.4) * aExpected);
+            let bScore = Math.round(randf(0.6, 1.4) * bExpected);
+            aScore = Math.max(0, aScore);
+            bScore = Math.max(0, bScore);
+            if (Math.random() < 0.04) {
+                [aScore, bScore] = [bScore, aScore];
+            }
+            aScore = Math.min(aScore, 6);
+            bScore = Math.min(bScore, 6);
+
+            let yellowA = 0,
+                redA = 0,
+                yellowB = 0,
+                redB = 0;
+            if (mode === 'attack') {
+                yellowA = rand(0, 3);
+                redA = Math.random() < 0.15 ? 1 : 0;
+                yellowB = rand(0, 2);
+                redB = Math.random() < 0.05 ? 1 : 0;
+            } else if (mode === 'defense') {
+                yellowA = rand(0, 1);
+                redA = 0;
+                yellowB = rand(0, 2);
+                redB = Math.random() < 0.03 ? 1 : 0;
+            } else {
+                yellowA = rand(0, 2);
+                redA = Math.random() < 0.05 ? 1 : 0;
+                yellowB = rand(0, 2);
+                redB = Math.random() < 0.05 ? 1 : 0;
+            }
+
+            let injuryA = false,
+                injuryB = false;
+            if (Math.random() < 0.04) injuryA = true;
+            if (Math.random() < 0.04) injuryB = true;
+
+            return {
+                aScore,
+                bScore,
+                yellowA,
+                redA,
+                yellowB,
+                redB,
+                injuryA,
+                injuryB,
+            };
+        }
+
+        // ============================================================
+        //  WORLD CUP
+        // ============================================================
+        function processWorldCup() {
+            if (!G) return;
+
+            if (G.worldCupStage === 'idle' && G.month === 12) {
+                G.worldCupYear = G.season;
+                initWorldCup();
+                G.worldCupStage = 'group';
+                addNews(`🏆 DÜNYA KUPASI ${G.worldCupYear} BAŞLIYOR! (Grup aşaması)`);
+                playGroupStage();
+                G.worldCupStage = 'r16';
+                addNews(`📋 Grup aşaması tamamlandı. Son 16 turu başlıyor.`);
+                saveGame();
+                renderGame();
+                return;
+            }
+
+            if (G.worldCupStage === 'r16' && G.month === 1) {
+                playKnockoutRound('r16');
+                playKnockoutRound('quarter');
+                G.worldCupStage = 'semi';
+                addNews(`⚡ Son 16 ve Çeyrek Final tamamlandı. Yarı finalistler belli oldu.`);
+                saveGame();
+                renderGame();
+                return;
+            }
+
+            if (G.worldCupStage === 'semi' && G.month === 2) {
+                playKnockoutRound('semi');
+                playKnockoutRound('final');
+                G.worldCupStage = 'finished';
+                const champ = G.worldCupData?.champion;
+                if (champ) {
+                    const prize = 10000;
+                    champ.budget += prize;
+                    champ.cups += 1;
+                    if (champ.id === G.userTeamId) {
+                        showWorldCupWinAnimation(champ);
+                    }
+                    addNews(`🏆🏆🏆 ${flagImg(champ,20)} ${champ.name} DÜNYA KUPASI ${G.worldCupYear} ŞAMPİYONU! ${kFormat(prize)} ödül kazandı!`);
+                    if (champ.id === G.userTeamId) {
+                        addNews(`🎉 SİZ DÜNYA KUPASINI KAZANDINIZ! TEBRİKLER!`);
+                    }
+                } else {
+                    addNews(`🏆 Dünya Kupası ${G.worldCupYear} tamamlandı.`);
+                }
+                saveGame();
+                renderGame();
+                return;
+            }
+
+            if (G.worldCupStage === 'finished' && G.month === 3) {
+                G.worldCupStage = 'idle';
+                addNews(`📅 Dünya Kupası ${G.worldCupYear} resmen kapandı.`);
+                saveGame();
+                renderGame();
+            }
+        }
+
+        function initWorldCup() {
+            const sorted = [...G.teams].sort((a, b) => b.power - a.power);
+            const participants = shuffleArray(sorted.slice(0, 32));
+            const groups = [];
+            for (let i = 0; i < 8; i++) {
+                groups.push(participants.slice(i * 4, i * 4 + 4));
+            }
+
+            const groupData = groups.map((g, idx) => {
+                const name = String.fromCharCode(65 + idx);
+                const teams = g.map(t => ({
+                    ...t,
+                    pts: 0,
+                    gf: 0,
+                    ga: 0,
+                    matches: []
+                }));
+                return { name, teams };
+            });
+
+            G.worldCupData = {
+                year: G.worldCupYear,
+                groups: groupData,
+                rounds: {
+                    r16: [],
+                    quarter: [],
+                    semi: [],
+                    final: null
+                },
+                champion: null,
+                status: 'group'
+            };
+        }
+
+        function playGroupStage() {
+            const data = G.worldCupData;
+            if (!data) return;
+            for (const grp of data.groups) {
+                const t = grp.teams;
+                for (let i = 0; i < t.length; i++) {
+                    for (let j = i + 1; j < t.length; j++) {
+                        const a = t[i];
+                        const b = t[j];
+                        const result = simulateMatch(a, b, 'normal');
+                        a.gf += result.aScore;
+                        a.ga += result.bScore;
+                        b.gf += result.bScore;
+                        b.ga += result.aScore;
+                        if (result.aScore > result.bScore) a.pts += 3;
+                        else if (result.aScore < result.bScore) b.pts += 3;
+                        else { a.pts += 1;
+                            b.pts += 1; }
+                        a.matches.push({ opponentId: b.id, aScore: result.aScore, bScore: result.bScore });
+                        b.matches.push({ opponentId: a.id, aScore: result.bScore, bScore: result.aScore });
+                        addNews(`📊 Grup ${grp.name}: ${flagImg(a,20)} ${a.name} ${result.aScore} - ${result.bScore} ${flagImg(b,20)} ${b.name}`);
+                    }
+                }
+                grp.teams.sort((a, b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga));
+            }
+        }
+
+        function playKnockoutRound(roundKey) {
+            const data = G.worldCupData;
+            if (!data) return;
+            let bracket = [];
+            if (roundKey === 'r16') {
+                const qualified = data.groups.flatMap(g => g.teams.slice(0, 2));
+                bracket = shuffleArray(qualified);
+            } else if (roundKey === 'quarter') {
+                const prev = data.rounds.r16;
+                if (!prev || prev.length === 0) return;
+                bracket = prev.map(m => m.winner);
+            } else if (roundKey === 'semi') {
+                const prev = data.rounds.quarter;
+                if (!prev || prev.length === 0) return;
+                bracket = prev.map(m => m.winner);
+            } else if (roundKey === 'final') {
+                const prev = data.rounds.semi;
+                if (!prev || prev.length === 0) return;
+                if (prev.length === 2) {
+                    const a = prev[0].winner;
+                    const b = prev[1].winner;
+                    const result = simulateMatch(a, b, 'normal');
+                    const winner = result.aScore > result.bScore ? a : (result.aScore < result.bScore ? b : (Math.random() <
+                        0.5 ? a : b));
+                    data.rounds.final = { teamA: a, teamB: b, scoreA: result.aScore, scoreB: result.bScore, winner: winner };
+                    data.champion = winner;
+                    addNews(`🏆 Final: ${flagImg(a,20)} ${a.name} ${result.aScore} - ${result.bScore} ${flagImg(b,20)} ${b.name} → ${flagImg(winner,20)} ${winner.name} şampiyon!`);
+                    return;
+                }
+                return;
+            }
+
+            const matches = [];
+            for (let i = 0; i < bracket.length; i += 2) {
+                if (i + 1 >= bracket.length) break;
+                const a = bracket[i];
+                const b = bracket[i + 1];
+                const result = simulateMatch(a, b, 'normal');
+                const winner = result.aScore > result.bScore ? a : (result.aScore < result.bScore ? b : (Math.random() < 0.5 ?
+                    a : b));
+                matches.push({ teamA: a, teamB: b, scoreA: result.aScore, scoreB: result.bScore, winner: winner });
+                const roundName = { r16: 'Son 16', quarter: 'Çeyrek Final', semi: 'Yarı Final' } [roundKey] || roundKey;
+                addNews(`⚽ ${roundName}: ${flagImg(a,20)} ${a.name} ${result.aScore} - ${result.bScore} ${flagImg(b,20)} ${b.name} → ${flagImg(winner,20)} ${winner.name} tur atladı!`);
+            }
+            data.rounds[roundKey] = matches;
+        }
+
+        // ============================================================
+        //  WORLD CUP WIN ANIMATION
+        // ============================================================
+        function showWorldCupWinAnimation(champTeam) {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); pointer-events:auto;';
+
+            const container = document.createElement('div');
+            container.style.cssText = 'position:relative; width:300px; height:300px; display:flex; justify-content:center; align-items:center;';
+
+            const trophy = document.createElement('div');
+            trophy.textContent = '🏆';
+            trophy.style.cssText = 'font-size:0px; transition: font-size 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform: scale(0);';
+            container.appendChild(trophy);
+
+            const flag = document.createElement('div');
+            flag.textContent = user.flag;
+            flag.style.cssText = 'position:absolute; left:-100px; top:50%; transform: translateY(-50%); font-size:0px; transition: left 1.5s cubic-bezier(0.34, 1.56, 0.64, 1), font-size 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);';
+            container.appendChild(flag);
+
+            const prize = document.createElement('div');
+            prize.textContent = '+10M€';
+            prize.style.cssText = 'position:absolute; bottom:-50px; font-size:0rem; color:#4caf50; font-weight:bold; opacity:0; transition: all 0.8s ease; text-shadow: 0 0 20px rgba(76,175,80,0.5);';
+            container.appendChild(prize);
+
+            const sub = document.createElement('div');
+            sub.textContent = 'DÜNYA KUPASI ŞAMPİYONU!';
+            sub.style.cssText = 'position:absolute; top:-60px; font-size:0rem; color:#f7d875; font-weight:700; letter-spacing:2px; text-shadow: 0 0 30px rgba(247,216,117,0.3); transition: font-size 1s ease 0.5s;';
+            container.appendChild(sub);
+
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                trophy.style.fontSize = '150px';
+                trophy.style.transform = 'scale(1)';
+            }, 100);
+
+            setTimeout(() => {
+                flag.style.left = '50%';
+                flag.style.transform = 'translate(-50%, -50%)';
+                flag.style.fontSize = '100px';
+            }, 1500);
+
+            setTimeout(() => {
+                prize.style.opacity = '1';
+                prize.style.fontSize = '2.5rem';
+                prize.style.bottom = '20px';
+                sub.style.fontSize = '1.8rem';
+                user.budget += 10000;
+                user.totalPrize += 10000;
+                addNews(`💰 +10M€ Dünya Kupası şampiyonluk bonusu!`);
+                saveGame();
+                renderGame();
+            }, 2500);
+
+            setTimeout(() => {
+                overlay.style.transition = 'opacity 1s';
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.remove();
+                }, 1000);
+            }, 5000);
+        }
+
+        // ============================================================
+        //  AI ENGINE + PASIF GELIR
+        // ============================================================
+        function aiTick() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+
+            // Pasif gelir işleme (kullanıcı için)
+            if (user && user.totalPassiveIncome > 0) {
+                user.budget += user.totalPassiveIncome;
+                addNews(`💵 Pasif gelir: +${kFormat(user.totalPassiveIncome)} (Toplam pasif: ${kFormat(user.totalPassiveIncome)})`);
+            }
+
+            for (const team of G.teams) {
+                if (team.id === G.userTeamId) continue;
+
+                // AI takımlar bütçeye göre güç satın alsın
+                if (team.power < 210) {
+                    const price = getPowerPrice(team.power);
+                    if (team.budget >= price && Math.random() < 0.30) { // %30 ihtimalle satın al
+                        team.budget -= price;
+                        team.power += 1;
+                        if (team.power > team.maxPower) team.maxPower = team.power;
+                        addNews(`⚡ ${flagImg(team,20)} ${team.name} gücünü ${team.power} seviyesine çıkardı! (${kFormat(price)} harcandı)`);
+                    }
+                }
+
+                // Rastgele yatırım (mevcut)
+                if (Math.random() < 0.3) {
+                    const amount = rand(50, 300);
+                    if (team.budget >= amount) {
+                        team.budget -= amount;
+                        team.investments.push({
+                            amount: amount,
+                            startMonth: G.monthCounter,
+                            duration: INVEST_DURATION,
+                            result: null,
+                        });
+                    }
+                }
+
+                processInvestments(team);
+                if (team.sponsorCooldown <= 0) {
+                    const base = team.power * 2;
+                    const bonus = rand(50, 300);
+                    const total = base + bonus;
+                    team.budget += total;
+                    team.sponsorCooldown = rand(3, 6);
+                    addNews(`🤝 ${flagImg(team,20)} ${team.name} ${kFormat(total)} sponsorluk geliri elde etti!`);
+                } else {
+                    team.sponsorCooldown--;
+                }
+            }
+
+            // Kullanıcı sponsor
+            if (user) {
+                if (user.sponsorCooldown <= 0) {
+                    const base = user.power * 2;
+                    const bonus = rand(50, 300);
+                    const total = base + bonus;
+                    user.budget += total;
+                    user.sponsorCooldown = rand(3, 6);
+                    addNews(`🤝 ${flagImg(user,20)} ${user.name} ${kFormat(total)} sponsorluk geliri elde etti!`);
+                } else {
+                    user.sponsorCooldown--;
+                }
+                processInvestments(user);
+            }
+
+            if (Math.random() < 0.05) {
+                const randomTeam = pick(G.teams.filter(t => t.id !== G.userTeamId));
+                if (randomTeam) {
+                    const action = pick(['güçlendi', 'sponsor aldı', 'yıldız oyuncu çıkardı']);
+                    if (action === 'güçlendi' && randomTeam.power < 210) {
+                        randomTeam.power += rand(1, 5);
+                        randomTeam.power = Math.min(randomTeam.power, 210);
+                        addNews(`🌟 ${flagImg(randomTeam,20)} ${randomTeam.name} gücünü ${randomTeam.power} seviyesine yükseltti!`);
+                    } else if (action === 'sponsor aldı') {
+                        const sp = rand(100, 500);
+                        randomTeam.budget += sp;
+                        addNews(`💼 ${flagImg(randomTeam,20)} ${randomTeam.name} ${kFormat(sp)} sponsorluk kazandı.`);
+                    } else {
+                        addNews(`⭐ ${flagImg(randomTeam,20)} ${randomTeam.name} yeni bir yıldız oyuncu keşfetti!`);
+                    }
+                }
+            }
+            processWorldCup();
+        }
+
+        function processInvestments(team) {
+            const toRemove = [];
+            for (let i = 0; i < team.investments.length; i++) {
+                const inv = team.investments[i];
+                if (inv.result !== null) continue;
+                const elapsed = G.monthCounter - inv.startMonth;
+                if (elapsed >= inv.duration) {
+                    const factor = randf(0.5, 1.8);
+                    const result = Math.round(inv.amount * factor);
+                    team.budget += result;
+                    inv.result = result;
+                    if (result > inv.amount) {
+                        addNews(`📈 ${flagImg(team,20)} ${team.name} yatırımından ${kFormat(result)} kazandı! (${kFormat(inv.amount)} yatırıldı)`);
+                    } else if (result < inv.amount) {
+                        addNews(`📉 ${flagImg(team,20)} ${team.name} yatırımında ${kFormat(inv.amount - result)} zarar etti.`);
+                    } else {
+                        addNews(`➖ ${flagImg(team,20)} ${team.name} yatırımı başa baş.`);
+                    }
+                    toRemove.push(i);
+                }
+            }
+            for (let i = toRemove.length - 1; i >= 0; i--) {
+                team.investments.splice(toRemove[i], 1);
+            }
+        }
+
+        // ============================================================
+        //  UI RENDER
+        // ============================================================
+        function renderGame() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+
+            const flagEl = document.getElementById('gFlag');
+            flagEl.src = `https://flagcdn.com/w40/${user.id}.png`;
+            if (user.power > 180) {
+                flagEl.classList.add('fire-glow');
+            } else {
+                flagEl.classList.remove('fire-glow');
+            }
+
+            document.getElementById('gName').textContent = user.name;
+            document.getElementById('gPower').textContent = user.power;
+            document.getElementById('gBudget').textContent = kFormat(user.budget);
+            document.getElementById('gSeason').textContent = G.season;
+            document.getElementById('gMonth').textContent = G.month;
+
+            // Pasif gelir göster
+            const passiveSpan = document.getElementById('passiveIncomeSpan');
+            if (user.totalPassiveIncome > 0) {
+                passiveSpan.style.display = 'inline-block';
+                document.getElementById('gPassiveIncome').textContent = kFormat(user.totalPassiveIncome);
+            } else {
+                passiveSpan.style.display = 'none';
+            }
+
+            document.getElementById('matchCounter').textContent = `${G.friendlyMatchesThisMonth}/10`;
+            document.getElementById('simCounter').textContent = `${G.friendlyMatchesThisMonth}/10`;
+
+            const negEl = document.getElementById('gNegMonth');
+            if (user.budget < 0) {
+                negEl.style.display = 'inline';
+                negEl.textContent = `⚠️ ${G.negativeBudgetMonths} ay negatif`;
+                negEl.style.color = '#ff6b6b';
+                negEl.style.background = 'rgba(255,0,0,0.1)';
+                negEl.style.padding = '2px 12px';
+                negEl.style.borderRadius = '30px';
+            } else {
+                negEl.style.display = 'none';
+            }
+
+            const feed = document.getElementById('newsFeed');
+            const count = document.getElementById('newsCount');
+            feed.innerHTML = G.news.slice(-30).reverse().map(n =>
+                `<div class="news-item"><span class="time">[${n.season}-${n.month}]</span>${n.text}</div>`
+            ).join('');
+            count.textContent = G.news.length + ' haber';
+
+            saveGame();
+        }
+
+        function addNews(text) {
+            if (!G) return;
+            G.news.push({
+                text: text,
+                season: G.season,
+                month: G.month,
+                timestamp: Date.now()
+            });
+            if (G.news.length > 500) G.news.shift();
+            if (!document.getElementById('game').classList.contains('hidden')) {
+                renderGame();
+            }
+        }
+
+        // ============================================================
+        //  UI NAVIGATION
+        // ============================================================
+        function showMenu() {
+            document.getElementById('menu').classList.remove('hidden');
+            document.getElementById('teamSelect').classList.add('hidden');
+            document.getElementById('game').classList.add('hidden');
+            closeAllModals();
+        }
+
+        function showTeamSelect() {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('teamSelect').classList.remove('hidden');
+            document.getElementById('game').classList.add('hidden');
+            renderTeamSelect();
+            closeAllModals();
+        }
+
+        function showGame() {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('teamSelect').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            renderGame();
+            closeAllModals();
+        }
+
+        function renderTeamSelect() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = TEAM_DATA.map(t =>
+                `<div class="team-card" data-id="${t.id}">
+                    <img class="flag-icon" src="https://flagcdn.com/w40/${t.id}.png" alt="${t.id}">
+                    <div class="name">${t.name}</div>
+                    <div class="power">⚡ ${t.power}</div>
+                    <div class="budget">💰 ${kFormat(t.budget)}</div>
+                </div>`
+            ).join('');
+
+            grid.querySelectorAll('.team-card').forEach(el => {
+                el.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    startNewCareer(id);
+                });
+            });
+        }
+
+        // ============================================================
+        //  GAME ACTIONS
+        // ============================================================
+        function startNewCareer(teamId) {
+            const state = createGameState(teamId);
+            if (!state) return;
+            G = state;
+            G.monthCounter = 0;
+            const team = G.teams.find(t => t.id === teamId);
+            addNews(`🚀 ${flagImg(team,20)} ${team.name} teknik direktörlüğüne başladınız!`);
+            addNews(`📅 Sezon ${G.season}, hedef Dünya Kupası!`);
+            saveGame();
+            showGame();
+        }
+
+        function continueCareer() {
+            const data = loadGame();
+            if (!data) {
+                alert('Kayıtlı oyun bulunamadı.');
+                return;
+            }
+            G = data;
+            for (const t of G.teams) {
+                if (t.investments === undefined) t.investments = [];
+                if (t.passiveInvestments === undefined) t.passiveInvestments = [];
+                if (t.totalPassiveIncome === undefined) t.totalPassiveIncome = 0;
+                if (t.sponsorCooldown === undefined) t.sponsorCooldown = 0;
+                if (t.maxPower === undefined) t.maxPower = t.power;
+                if (t.cups === undefined) t.cups = 0;
+                if (t.totalPrize === undefined) t.totalPrize = 0;
+                if (t.injury === undefined) t.injury = 0;
+                if (t.redCard === undefined) t.redCard = 0;
+                if (t.wins === undefined) t.wins = 0;
+                if (t.losses === undefined) t.losses = 0;
+                if (t.draws === undefined) t.draws = 0;
+                if (t.eliminated === undefined) t.eliminated = false;
+                if (t.wcBonus === undefined) t.wcBonus = 0;
+                if (t.budgetCelebrated === undefined) t.budgetCelebrated = false;
+            }
+            if (G.worldCupYear === undefined) G.worldCupYear = 2026;
+            if (G.worldCupStage === undefined) G.worldCupStage = 'idle';
+            if (G.news === undefined) G.news = [];
+            if (G.matchHistory === undefined) G.matchHistory = [];
+            if (G.worldCupData === undefined) G.worldCupData = null;
+            if (G.friendlyMatchesThisMonth === undefined) G.friendlyMatchesThisMonth = 0;
+            if (G.negativeBudgetMonths === undefined) G.negativeBudgetMonths = 0;
+            saveGame();
+            showGame();
+        }
+
+        function advanceMonth() {
+            if (!G) return;
+            G.month++;
+            G.monthCounter++;
+            if (G.month > 12) {
+                G.month = 1;
+                G.season++;
+                addNews(`📅 Yeni sezon: ${G.season}`);
+            }
+
+            G.friendlyMatchesThisMonth = 0;
+
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (user && G.month === 1) {
+                user.budget -= 1000;
+                addNews(`💰 Vergi ödendi: -1M€ (Bütçe: ${kFormat(user.budget)})`);
+                if (user.budget < 0) {
+                    G.negativeBudgetMonths++;
+                    addNews(`⚠️ Bütçe negatif! (${G.negativeBudgetMonths}. ay) - 3 ay üst üste negatif kalırsanız kovulabilirsiniz.`);
+                } else {
+                    G.negativeBudgetMonths = 0;
+                }
+            }
+
+            if (user && G.negativeBudgetMonths >= 3) {
+                addNews(`🚨 ${flagImg(user,20)} ${user.name} yönetimi sizi görevden aldı! (Bütçe 3 aydır negatif)`);
+                alert(`⚠️ ${user.name} yönetimi sizi görevden aldı! Bütçe 3 aydır negatif.`);
+                deleteSave();
+                G = null;
+                showMenu();
+                return;
+            }
+
+            // 100M bütçe kontrolü
+            if (user && user.budget >= 100000 && !user.budgetCelebrated) {
+                user.budgetCelebrated = true;
+                addNews(`🎉🎉🎉 BÜTÇENİZ 100 MİLYON €'YU AŞTI! MUHTEŞEM YÖNETİM! ${flagImg(user,20)} ${user.name} efsane oluyor!`);
+                const msg = `🎉 100 MİLYON €! TARİH YAZIYORSUNUZ!`;
+                alert(msg);
+            }
+
+            aiTick();
+
+            if (user) {
+                if (user.injury > 0) user.injury--;
+                if (user.redCard > 0) user.redCard--;
+            }
+
+            saveGame();
+            renderGame();
+            if (G.news.length === 0) {
+                addNews(`🌍 Dünya futbolunda hareketlilik devam ediyor...`);
+            }
+        }
+
+        // ============================================================
+        //  FRIENDLY MATCH
+        // ============================================================
+        let pendingMatchOpponent = null;
+
+        function startFriendlyMatch() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+
+            if (G.friendlyMatchesThisMonth >= 10) {
+                alert('Bu ay maksimum 10 dostluk maçı yapabilirsiniz!');
+                return;
+            }
+
+            const opponents = G.teams.filter(t => t.id !== G.userTeamId);
+            if (opponents.length === 0) return;
+            const opponent = pick(opponents);
+            pendingMatchOpponent = opponent;
+
+            const modal = document.getElementById('matchModal');
+            modal.classList.remove('hidden');
+            document.getElementById('matchupDisplay').innerHTML = `
+                ${flagImg(user,32)} ${user.name} ${user.power}
+                <span class="vs">VS</span>
+                ${flagImg(opponent,32)} ${opponent.name} ${opponent.power}
+            `;
+            modal.dataset.opponentId = opponent.id;
+        }
+
+        function playMatch(mode) {
+            const modal = document.getElementById('matchModal');
+            const opponentId = modal.dataset.opponentId;
+            if (!opponentId) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            const opponent = G.teams.find(t => t.id === opponentId);
+            if (!user || !opponent) return;
+
+            G.friendlyMatchesThisMonth++;
+
+            const result = simulateMatch(user, opponent, mode);
+            const userWin = result.aScore > result.bScore;
+            const draw = result.aScore === result.bScore;
+
+            if (userWin) user.wins++;
+            else if (draw) user.draws++;
+            else user.losses++;
+
+            const prize = rand(20, 80);
+            user.budget += prize;
+
+            if (result.redA > 0) user.redCard += result.redA;
+            if (result.injuryA) user.injury += rand(1, 3);
+
+            const msg =
+                `🤝 Dostluk Maçı: ${flagImg(user,20)} ${user.name} ${result.aScore} - ${result.bScore} ${flagImg(opponent,20)} ${opponent.name} ${userWin ? '✅ Kazandı!' : draw ? '🤝 Berabere' : '❌ Kaybetti'} ${result.redA>0?'🟥 Kırmızı kart!':''} ${result.injuryA?'🩹 Sakatlık!':''}`;
+            addNews(msg);
+
+            modal.classList.add('hidden');
+            showMatchResult(user, opponent, result, userWin, draw, prize);
+
+            saveGame();
+            renderGame();
+        }
+
+        function showMatchResult(user, opponent, result, userWin, draw, prize) {
+            const modal = document.getElementById('matchResultModal');
+            const content = document.getElementById('matchResultContent');
+            const winText = userWin ? '🏆 Kazandınız!' : draw ? '🤝 Berabere' : '😞 Kaybettiniz.';
+
+            let html = `
+                <div style="text-align:center; font-size:1.2rem; margin:12px 0;">
+                    <span>${flagImg(user,32)} ${user.name}</span>
+                    <span style="font-size:2rem; margin:0 16px; font-weight:700;">
+                        <span id="animScoreA" style="display:inline-block; min-width:40px;">0</span>
+                        -
+                        <span id="animScoreB" style="display:inline-block; min-width:40px;">0</span>
+                    </span>
+                    <span>${flagImg(opponent,32)} ${opponent.name}</span>
+                </div>
+                <div style="text-align:center; font-size:1rem; color:#f7d875;">${winText}</div>
+                <div style="display:flex; justify-content:space-around; margin:12px 0; font-size:0.9rem;">
+                    <div>🟨 ${result.yellowA} / 🟥 ${result.redA}</div>
+                    <div>🟨 ${result.yellowB} / 🟥 ${result.redB}</div>
+                </div>
+                <div style="text-align:center; color:#9aaec9; font-size:0.9rem;">
+                    ${result.injuryA ? '🩹 Sakatlık var!' : ''} ${result.redA > 0 ? '🔴 Kırmızı kart cezası!' : ''}
+                </div>
+                <div style="text-align:center; margin-top:8px;">💰 Ödül: ${kFormat(prize)}</div>
+            `;
+            content.innerHTML = html;
+
+            modal.classList.remove('hidden');
+
+            let currentA = 0,
+                currentB = 0;
+            const targetA = result.aScore,
+                targetB = result.bScore;
+            const duration = 800;
+            const startTime = performance.now();
+
+            function animateScore(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                currentA = Math.round(progress * targetA);
+                currentB = Math.round(progress * targetB);
+                const elA = document.getElementById('animScoreA');
+                const elB = document.getElementById('animScoreB');
+                if (elA) elA.textContent = currentA;
+                if (elB) elB.textContent = currentB;
+                if (progress < 1) {
+                    requestAnimationFrame(animateScore);
+                } else {
+                    if (elA) elA.textContent = targetA;
+                    if (elB) elB.textContent = targetB;
+                    if (targetA > 0 || targetB > 0) {
+                        document.querySelector('.modal-box')?.classList.add('goal-flash');
+                        setTimeout(() => document.querySelector('.modal-box')?.classList.remove('goal-flash'), 600);
+                    }
+                }
+            }
+            requestAnimationFrame(animateScore);
+
+            document.getElementById('closeMatchResult').onclick = function() {
+                modal.classList.add('hidden');
+                advanceMonth();
+            };
+        }
+
+        // ============================================================
+        //  HIZLI SİMÜLASYON (10 MAÇ)
+        // ============================================================
+        function openSimModal() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            if (G.friendlyMatchesThisMonth >= 10) {
+                alert('Bu ay zaten 10 maç yaptınız! Ayı ilerletin.');
+                return;
+            }
+            document.getElementById('simModal').classList.remove('hidden');
+        }
+
+        function runSimulation(mode) {
+            const simModal = document.getElementById('simModal');
+            simModal.classList.add('hidden');
+
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+
+            const remaining = 10 - G.friendlyMatchesThisMonth;
+            if (remaining <= 0) {
+                alert('Bu ay zaten 10 maç yaptınız! Ayı ilerletin.');
+                return;
+            }
+
+            const count = remaining;
+            let wins = 0,
+                draws = 0,
+                losses = 0;
+            let totalPrize = 0;
+            let totalYellow = 0,
+                totalRed = 0;
+            let injuries = 0;
+            const matchDetails = [];
+
+            for (let i = 0; i < count; i++) {
+                const opponents = G.teams.filter(t => t.id !== G.userTeamId);
+                if (opponents.length === 0) break;
+                const opponent = pick(opponents);
+
+                const result = simulateMatch(user, opponent, mode);
+                const userWin = result.aScore > result.bScore;
+                const draw = result.aScore === result.bScore;
+
+                if (userWin) { wins++;
+                    user.wins++; } else if (draw) { draws++;
+                    user.draws++; } else { losses++;
+                    user.losses++; }
+
+                const prize = rand(20, 80);
+                totalPrize += prize;
+                user.budget += prize;
+
+                if (result.redA > 0) { totalRed += result.redA;
+                    user.redCard += result.redA; }
+                if (result.yellowA > 0) totalYellow += result.yellowA;
+                if (result.injuryA) { injuries++;
+                    user.injury += rand(1, 3); }
+
+                G.friendlyMatchesThisMonth++;
+
+                matchDetails.push({
+                    opponent: opponent,
+                    scoreA: result.aScore,
+                    scoreB: result.bScore,
+                    userWin: userWin,
+                    draw: draw,
+                    yellow: result.yellowA,
+                    red: result.redA,
+                    injury: result.injuryA,
+                    prize: prize
+                });
+
+                if (G.friendlyMatchesThisMonth >= 10) break;
+            }
+
+            const summary = `⚡ 10 maç simülasyonu: ${wins}G ${draws}B ${losses}M, ${kFormat(totalPrize)} kazanç, ${totalYellow} sarı, ${totalRed} kırmızı, ${injuries} sakatlık.`;
+            addNews(summary);
+
+            showSimResult(wins, draws, losses, totalPrize, totalYellow, totalRed, injuries, matchDetails);
+
+            saveGame();
+            renderGame();
+        }
+
+        function showSimResult(wins, draws, losses, totalPrize, totalYellow, totalRed, injuries, matchDetails) {
+            const modal = document.getElementById('simResultModal');
+            const content = document.getElementById('simResultContent');
+
+            let html = `
+                <div class="sim-result-grid">
+                    <div class="item"><div class="num">${wins}</div><div class="label">Galibiyet</div></div>
+                    <div class="item"><div class="num">${draws}</div><div class="label">Beraberlik</div></div>
+                    <div class="item"><div class="num">${losses}</div><div class="label">Mağlubiyet</div></div>
+                </div>
+                <div style="display:flex; justify-content:space-around; margin:8px 0; font-size:0.9rem;">
+                    <div>💰 ${kFormat(totalPrize)}</div>
+                    <div>🟨 ${totalYellow} / 🟥 ${totalRed}</div>
+                    <div>🩹 ${injuries} sakatlık</div>
+                </div>
+                <hr style="border-color:rgba(255,255,255,0.06); margin:8px 0;">
+                <div class="match-list">
+                    ${matchDetails.map((m, idx) => `
+                        <div class="row">
+                            <span>${flagImg(m.opponent,18)} ${m.opponent.name}</span>
+                            <span class="score" style="color:#f7d875; font-weight:600;">${m.scoreA} - ${m.scoreB}</span>
+                            <span>${m.userWin ? '✅' : m.draw ? '🤝' : '❌'} ${m.red>0?'🟥':''} ${m.injury?'🩹':''}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+
+            document.getElementById('closeSimResult').onclick = function() {
+                modal.classList.add('hidden');
+            };
+        }
+
+        // ============================================================
+        //  INVESTMENT
+        // ============================================================
+        function showInvestment() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            const modal = document.getElementById('investModal');
+            modal.classList.remove('hidden');
+            const container = document.getElementById('investOptions');
+            const amounts = [50, 100, 250, 500, 1000, 2000, 5000, 10000];
+            container.innerHTML = amounts.map(a =>
+                `<button data-amount="${a}">${kFormat(a)}</button>`
+            ).join('');
+
+            container.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const amount = parseInt(this.dataset.amount);
+                    doInvestment(amount);
+                });
+            });
+
+            document.getElementById('investResult').classList.add('hidden');
+        }
+
+        function doInvestment(amount) {
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            if (user.budget < amount) {
+                alert('Yeterli bütçeniz yok!');
+                return;
+            }
+            user.budget -= amount;
+            user.investments.push({
+                amount: amount,
+                startMonth: G.monthCounter,
+                duration: INVEST_DURATION,
+                result: null,
+            });
+            addNews(`📊 ${flagImg(user,20)} ${user.name} ${kFormat(amount)} yatırım yaptı. (${INVEST_DURATION} ay sonra sonuçlanacak)`);
+            document.getElementById('investResult').classList.remove('hidden');
+            document.getElementById('investResult').textContent = `✅ ${kFormat(amount)} yatırıldı. ${INVEST_DURATION} ay sonra sonuç belli olacak.`;
+            saveGame();
+            renderGame();
+            setTimeout(() => {
+                document.getElementById('investResult').classList.add('hidden');
+            }, 3000);
+        }
+
+        // ============================================================
+        //  PASSIVE INCOME
+        // ============================================================
+        function showPassiveIncome() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            const modal = document.getElementById('passiveModal');
+            modal.classList.remove('hidden');
+            const container = document.getElementById('passiveOptions');
+            const amounts = [100, 250, 500, 1000, 2000, 5000];
+            container.innerHTML = amounts.map(a =>
+                `<button data-amount="${a}">${kFormat(a)} (Aylık ${kFormat(a/10)})</button>`
+            ).join('');
+
+            container.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const amount = parseInt(this.dataset.amount);
+                    doPassiveInvestment(amount);
+                });
+            });
+
+            document.getElementById('passiveResult').classList.add('hidden');
+        }
+
+        function doPassiveInvestment(amount) {
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            if (user.budget < amount) {
+                alert('Yeterli bütçeniz yok!');
+                return;
+            }
+            user.budget -= amount;
+            const monthlyReturn = Math.round(amount / 10);
+            user.passiveInvestments.push({
+                amount: amount,
+                monthlyReturn: monthlyReturn,
+                startMonth: G.monthCounter
+            });
+            user.totalPassiveIncome += monthlyReturn;
+            addNews(`💵 ${flagImg(user,20)} ${user.name} ${kFormat(amount)} pasif gelir yatırımı yaptı. (Aylık ${kFormat(monthlyReturn)})`);
+            document.getElementById('passiveResult').classList.remove('hidden');
+            document.getElementById('passiveResult').textContent = `✅ ${kFormat(amount)} yatırıldı. Aylık ${kFormat(monthlyReturn)} pasif gelir eklendi.`;
+            saveGame();
+            renderGame();
+            setTimeout(() => {
+                document.getElementById('passiveResult').classList.add('hidden');
+            }, 3000);
+        }
+
+        // ============================================================
+        //  SPONSOR
+        // ============================================================
+        function showSponsor() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            const modal = document.getElementById('sponsorModal');
+            modal.classList.remove('hidden');
+            const content = document.getElementById('sponsorContent');
+            if (user.sponsorCooldown > 0) {
+                content.innerHTML = `<p>⏳ Sponsorluk bekleme süresi: ${user.sponsorCooldown} ay kaldı.</p>`;
+            } else {
+                const base = user.power * 2;
+                const bonus = rand(50, 300);
+                const total = base + bonus;
+                user.budget += total;
+                user.sponsorCooldown = rand(3, 6);
+                addNews(`🤝 ${flagImg(user,20)} ${user.name} ${kFormat(total)} sponsorluk geliri elde etti!`);
+                content.innerHTML = `<p>🎉 ${kFormat(total)} sponsorluk geliri kazandınız!</p><p class="text-muted">Sonraki sponsor ${user.sponsorCooldown} ay sonra.</p>`;
+                saveGame();
+                renderGame();
+            }
+        }
+
+        // ============================================================
+        //  AID (YARDIM GÖNDER) - GÜNCELLENDİ
+        // ============================================================
+        function showAid() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            const modal = document.getElementById('aidModal');
+            modal.classList.remove('hidden');
+            const select = document.getElementById('aidTeamSelect');
+            const others = G.teams.filter(t => t.id !== G.userTeamId);
+            select.innerHTML = others.map(t =>
+                `<option value="${t.id}">${t.flag} ${t.name} (${kFormat(t.budget)})</option>`
+            ).join('');
+
+            const container = document.getElementById('aidOptions');
+            const amounts = [100, 250, 500, 1000, 2000, 5000, 10000];
+            container.innerHTML = amounts.map(a =>
+                `<button data-amount="${a}">${kFormat(a)}</button>`
+            ).join('');
+
+            container.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const amount = parseInt(this.dataset.amount);
+                    doAid(amount);
+                });
+            });
+
+            document.getElementById('aidResult').classList.add('hidden');
+        }
+
+        function doAid(amount) {
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            if (user.budget < amount) {
+                alert('Yeterli bütçeniz yok!');
+                return;
+            }
+            const select = document.getElementById('aidTeamSelect');
+            const targetId = select.value;
+            const target = G.teams.find(t => t.id === targetId);
+            if (!target) return;
+
+            // Yardım miktarını bütçeden düş, hedefin bütçesine ekle
+            user.budget -= amount;
+            target.budget += amount;
+
+            // Hedef takım bu parayla güç satın alabilir mi?
+            let totalPowerGain = 0;
+            let remainingAmount = amount;
+            while (target.power < 210 && remainingAmount > 0) {
+                const price = getPowerPrice(target.power);
+                if (remainingAmount >= price) {
+                    target.budget -= price; // bütçeden düş
+                    remainingAmount -= price;
+                    target.power += 1;
+                    totalPowerGain++;
+                    if (target.power > target.maxPower) target.maxPower = target.power;
+                } else {
+                    break;
+                }
+            }
+
+            // Eğer kalan para varsa bütçede kalsın (zaten eklenmişti)
+            // Ama biz yukarıda target.budget'ten düştük, o yüzden kalan amount zaten bütçede.
+            // target.budget şu anda doğru.
+
+            let msg = `🎁 ${flagImg(user,20)} ${user.name}, ${flagImg(target,20)} ${target.name} takımına ${kFormat(amount)} yardım gönderdi!`;
+            if (totalPowerGain > 0) {
+                msg += ` Bu yardımla ${totalPowerGain} güç puanı kazandı! (Yeni güç: ${target.power})`;
+            } else {
+                msg += ` Ancak güç satın almaya yetmedi. (Güç fiyatı: ${kFormat(getPowerPrice(target.power))})`;
+            }
+            addNews(msg);
+
+            document.getElementById('aidResult').classList.remove('hidden');
+            document.getElementById('aidResult').textContent = `✅ ${kFormat(amount)} yardım gönderildi. ${totalPowerGain>0 ? `+${totalPowerGain} güç eklendi.` : 'Güç eklenemedi.'}`;
+            saveGame();
+            renderGame();
+            setTimeout(() => {
+                document.getElementById('aidResult').classList.add('hidden');
+            }, 4000);
+        }
+
+        // ============================================================
+        //  STATS
+        // ============================================================
+        function showStats() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            const modal = document.getElementById('statsModal');
+            modal.classList.remove('hidden');
+            const container = document.getElementById('statsContent');
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="num">${user.wins}</div><div class="label">Galibiyet</div></div>
+                    <div class="stat-card"><div class="num">${user.draws}</div><div class="label">Beraberlik</div></div>
+                    <div class="stat-card"><div class="num">${user.losses}</div><div class="label">Yenilgi</div></div>
+                    <div class="stat-card"><div class="num">${user.cups}</div><div class="label">Kupa</div></div>
+                    <div class="stat-card"><div class="num">${kFormat(user.totalPrize)}</div><div class="label">Toplam Ödül</div></div>
+                    <div class="stat-card"><div class="num">${user.maxPower}</div><div class="label">En Yüksek Güç</div></div>
+                </div>
+                <p class="text-center text-muted" style="margin-top:12px;">Sezon: ${G.season} | Ay: ${G.month}</p>
+                <p class="text-center text-muted">Takım Gücü: ${user.power} | Bütçe: ${kFormat(user.budget)}</p>
+                <p class="text-center text-muted">Pasif Gelir: ${kFormat(user.totalPassiveIncome)} / ay</p>
+            `;
+        }
+
+        // ============================================================
+        //  TAKIM GÜÇLERİ LİSTESİ
+        // ============================================================
+        function showTeamPowers() {
+            if (!G) return;
+            const modal = document.getElementById('teamPowersModal');
+            modal.classList.remove('hidden');
+            const container = document.getElementById('teamPowersContent');
+
+            const sorted = [...G.teams].sort((a, b) => b.power - a.power);
+            let html = `<div style="margin-bottom:12px; color:#7e91b0; font-size:0.9rem;">Sıralama (Güce göre) - 🔥 Güç > 180 (Ateş efekti)</div>`;
+            sorted.forEach((team, idx) => {
+                const isUser = team.id === G.userTeamId;
+                const isFire = team.power > 180;
+                html += `<div class="team-power-item" style="${isUser ? 'background:rgba(255,215,100,0.08); border-left:3px solid #f7d875;' : ''}">
+                    <div>
+                        <span class="rank">#${idx+1}</span>
+                        ${flagImg(team,24)} ${team.name}
+                        ${isFire ? '🔥' : ''}
+                        ${isUser ? '⭐' : ''}
+                        ${team.wcBonus ? '🏆' : ''}
+                    </div>
+                    <div class="power-val" style="${isFire ? 'color:#ff6b6b;' : ''}">${team.power}</div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        //  WORLD CUP FIXTURE & MATCH VIEWER
+        // ============================================================
+        function showWorldCupFixture() {
+            if (!G) return;
+            const modal = document.getElementById('worldCupModal');
+            modal.classList.remove('hidden');
+            const container = document.getElementById('worldCupContent');
+
+            if (!G.worldCupData || G.worldCupStage === 'idle') {
+                container.innerHTML = `<p class="text-center text-muted">Henüz bir Dünya Kupası düzenlenmedi veya turnuva yok.</p>`;
+                return;
+            }
+
+            const data = G.worldCupData;
+            let html = `<p class="text-center text-gold">🏆 Dünya Kupası ${data.year}</p>`;
+
+            for (const grp of data.groups) {
+                html += `<div class="wc-group"><h4>Grup ${grp.name}</h4>`;
+                for (const team of grp.teams) {
+                    html += `<div class="wc-team"><span>${flagImg(team,20)} ${team.name}</span><span>P: ${team.pts} | G: ${team.gf}-${team.ga}</span></div>`;
+                }
+                for (const team of grp.teams) {
+                    for (const m of team.matches) {
+                        const opp = G.teams.find(t => t.id === m.opponentId);
+                        if (opp) {
+                            html +=
+                                `<div class="wc-match">${flagImg(team,20)} ${team.name} <span class="score">${m.aScore} - ${m.bScore}</span> ${flagImg(opp,20)} ${opp.name}</div>`;
+                        }
+                    }
+                }
+                html += `</div>`;
+            }
+
+            const rounds = [
+                { key: 'r16', label: 'Son 16' },
+                { key: 'quarter', label: 'Çeyrek Final' },
+                { key: 'semi', label: 'Yarı Final' }
+            ];
+            for (const r of rounds) {
+                const matches = data.rounds[r.key];
+                if (matches && matches.length) {
+                    html += `<div class="wc-knockout"><div class="round-title">${r.label}</div>`;
+                    for (const m of matches) {
+                        html +=
+                            `<div class="wc-match">
+                                ${flagImg(m.teamA,20)} ${m.teamA.name}
+                                <span class="score">${m.scoreA} - ${m.scoreB}</span>
+                                ${flagImg(m.teamB,20)} ${m.teamB.name}
+                                <span style="color:#7e91b0; font-size:0.8rem;">→ ${flagImg(m.winner,20)} ${m.winner.name}</span>
+                                <button class="watch-btn" data-teamA="${m.teamA.id}" data-teamB="${m.teamB.id}" data-scoreA="${m.scoreA}" data-scoreB="${m.scoreB}">▶ İzle</button>
+                            </div>`;
+                    }
+                    html += `</div>`;
+                }
+            }
+            if (data.rounds.final) {
+                const f = data.rounds.final;
+                html += `<div class="wc-knockout" style="border-left-color:#f7d875; background:rgba(255,215,100,0.1);">
+                    <div class="round-title">🏆 Final</div>
+                    <div class="wc-match">
+                        ${flagImg(f.teamA,20)} ${f.teamA.name}
+                        <span class="score">${f.scoreA} - ${f.scoreB}</span>
+                        ${flagImg(f.teamB,20)} ${f.teamB.name}
+                        <span style="color:#f7d875; font-weight:bold;">→ ${flagImg(f.winner,20)} ${f.winner.name} 🏆</span>
+                        <button class="watch-btn" data-teamA="${f.teamA.id}" data-teamB="${f.teamB.id}" data-scoreA="${f.scoreA}" data-scoreB="${f.scoreB}">▶ İzle</button>
+                    </div>
+                </div>`;
+            }
+
+            container.innerHTML = html;
+
+            container.querySelectorAll('.watch-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const teamA = this.dataset.teama;
+                    const teamB = this.dataset.teamb;
+                    const scoreA = parseInt(this.dataset.scorea);
+                    const scoreB = parseInt(this.dataset.scoreb);
+                    showWcMatch(teamA, teamB, scoreA, scoreB);
+                });
+            });
+        }
+
+        function showWcMatch(teamAId, teamBId, scoreA, scoreB) {
+            const modal = document.getElementById('wcMatchViewer');
+            modal.classList.remove('hidden');
+            const teamA = getTeamById(teamAId);
+            const teamB = getTeamById(teamBId);
+            if (!teamA || !teamB) return;
+
+            document.getElementById('wcTeamAFlag').src = `https://flagcdn.com/w48/${teamA.id}.png`;
+            document.getElementById('wcTeamAName').textContent = teamA.name;
+            document.getElementById('wcTeamBFlag').src = `https://flagcdn.com/w48/${teamB.id}.png`;
+            document.getElementById('wcTeamBName').textContent = teamB.name;
+
+            const scoreElA = document.getElementById('wcScoreA');
+            const scoreElB = document.getElementById('wcScoreB');
+            const eventsEl = document.getElementById('wcMatchEvents');
+
+            let currentA = 0,
+                currentB = 0;
+            const duration = 1200;
+            const startTime = performance.now();
+            let goalEvents = [];
+
+            const totalGoals = scoreA + scoreB;
+            const goalTimes = [];
+            for (let i = 0; i < totalGoals; i++) {
+                goalTimes.push(rand(100, duration - 100));
+            }
+            goalTimes.sort((a, b) => a - b);
+
+            let goalIndex = 0;
+            let lastGoalA = 0,
+                lastGoalB = 0;
+
+            function animateWcScore(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentOverall = Math.round(progress * (scoreA + scoreB));
+
+                while (goalIndex < goalTimes.length && goalTimes[goalIndex] <= elapsed) {
+                    const isAGoal = (lastGoalA < scoreA && (lastGoalB === scoreB || Math.random() < 0.5));
+                    if (isAGoal && lastGoalA < scoreA) {
+                        lastGoalA++;
+                        eventsEl.innerHTML += `<div style="color:#4ecdc4;">⚽ Gol! ${teamA.name} (${lastGoalA})</div>`;
+                    } else if (lastGoalB < scoreB) {
+                        lastGoalB++;
+                        eventsEl.innerHTML += `<div style="color:#ff6b6b;">⚽ Gol! ${teamB.name} (${lastGoalB})</div>`;
+                    }
+                    goalIndex++;
+                }
+
+                const targetA = Math.min(lastGoalA, scoreA);
+                const targetB = Math.min(lastGoalB, scoreB);
+                scoreElA.textContent = targetA;
+                scoreElB.textContent = targetB;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateWcScore);
+                } else {
+                    scoreElA.textContent = scoreA;
+                    scoreElB.textContent = scoreB;
+                    eventsEl.innerHTML += `<div style="color:#f7d875; margin-top:8px;">🏁 Maç sona erdi!</div>`;
+                }
+            }
+            requestAnimationFrame(animateWcScore);
+
+            document.getElementById('closeWcMatch').onclick = function() {
+                modal.classList.add('hidden');
+                eventsEl.innerHTML = '';
+                scoreElA.textContent = '0';
+                scoreElB.textContent = '0';
+            };
+        }
+
+        // ============================================================
+        //  SETTINGS
+        // ============================================================
+        function showSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('hidden');
+            document.getElementById('setPrice1').value = PRICE_1;
+            document.getElementById('setPrice2').value = PRICE_2;
+            document.getElementById('setPrice3').value = PRICE_3;
+            document.getElementById('setPrice4').value = PRICE_4;
+            document.getElementById('setInvestDuration').value = INVEST_DURATION;
+        }
+
+        function saveSettings() {
+            PRICE_1 = parseInt(document.getElementById('setPrice1').value) || 400;
+            PRICE_2 = parseInt(document.getElementById('setPrice2').value) || 7000;
+            PRICE_3 = parseInt(document.getElementById('setPrice3').value) || 10000;
+            PRICE_4 = parseInt(document.getElementById('setPrice4').value) || 15000;
+            INVEST_DURATION = parseInt(document.getElementById('setInvestDuration').value) || 3;
+            if (INVEST_DURATION < 1) INVEST_DURATION = 1;
+            if (INVEST_DURATION > 12) INVEST_DURATION = 12;
+            alert('Ayarlar kaydedildi!');
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        // ============================================================
+        //  QUIT / RESIGN
+        // ============================================================
+        function resign() {
+            if (!G) return;
+            if (confirm('Gerçekten istifa etmek istiyor musunuz? Takımınızı kaybedeceksiniz.')) {
+                deleteSave();
+                G = null;
+                showMenu();
+                alert('İstifa ettiniz. Yeni bir kariyere başlayabilirsiniz.');
+            }
+        }
+
+        // ============================================================
+        //  POWER UPGRADE
+        // ============================================================
+        function upgradePower() {
+            if (!G) return;
+            const user = G.teams.find(t => t.id === G.userTeamId);
+            if (!user) return;
+            if (user.power >= 210) {
+                alert('Maksimum güce ulaştınız! (210)');
+                return;
+            }
+            const price = getPowerPrice(user.power);
+            if (user.budget < price) {
+                alert(`Yeterli bütçe yok! ${kFormat(price)} gerekli.`);
+                return;
+            }
+            user.budget -= price;
+            user.power += 1;
+            if (user.power > user.maxPower) user.maxPower = user.power;
+            addNews(`⚡ ${flagImg(user,20)} ${user.name} gücünü ${user.power} seviyesine çıkardı! (${kFormat(price)} harcandı)`);
+            saveGame();
+            renderGame();
+        }
+
+        // ============================================================
+        //  MODAL CLOSE HELPERS
+        // ============================================================
+        function closeAllModals() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.add('hidden'));
+        }
+
+        // ============================================================
+        //  EVENT BINDINGS
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnNewCareer').addEventListener('click', showTeamSelect);
+            document.getElementById('btnContinue').addEventListener('click', continueCareer);
+            document.getElementById('btnSettings').addEventListener('click', showSettings);
+            document.getElementById('btnStats').addEventListener('click', showStats);
+
+            document.getElementById('btnBackMenu').addEventListener('click', showMenu);
+
+            document.getElementById('btnFriendlyMatch').addEventListener('click', startFriendlyMatch);
+            document.getElementById('btnSimulate10').addEventListener('click', openSimModal);
+            document.getElementById('btnInvest').addEventListener('click', showInvestment);
+            document.getElementById('btnPassiveIncome').addEventListener('click', showPassiveIncome);
+            document.getElementById('btnSponsor').addEventListener('click', showSponsor);
+            document.getElementById('btnAid').addEventListener('click', showAid);
+            document.getElementById('btnTeamPowers').addEventListener('click', showTeamPowers);
+            document.getElementById('btnAdvanceMonth').addEventListener('click', advanceMonth);
+            document.getElementById('btnQuit').addEventListener('click', resign);
+            document.getElementById('btnWorldCup').addEventListener('click', showWorldCupFixture);
+            document.getElementById('btnUpgradePower').addEventListener('click', upgradePower);
+
+            document.querySelectorAll('#matchModal .modal-options button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const mode = this.dataset.mod;
+                    playMatch(mode);
+                });
+            });
+            document.getElementById('closeMatchModal').addEventListener('click', function() {
+                document.getElementById('matchModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeMatchResult').addEventListener('click', function() {
+                document.getElementById('matchResultModal').classList.add('hidden');
+            });
+
+            document.querySelectorAll('#simModOptions button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const mode = this.dataset.mod;
+                    runSimulation(mode);
+                });
+            });
+            document.getElementById('closeSimModal').addEventListener('click', function() {
+                document.getElementById('simModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeInvestModal').addEventListener('click', function() {
+                document.getElementById('investModal').classList.add('hidden');
+            });
+
+            document.getElementById('closePassiveModal').addEventListener('click', function() {
+                document.getElementById('passiveModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeSponsorModal').addEventListener('click', function() {
+                document.getElementById('sponsorModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeAidModal').addEventListener('click', function() {
+                document.getElementById('aidModal').classList.add('hidden');
+            });
+
+            document.getElementById('saveSettings').addEventListener('click', saveSettings);
+            document.getElementById('closeSettings').addEventListener('click', function() {
+                document.getElementById('settingsModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeStats').addEventListener('click', function() {
+                document.getElementById('statsModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeWorldCup').addEventListener('click', function() {
+                document.getElementById('worldCupModal').classList.add('hidden');
+            });
+
+            document.getElementById('closeTeamPowers').addEventListener('click', function() {
+                document.getElementById('teamPowersModal').classList.add('hidden');
+            });
+
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) this.classList.add('hidden');
+                });
+            });
+
+            const saved = loadGame();
+            if (saved) {}
+
+            showMenu();
+        });
+
+        setInterval(() => {
+            if (G) saveGame();
+        }, 30000);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !document.querySelector('.modal-overlay:not(.hidden)')) {
+                if (!document.getElementById('game').classList.contains('hidden')) {
+                    advanceMonth();
+                }
+            }
+            if (e.key === 'Escape') {
+                closeAllModals();
+            }
+        });
+
+        console.log('⚽ National Team Manager loaded. Enjoy!');
+    </script>
+</body>
+</html>
