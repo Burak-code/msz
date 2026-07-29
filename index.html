@@ -15,6 +15,10 @@
     <!-- Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <!-- Word dosyası okumak için mammoth.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js">
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -117,36 +121,297 @@
             border-radius: 10px;
         }
 
-        /* HTML demo card image overlay */
-        .demo-card {
+        .btn-glow {
             position: relative;
             overflow: hidden;
-            border-radius: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .demo-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        .demo-card:hover img {
-            transform: scale(1.05);
-        }
-        .demo-card .card-body {
-            padding: 1.5rem;
-        }
-        .demo-card .card-overlay {
+        .btn-glow::before {
+            content: '';
             position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 60%);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
             opacity: 0;
-            transition: opacity 0.3s ease;
-            display: flex;
-            align-items: flex-end;
-            padding: 1.5rem;
+            transition: opacity 0.5s ease;
+            transform: scale(0.5);
         }
-        .demo-card:hover .card-overlay {
+        .btn-glow:hover::before {
             opacity: 1;
+            transform: scale(1);
+        }
+        .btn-glow:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+        }
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: inherit;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .btn-secondary:active {
+            transform: scale(0.96);
+        }
+
+        /* Haber Bileşeni - Sol Alt */
+        .news-popup {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 999;
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .news-trigger {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+        .news-trigger:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.6);
+        }
+        .news-trigger:active {
+            transform: scale(0.9);
+        }
+        .news-trigger i {
+            font-size: 28px;
+            color: white;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        }
+        .news-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.5);
+        }
+
+        .news-panel {
+            position: fixed;
+            bottom: 110px;
+            left: 30px;
+            width: 380px;
+            max-height: 460px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            z-index: 998;
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dark .news-panel {
+            background: rgba(20,20,20,0.95);
+            border-color: rgba(255,255,255,0.05);
+        }
+        .news-panel.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        .news-panel-header {
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .news-panel-header i {
+            font-size: 18px;
+        }
+        .news-close {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+        }
+        .news-close:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.2);
+        }
+        .news-list {
+            padding: 12px 16px 16px 16px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .news-item {
+            padding: 14px 16px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .dark .news-item {
+            background: rgba(255,255,255,0.03);
+        }
+        .news-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-left-color: #3b82f6;
+            transform: translateX(4px);
+        }
+        .news-item-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #e5e7eb;
+        }
+        .dark .news-item-img {
+            background: #374151;
+        }
+        .news-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .news-item-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .news-item-desc {
+            font-size: 12px;
+            opacity: 0.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+        .news-item-date {
+            font-size: 10px;
+            opacity: 0.4;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .news-empty {
+            text-align: center;
+            padding: 30px 0;
+            opacity: 0.5;
+        }
+
+        /* Word'den gelen resimler için */
+        .news-item-img.word-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Tıklama Ripple */
+        .click-ripple {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out forwards;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Yükleniyor animasyonu */
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 12px;
+        }
+        .loading-spinner i {
+            font-size: 30px;
+            color: #3b82f6;
         }
     </style>
 </head>
@@ -154,13 +419,51 @@
 
     <div class="bg-overlay"></div>
 
+    <!-- Tıklama Sesi (Web Audio API) -->
+    <script>
+        function playClickSound() {
+            try {
+                const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        function createRipple(e) {
+            const ripple = document.createElement('div');
+            ripple.className = 'click-ripple';
+            const rect = e.target.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - size / 2) + 'px';
+            ripple.style.top = (e.clientY - size / 2) + 'px';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button, .nav-link, .news-trigger, .news-close, .news-item, a, [onclick], .btn-primary, .btn-secondary');
+            if (target) {
+                playClickSound();
+                createRipple(e);
+            }
+        });
+    </script>
+
     <header class="fixed top-0 w-full z-50 glass-card">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">
                 MSZ
             </h1>
 
-            <!-- Desktop Nav -->
             <nav class="hidden md:flex space-x-8 font-semibold">
                 <span class="nav-link" onclick="updateUI('html')">HTML</span>
                 <span class="nav-link" onclick="updateUI('home')">Ana Sayfa</span>
@@ -170,7 +473,6 @@
                 <span class="nav-link" onclick="updateUI('contact')">İletişim</span>
             </nav>
 
-            <!-- Mobile Toggle -->
             <button id="menu-btn" class="md:hidden text-2xl focus:outline-none">
                 <i class="fas fa-bars"></i>
             </button>
@@ -181,7 +483,6 @@
         </div>
     </header>
 
-    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-40 bg-white dark:bg-darkbg flex flex-col items-center justify-center space-y-8 text-2xl font-bold translate-x-full md:hidden">
         <button id="close-menu" class="absolute top-6 right-6 text-3xl">&times;</button>
         <span onclick="toggleMenu(); updateUI('html')">HTML</span>
@@ -205,9 +506,32 @@
         </div>
     </footer>
 
+    <!-- ============ HABER BİLEŞENİ (SOL ALT) ============ -->
+    <div class="news-popup">
+        <div class="news-trigger" id="newsTrigger" title="Haberler">
+            <i class="fas fa-newspaper"></i>
+            <span class="news-badge" id="newsBadge">...</span>
+        </div>
+    </div>
+
+    <div class="news-panel" id="newsPanel">
+        <div class="news-panel-header">
+            <span><i class="fas fa-bullhorn mr-2"></i> Öne Çıkanlar</span>
+            <span class="news-close" id="newsClose"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="news-list" id="newsList">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Word belgesi okunuyor...</span>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js">
     </script>
+
     <script>
+        // ============ SAYFA İÇERİKLERİ ============
         const pages = {
             home: `
                     <div class="text-center py-20" data-aos="zoom-out">
@@ -217,7 +541,9 @@
                         <p class="text-xl md:text-2xl opacity-80 max-w-2xl mx-auto mb-10">
                             Geleceği kodlayan bir teknoloji tutkunu. Web geliştirme, oyun tasarımı ve dijital dünyanın her köşesindeyim.
                         </p>
-                        <button onclick="updateUI('experiences')" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all inline-block">Projelere Göz At</button>
+                        <button onclick="updateUI('experiences')" class="btn-primary">
+                            Projelere Göz At <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
                 `,
             about: `
@@ -248,7 +574,7 @@
                             {title: "Team-Menager", desc: "Milli futbol takımını yöneterek dünya kupası yolculuğu.", link: "team-menager.html", icon: "fa-chart-line"},
                             {title: "Game Studio", desc: "Geleceğin oyun stüdyosunun temelleri.", link: "#", disabled: true, icon: "fa-rocket"}
                         ].map(p => `
-                                <div class="glass-card project-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
+                                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
                                     <i class="fas ${p.icon} text-4xl text-blue-500 mb-4 opacity-80 group-hover:scale-110 transition-transform"></i>
                                     <h3 class="text-2xl font-bold mb-3">${p.title}</h3>
                                     <p class="opacity-70 mb-6 text-sm">${p.desc}</p>
@@ -308,7 +634,7 @@
                                 {title: "Restoran", file: "restoran.html", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&crop=center", icon: "fa-utensils"},
                                 {title: "Berber", file: "berber.html", img: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&crop=center", icon: "fa-cut"},
                                 {title: "Spor", file: "spor.html", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop&crop=center", icon: "fa-dumbbell"},
-                                {title: "Emlakçı", file: "emlakçı.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center", icon: "fa-building"},
+                                {title: "Emlakçı", file: "emlak.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center", icon: "fa-building"},
                                 {title: "Fotoğrafçı", file: "fotoğrafçı.html", img: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&h=400&fit=crop&crop=center", icon: "fa-camera"}
                             ].map((item, index) => `
                                     <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10" data-aos="fade-up" data-aos-delay="${index * 80}">
@@ -324,7 +650,7 @@
                                                 <h3 class="text-xl font-bold">${item.title}</h3>
                                                 <p class="text-sm opacity-60">HTML demosu</p>
                                             </div>
-                                            <a href="${item.file}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:shadow-lg hover:shadow-blue-500/40 flex items-center gap-2">
+                                            <a href="${item.file}" target="_blank" class="btn-primary text-sm py-2 px-5">
                                                 İncele <i class="fas fa-arrow-right text-xs"></i>
                                             </a>
                                         </div>
@@ -358,9 +684,212 @@
             document.documentElement.classList.toggle('dark');
         });
 
+        // ============ WORD BELGESİNDEN HABER OKUMA ============
+        async function loadNewsFromWord() {
+            const list = document.getElementById('newsList');
+            const badge = document.getElementById('newsBadge');
+
+            try {
+                // haber.docx dosyasını fetch ile al
+                const response = await fetch('haber.docx');
+                if (!response.ok) throw new Error('NOT PAGES RECOGNİZED');
+
+                const arrayBuffer = await response.arrayBuffer();
+
+                // mammoth ile oku
+                const result = await mammoth.convertToHtml({
+                    arrayBuffer: arrayBuffer,
+                    convertImage: mammoth.images.imgElement((image) => {
+                        // Resimleri base64'e çevir
+                        return image.read("base64").then((imageBuffer) => {
+                            return {
+                                src: "data:" + image.contentType + ";base64," + imageBuffer
+                            };
+                        });
+                    })
+                });
+
+                const htmlContent = result.value;
+
+                // HTML içeriğini parse et
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlContent, 'text/html');
+
+                // Resimleri ve metinleri topla
+                let items = [];
+                const body = doc.body;
+
+                // Paragrafları ve resimleri sırayla al
+                const children = body.children;
+                let currentText = '';
+                let currentImg = null;
+
+                for (let i = 0; i < children.length; i++) {
+                    const el = children[i];
+
+                    if (el.tagName === 'P') {
+                        const text = el.textContent.trim();
+                        if (text.length > 0) {
+                            // Önceki resim varsa onunla birleştir
+                            if (currentImg) {
+                                items.push({
+                                    text: text,
+                                    img: currentImg
+                                });
+                                currentImg = null;
+                            } else {
+                                // Sadece metin
+                                items.push({
+                                    text: text,
+                                    img: null
+                                });
+                            }
+                        }
+                    } else if (el.tagName === 'IMG') {
+                        const src = el.getAttribute('src');
+                        if (src && src.startsWith('data:image')) {
+                            currentImg = src;
+                        }
+                    } else if (el.tagName === 'FIGURE') {
+                        // Figure içindeki img'i bul
+                        const img = el.querySelector('img');
+                        if (img) {
+                            const src = img.getAttribute('src');
+                            if (src && src.startsWith('data:image')) {
+                                currentImg = src;
+                            }
+                        }
+                        // Figure içindeki figcaption veya metin
+                        const caption = el.querySelector('figcaption');
+                        if (caption) {
+                            const text = caption.textContent.trim();
+                            if (text.length > 0) {
+                                items.push({
+                                    text: text,
+                                    img: currentImg || null
+                                });
+                                currentImg = null;
+                            }
+                        }
+                    }
+                }
+
+                // Eğer hiç öğe yoksa, düz metin olarak al
+                if (items.length === 0) {
+                    const allText = body.textContent.trim();
+                    if (allText.length > 0) {
+                        // Paragraflara böl
+                        const paragraphs = allText.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+                        items = paragraphs.map(p => ({
+                            text: p.trim(),
+                            img: null
+                        }));
+                    }
+                }
+
+                // Word'den resim çıkarma işlemi
+                // Eğer resim varsa ve metin yoksa, resmi göster
+                const finalItems = [];
+                let tempImg = null;
+
+                for (const item of items) {
+                    if (item.img && !item.text) {
+                        // Sadece resim varsa
+                        finalItems.push({
+                            text: '📷 Görsel',
+                            img: item.img
+                        });
+                    } else if (item.img && item.text) {
+                        finalItems.push(item);
+                    } else if (item.text) {
+                        finalItems.push(item);
+                    }
+                }
+
+                // Hiç haber yoksa örnek ver
+                if (finalItems.length === 0) {
+                    finalItems.push({
+                        text: 'Word belgesinden haber okunamadı. Örnek haber gösteriliyor.',
+                        img: null
+                    });
+                    finalItems.push({
+                        text: 'haber.docx dosyasını kontrol edin.',
+                        img: null
+                    });
+                }
+
+                // Maksimum 8 haber göster
+                const displayItems = finalItems.slice(0, 8);
+                badge.textContent = displayItems.length;
+
+                // Haberleri listele
+                list.innerHTML = displayItems.map((item, i) => `
+                        <div class="news-item" onclick="alert('${item.text.replace(/'/g, "\\'")}')">
+                            ${item.img ? `<img src="${item.img}" class="news-item-img word-image" alt="Haber görseli">` : ''}
+                            <div class="news-item-content">
+                                <div class="news-item-title">${item.text.length > 60 ? item.text.substring(0, 60) + '...' : item.text}</div>
+                                <div class="news-item-date">
+                                    <i class="far fa-clock"></i> ${new Date().toLocaleDateString('tr-TR')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+            } catch (error) {
+                console.error('Word okuma hatası:', error);
+                list.innerHTML = `
+                        <div class="news-item">
+                            <div class="news-item-content">
+                                <div class="news-item-title">Haber yok</div>
+                                <div class="news-item-desc">Daha sonra gelin</div>
+                                <div class="news-item-date">Hata: ${error.message}</div>
+                            </div>
+                        </div>
+                        <div class="news-item" onclick="loadNewsFromWord()">
+                            <div class="news-item-content">
+                                <div class="news-item-title">🔄 Tekrar dene</div>
+                                <div class="news-item-date">Tıkla</div>
+                            </div>
+                        </div>
+                    `;
+                badge.textContent = '!';
+            }
+        }
+
+        // ============ HABER PANELİ KONTROLÜ ============
+        const newsTrigger = document.getElementById('newsTrigger');
+        const newsPanel = document.getElementById('newsPanel');
+        const newsClose = document.getElementById('newsClose');
+
+        let newsLoaded = false;
+
+        newsTrigger.addEventListener('click', () => {
+            newsPanel.classList.toggle('active');
+            if (newsPanel.classList.contains('active') && !newsLoaded) {
+                loadNewsFromWord();
+                newsLoaded = true;
+            }
+        });
+
+        newsClose.addEventListener('click', () => {
+            newsPanel.classList.remove('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (newsPanel.classList.contains('active')) {
+                if (!newsPanel.contains(e.target) && !newsTrigger.contains(e.target)) {
+                    newsPanel.classList.remove('active');
+                }
+            }
+        });
+
+        // ============ BAŞLAT ============
         window.onload = () => {
             AOS.init({ duration: 800, once: true });
             updateUI('home');
+
+            // Haber sayısını göster (yüklenene kadar)
+            document.getElementById('newsBadge').textContent = '...';
         };
     </script>
 </body>
