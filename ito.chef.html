@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Şef Burak | Biografi & CV</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0b0b0b;
+            color: #f0ece6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ===== ARKA PLAN İTALYAN BAYRAĞI (OPAKLIĞI ARTIRILDI) ===== */
+        .flag-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/1280px-Flag_of_Italy.svg.png') no-repeat center center/cover;
+            opacity: 0.25; /* ARTIRILDI: 0.08 → 0.25 */
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== NAVBAR (SİYAH) ===== */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(10px);
+            padding: 0.9rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2.2rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #c9a84c;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        nav a {
+            color: #d4cdc0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: 0.8px;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav a i {
+            font-size: 1rem;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: #c9a84c;
+            color: #0b0b0b;
+            transform: scale(1.05);
+        }
+
+        /* ===== ANA KAPSAYICI ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* ===== BÖLÜM BAŞLIKLARI ===== */
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            border-bottom: 3px solid #c9a84c;
+            display: inline-block;
+            padding-bottom: 0.4rem;
+            margin-bottom: 2.8rem;
+            color: #f0ece6;
+        }
+
+        .section {
+            min-height: 70vh;
+            padding: 2rem 0;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ===== KİMLİK KARTI (ANASAYFA) ===== */
+        .identity-card {
+            display: flex;
+            flex-wrap: wrap;
+            background: rgba(15, 15, 15, 0.92);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            max-width: 980px;
+            margin: 2rem auto;
+            border: 1px solid rgba(201, 168, 76, 0.25);
+        }
+
+        .identity-card .card-left {
+            flex: 0 0 320px;
+            max-width: 320px;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.8rem;
+        }
+
+        .identity-card .card-left img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+            border: 3px solid #c9a84c;
+        }
+
+        .identity-card .card-right {
+            flex: 1;
+            padding: 2.8rem 3rem;
+            background: linear-gradient(145deg, #161616, #0e0e0e);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .identity-card .card-right h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #f0ece6;
+            margin-bottom: 0.2rem;
+            letter-spacing: 1px;
+        }
+
+        .identity-card .card-right .sub-title {
+            font-size: 1.15rem;
+            color: #c9a84c;
+            font-weight: 600;
+            margin-bottom: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .identity-card .card-right .info-line {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 0.5rem 0;
+            font-size: 1.05rem;
+            color: #d4cdc0;
+        }
+
+        .identity-card .card-right .info-line i {
+            width: 26px;
+            color: #c9a84c;
+            font-size: 1.2rem;
+        }
+
+        .btn-gold {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.9rem 2.6rem;
+            background: #c9a84c;
+            color: #0b0b0b;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 6px 24px rgba(201, 168, 76, 0.3);
+            cursor: pointer;
+            width: fit-content;
+        }
+
+        .btn-gold:hover {
+            background: #dbb95c;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(201, 168, 76, 0.45);
+        }
+
+        /* ===== HAKKIMDA ===== */
+        .about-text {
+            background: rgba(15, 15, 15, 0.92);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            font-size: 1.15rem;
+            max-width: 880px;
+            margin: 0 auto;
+            border-left: 6px solid #c9a84c;
+            line-height: 1.8;
+        }
+
+        .about-text p {
+            margin-bottom: 1.2rem;
+        }
+
+        .about-text strong {
+            color: #c9a84c;
+        }
+
+        /* ===== GEÇMİŞİM ===== */
+        .timeline {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            background: rgba(15, 15, 15, 0.92);
+            padding: 1.8rem 2.4rem;
+            margin-bottom: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+            border-left: 8px solid #c9a84c;
+            transition: transform 0.25s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+        }
+
+        .timeline-item .year {
+            font-weight: 700;
+            color: #c9a84c;
+            font-size: 1.3rem;
+        }
+
+        .timeline-item h3 {
+            font-size: 1.5rem;
+            margin: 0.3rem 0 0.2rem;
+            color: #f0ece6;
+        }
+
+        .timeline-item .place {
+            font-weight: 600;
+            color: #b8ae9c;
+        }
+
+        .timeline-item ul {
+            margin-top: 0.7rem;
+            padding-left: 1.5rem;
+            color: #d4cdc0;
+        }
+
+        .timeline-item ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* ===== CV SAYFASI ===== */
+        .cv-wrapper {
+            background: rgba(15, 15, 15, 0.94);
+            padding: 3rem;
+            border-radius: 28px;
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6);
+            max-width: 1050px;
+            margin: 0 auto;
+            border: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        .cv-wrapper h2 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #c9a84c;
+            padding-bottom: 0.4rem;
+            margin-bottom: 1.8rem;
+            color: #f0ece6;
+        }
+
+        .cv-grid {
+            display: grid;
+            grid-template-columns: 1fr 2.2fr;
+            gap: 2.5rem;
+        }
+
+        .cv-left .cv-photo {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 50%;
+            border: 4px solid #c9a84c;
+            margin-bottom: 1.2rem;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+
+        .cv-left h4 {
+            font-size: 1.15rem;
+            color: #c9a84c;
+            margin-top: 1.5rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.3rem;
+        }
+
+        .cv-left ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cv-left ul li {
+            margin: 0.6rem 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d4cdc0;
+        }
+
+        .cv-left ul li i {
+            width: 22px;
+            color: #c9a84c;
+        }
+
+        .cv-right .cv-item {
+            margin-bottom: 1.8rem;
+        }
+
+        .cv-right .cv-item h4 {
+            color: #c9a84c;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .cv-right .cv-item p,
+        .cv-right .cv-item ul {
+            color: #d4cdc0;
+        }
+
+        .cv-right .cv-item ul {
+            padding-left: 1.2rem;
+        }
+
+        .btn-download {
+            display: inline-block;
+            margin-top: 2.5rem;
+            padding: 0.9rem 2.8rem;
+            background: #c9a84c;
+            color: #0b0b0b;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1.05rem;
+            box-shadow: 0 6px 24px rgba(201, 168, 76, 0.25);
+            cursor: pointer;
+        }
+
+        .btn-download i {
+            margin-right: 10px;
+        }
+
+        .btn-download:hover {
+            background: #dbb95c;
+            transform: scale(1.03);
+        }
+
+        /* ===== İLETİŞİM ===== */
+        .contact-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            background: rgba(15, 15, 15, 0.92);
+            padding: 2rem 2.8rem;
+            border-radius: 60px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #f0ece6;
+        }
+
+        .contact-item i {
+            font-size: 2.2rem;
+            color: #c9a84c;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 50px rgba(201, 168, 76, 0.15);
+            border-color: #c9a84c;
+            background: #1a1a1a;
+        }
+
+        .contact-info-box {
+            text-align: center;
+            margin-top: 3rem;
+            background: rgba(15, 15, 15, 0.85);
+            padding: 1.8rem;
+            border-radius: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid rgba(201, 168, 76, 0.1);
+        }
+
+        .contact-info-box p {
+            margin: 0.5rem 0;
+            color: #d4cdc0;
+        }
+
+        .contact-info-box i {
+            color: #c9a84c;
+            width: 28px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            nav {
+                gap: 0.6rem;
+                padding: 0.6rem 0.8rem;
+            }
+            nav a {
+                font-size: 0.78rem;
+                padding: 0.2rem 0.5rem;
+            }
+            .identity-card .card-left {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 1.5rem;
+            }
+            .identity-card .card-right {
+                padding: 2rem 1.5rem;
+            }
+            .identity-card .card-right h1 {
+                font-size: 2.2rem;
+            }
+            .cv-grid {
+                grid-template-columns: 1fr;
+            }
+            .cv-wrapper {
+                padding: 1.5rem;
+            }
+            .contact-item {
+                padding: 1.2rem 1.8rem;
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .identity-card .card-right h1 {
+                font-size: 1.8rem;
+            }
+            .btn-gold {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* ===== YAZDIRMA ===== */
+        @media print {
+            nav,
+            .flag-bg,
+            .btn-gold,
+            .btn-download {
+                display: none !important;
+            }
+            .section {
+                display: block !important;
+                page-break-after: always;
+                min-height: auto;
+            }
+            .identity-card,
+            .cv-wrapper,
+            .about-text,
+            .timeline-item {
+                background: #fff !important;
+                color: #000 !important;
+                border-color: #999 !important;
+                box-shadow: none !important;
+            }
+            .identity-card .card-right h1,
+            .section-title,
+            .cv-wrapper h2 {
+                color: #000 !important;
+            }
+            .identity-card .card-right .sub-title,
+            .identity-card .card-right .info-line i,
+            .cv-left h4,
+            .cv-right .cv-item h4,
+            .timeline-item .year {
+                color: #b8860b !important;
+            }
+            body {
+                background: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ARKA PLAN İTALYAN BAYRAĞI (OPAKLIK ARTIRILDI) -->
+    <div class="flag-bg"></div>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="#" class="active" data-section="home"><i class="fas fa-home"></i> Anasayfa</a>
+        <a href="#" data-section="about"><i class="fas fa-user-chef"></i> Hakkımda</a>
+        <a href="#" data-section="history"><i class="fas fa-history"></i> Geçmişim</a>
+        <a href="#" data-section="cv"><i class="fas fa-file-alt"></i> CV</a>
+        <a href="#" data-section="contact"><i class="fas fa-envelope"></i> İletişim</a>
+    </nav>
+
+    <!-- ANA KAPSAYICI -->
+    <div class="container">
+
+        <!-- ===== ANA SAYFA ===== -->
+        <section id="home" class="section active">
+            <div class="identity-card">
+                <div class="card-left">
+                    <img src="https://img.freepik.com/free-photo/portrait-handsome-male-chef-with-arms-crossed-holding-wooden-spoon_23-2148154674.jpg" alt="Şef Burak" />
+                </div>
+                <div class="card-right">
+                    <h1>Burak</h1>
+                    <div class="sub-title">Executive Chef & Gastronom</div>
+                    <div class="info-line"><i class="fas fa-calendar-alt"></i> Doğum: 14 Mart 1985</div>
+                    <div class="info-line"><i class="fas fa-map-pin"></i> Napoli, İtalya</div>
+                    <div class="info-line"><i class="fas fa-utensils"></i> Ristorante del Mare, Amalfi</div>
+                    <div class="info-line"><i class="fas fa-star"></i> 2 Michelin Yıldızı</div>
+                    <a href="#history" class="btn-gold" data-section="history"><i class="fas fa-arrow-right"></i> Geçmişime Git</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== HAKKIMDA ===== -->
+        <section id="about" class="section">
+            <h2 class="section-title">Hakkımda</h2>
+            <div class="about-text">
+                <p><strong>Şefimiz</strong>, Napoli'de doğup büyümüş, Akdeniz mutfağının modern yorumcusu bir şeftir. 15 yaşında mutfaklarda çalışmaya başlayan Vitale, geleneksel İtalyan lezzetlerini çağdaş tekniklerle harmanlayarak benzersiz bir damak deneyimi sunmaktadır.</p>
+                <p>Amalfi kıyılarında yer alan Ristorante del Mare'nin Executive Chef'i olarak, taptaze deniz ürünleri ve yerel ürünlerle yarattığı menülerle 2 Michelin yıldızına layık görülmüştür.</p>
+                <p>Mutfak felsefesi: <em>"Malzemenin ruhuna saygı, sunumda sanat ve lezzette sadelik."</em> Aynı zamanda genç şeflere mentorluk yapmakta ve İtalyan gastronomisini dünyaya tanıtmak için uluslararası etkinliklerde yer almaktadır.</p>
+            </div>
+        </section>
+
+        <!-- ===== GEÇMİŞİM ===== -->
+        <section id="history" class="section">
+            <h2 class="section-title">Geçmişim</h2>
+            <div class="timeline">
+
+                <div class="timeline-item">
+                    <div class="year">2018 – Günümüz</div>
+                    <h3>Ristorante del Mare</h3>
+                    <div class="place">Amalfi, İtalya</div>
+                    <ul>
+                        <li>2 Michelin Yıldızı (2021, 2023)</li>
+                        <li>Gambero Rosso 3 Çatal ödülü</li>
+                        <li>İtalya'nın en iyi 10 restoranı arasında</li>
+                    </ul>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="year">2014 – 2018</div>
+                    <h3>La Terrazza</h3>
+                    <div class="place">Capri, İtalya</div>
+                    <ul>
+                        <li>Michelin Yıldızı kazandı (2016)</li>
+                        <li>Akdeniz fusion mutfağında öncü</li>
+                        <li>Yaratıcı sunum teknikleri geliştirdi</li>
+                    </ul>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="year">2010 – 2014</div>
+                    <h3>Il Pescatore</h3>
+                    <div class="place">Positano, İtalya</div>
+                    <ul>
+                        <li>Sous Chef olarak görev yaptı</li>
+                        <li>Yerel balıkçılarla doğrudan tedarik zinciri kurdu</li>
+                        <li>Restoranın 1. Michelin yıldızında pay sahibi</li>
+                    </ul>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="year">2008 – 2010</div>
+                    <h3>Le Cordon Bleu</h3>
+                    <div class="place">Paris, Fransa</div>
+                    <ul>
+                        <li>Gastronomi ve Mutfak Sanatları eğitimi</li>
+                        <li>Fransız teknikleri ile İtalyan mutfağını birleştirdi</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== CV ===== -->
+        <section id="cv" class="section">
+            <h2 class="section-title">CV</h2>
+            <div class="cv-wrapper">
+                <div class="cv-grid">
+                    <!-- CV SOL -->
+                    <div class="cv-left">
+                        <img src="https://img.freepik.com/free-photo/portrait-handsome-male-chef-with-arms-crossed-holding-wooden-spoon_23-2148154674.jpg" alt="Şef" class="cv-photo" />
+                        <h3 style="margin-top:0; color:#f0ece6;">Burak</h3>
+                        <p style="color:#b8ae9c;"><i class="fas fa-map-pin" style="color:#c9a84c;"></i> Amalfi, İtalya</p>
+                        <hr style="margin:1rem 0; border-color:#2a2a2a;" />
+
+                        <h4><i class="fas fa-phone"></i> İletişim</h4>
+                        <ul>
+                            <li><i class="fas fa-phone-alt"></i> NONE</li>
+                            <li><i class="fas fa-envelope"></i> xxx.gmail.com</li>
+                            <li><i class="fab fa-instagram"></i> NONE</li>
+                        </ul>
+
+                        <h4><i class="fas fa-award"></i> Uzmanlıklar</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> İtalyan Mutfağı</li>
+                            <li><i class="fas fa-check-circle"></i> Deniz Ürünleri</li>
+                            <li><i class="fas fa-check-circle"></i> Moleküler Gastronomi</li>
+                            <li><i class="fas fa-check-circle"></i> Menü Tasarımı</li>
+                        </ul>
+
+                        <h4><i class="fas fa-globe"></i> Diller</h4>
+                        <ul>
+                            <li><i class="fas fa-check"></i>🇮🇹 İtalyanca (Anadil)</li>
+                            <li><i class="fas fa-check"></i>🇬🇧 İngilizce (Akıcı)</li>
+                            <li><i class="fas fa-check"></i>🇫🇷 Fransızca (İleri)</li>
+                            <li><i class="fas fa-check"></i>🇪🇸 İspanyolca (Orta)</li>
+                        </ul>
+                    </div>
+
+                    <!-- CV SAĞ -->
+                    <div class="cv-right">
+                        <h2 style="border-bottom:2px solid #c9a84c; padding-bottom:0.3rem; color:#f0ece6;">ÖZGEÇMİŞ</h2>
+                        <p style="margin-bottom:1.8rem; color:#b8ae9c;"><strong style="color:#f0ece6;">Executive Chef</strong> · 20+ yıl deneyim</p>
+
+                        <div class="cv-item">
+                            <h4><i class="fas fa-briefcase"></i> Deneyim</h4>
+                            <p><strong style="color:#f0ece6;">Ristorante del Mare</strong> – Executive Chef (2018–günümüz)</p>
+                            <p style="color:#b8ae9c; font-size:0.95rem;">2 Michelin yıldızı, İtalya'nın en iyi deniz ürünleri restoranı</p>
+                            <p><strong style="color:#f0ece6;">La Terrazza</strong> – Baş Şef (2014–2018)</p>
+                            <p style="color:#b8ae9c; font-size:0.95rem;">Michelin yıldızı kazandı, Capri'nin gözde restoranı</p>
+                            <p><strong style="color:#f0ece6;">Il Pescatore</strong> – Sous Chef (2010–2014)</p>
+                        </div>
+
+                        <div class="cv-item">
+                            <h4><i class="fas fa-graduation-cap"></i> Eğitim</h4>
+                            <p><strong style="color:#f0ece6;">Le Cordon Bleu Paris</strong> – Gastronomi Diploması (2008–2010)</p>
+                            <p><strong style="color:#f0ece6;">Napoli Gastronomi Enstitüsü</strong> – Mutfak Sanatları (2003–2006)</p>
+                        </div>
+
+                        <div class="cv-item">
+                            <h4><i class="fas fa-trophy"></i> Başarılar</h4>
+                            <ul>
+                                <li>2 Michelin Yıldızı (2021, 2023)</li>
+                                <li>Gambero Rosso 3 Çatal (2022)</li>
+                                <li>İtalya Genç Şef Ödülü (2015)</li>
+                                <li>San Pellegrino Genç Yetenek (2017)</li>
+                            </ul>
+                        </div>
+
+                        <div class="cv-item">
+                            <h4><i class="fas fa-heart"></i> Sosyal Sorumluluk</h4>
+                            <p><strong style="color:#f0ece6;">Mare Nostrum</strong> – Kurucu (2019)</p>
+                            <p style="color:#b8ae9c;">Sürdürülebilir balıkçılık ve deniz koruma projeleri.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İNDİR BUTONU -->
+                <div style="text-align:center; margin-top:2.5rem;">
+                    <button class="btn-download" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> CV'yi İndir (PDF)</button>
+                    <p style="margin-top:0.6rem; font-size:0.85rem; color:#6a6a6a;">PDF olarak kaydetmek için "Yazdır" (Ctrl+P) → "Farklı kaydet" seçeneğini kullanın.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== İLETİŞİM ===== -->
+        <section id="contact" class="section">
+            <h2 class="section-title">İletişim</h2>
+            <div class="contact-cards">
+                <a href="https://wa.me" target="_blank" class="contact-item">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="https://instagram.com/burak_msz" target="_blank" class="contact-item">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+                <a href="https://mail.google.com/mail/u/0/?fs=1&to=burakbilec123@gmail.com&tf=cm" target="_blank" class="contact-item">
+                    <i class="fas fa-envelope"></i> E-posta
+                </a>
+            </div>
+            <div class="contact-info-box">
+                <p><i class="fas fa-phone-alt"></i> NONE</p>
+                <p><i class="fas fa-map-marker-alt"></i> İtalya</p>
+                <p><i class="fas fa-clock"></i> Pazartesi – Cumartesi</p>
+            </div>
+        </section>
+
+    </div><!-- /container -->
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            const navLinks = document.querySelectorAll('nav a[data-section]');
+            const sections = document.querySelectorAll('.section');
+            const btnHistory = document.querySelector('a.btn-gold[data-section="history"]');
+
+            function switchSection(sectionId) {
+                sections.forEach(sec => sec.classList.remove('active'));
+                const target = document.getElementById(sectionId);
+                if (target) target.classList.add('active');
+
+                navLinks.forEach(link => link.classList.remove('active'));
+                const activeLink = Array.from(navLinks).find(link => link.dataset.section === sectionId);
+                if (activeLink) activeLink.classList.add('active');
+
+                if (history.pushState) {
+                    history.pushState(null, null, '#' + sectionId);
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchSection(this.dataset.section);
+                });
+            });
+
+            if (btnHistory) {
+                btnHistory.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchSection('history');
+                });
+            }
+
+            window.addEventListener('load', function() {
+                const hash = window.location.hash.replace('#', '');
+                if (hash && document.getElementById(hash)) {
+                    switchSection(hash);
+                } else {
+                    switchSection('home');
+                }
+            });
+
+            window.addEventListener('hashchange', function() {
+                const hash = window.location.hash.replace('#', '');
+                if (hash && document.getElementById(hash)) {
+                    switchSection(hash);
+                }
+            });
+
+            document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+                window.print();
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
