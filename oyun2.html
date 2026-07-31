@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MSZ Girişim Simülatörü</title>
+  <title>MSZ Girişim Simülatörü 2.0</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -125,35 +125,87 @@
     .settings-menu.active { display: flex; }
     .hidden { display: none; }
     .crash-text { color: #ff4444; font-weight: bold; }
+    .positive { color: #00ff99; }
+    .negative { color: #ff4444; }
     small { font-size: 0.75rem; color: #aaa; }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      font-size: 0.8rem;
+    }
+    .quest-item {
+      background-color: #2a2a2a;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border-left: 3px solid #ffaa00;
+    }
+    .light-mode .quest-item {
+      background-color: #f5f5f5;
+    }
+    .sell-price {
+      color: #ffaa00;
+      font-weight: bold;
+    }
+    .owned-item-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .profit-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .profit-badge.positive {
+      background-color: #00ff9933;
+      color: #00ff99;
+    }
+    .profit-badge.negative {
+      background-color: #ff444433;
+      color: #ff4444;
+    }
   </style>
 </head>
-<body class="dark-mode">
+<body>
   <div id="game-info" class="section">
-    <h1>📈 MSZ Sim</h1>
+    <h1>📈 MSZ Sim 2.0</h1>
     <p><strong>Bakiye:</strong> <span id="money">5000</span> TL</p>
-    <p><strong>Zaman:</strong> <span id="time">1 / 1</span></p>
+    <p><strong>Toplam Varlık:</strong> <span id="total-wealth">5000</span> TL</p>
+    <p><strong>Zaman:</strong> <span id="time">Ocak 2026</span></p>
     <p><strong>İşlem:</strong> <span id="actions">6</span></p>
     <div id="debt-status" class="hidden">
       <p><strong>Borç:</strong> <span id="debt-amount">0</span> TL</p>
+      <p><strong>Kredi Notu:</strong> <span id="credit-score">1000</span></p>
       <button id="repay-debt-button" onclick="repayLoan()">💰 Borcu Kapat</button>
     </div>
     <button onclick="nextMonth()">⏭️ Ayı Geç</button>
-    <button id="debt-button" onclick="takeLoan()">💸 Borç Al (50k)</button>
+    <button id="debt-button" onclick="takeLoan()">💸 Borç Al</button>
     <button onclick="openSettings()">⚙️ Ayarlar</button>
+    <button onclick="showStats()">📊 İstatistikler</button>
   </div>
 
   <div id="game-menu" class="section">
     <button onclick="openMenu('phone')">📱 Telefon</button>
     <button onclick="openMenu('car')">🚗 Araba</button>
     <button onclick="openMenu('house')">🏠 Ev</button>
-    <button onclick="work()">💼 Çalış (+500 TL)</button>
+    <button onclick="openMenu('crypto')">₿ Kripto</button>
+    <button onclick="openMenu('business')">🏢 İş Kur</button>
+    <button onclick="work()">💼 Çalış (+5000 TL)</button>
+    <button onclick="showQuests()">🎯 Görevler</button>
   </div>
   
   <div id="settings-menu" class="settings-menu">
     <h3>Ayarlar</h3>
     <button onclick="setTheme('dark')">Koyu</button>
     <button onclick="setTheme('light')">Açık</button>
+    <button onclick="setDifficulty('easy')">Kolay</button>
+    <button onclick="setDifficulty('normal')">Normal</button>
+    <button onclick="setDifficulty('hard')">Zor</button>
     <button onclick="openSettings()">Kapat</button>
   </div>
 
@@ -169,14 +221,35 @@
   <div id="log"></div>
 
   <script>
+    // ============ OYUN DURUMU ============
     let money = 5000;
     let month = 1;
-    let year = 1;
+    let year = 2026;
     let actions = 6;
     let debt = 0;
+    let creditScore = 1000;
     let currentMenu = "";
+    let difficulty = "normal";
+    let totalEarned = 0;
+    let totalPaidTax = 0;
+    let totalRentIncome = 0;
     
-    let cars = [], phones = [], houses = [];
+    // Varlık listeleri
+    let cars = [], phones = [], houses = [], cryptos = [], businesses = [];
+    
+    // Kripto verileri
+    let cryptoData = [
+      { id: 101, name: "Bitcoin", price: 1500000, volatility: 0.15 },
+      { id: 102, name: "Ethereum", price: 80000, volatility: 0.12 },
+      { id: 103, name: "Solana", price: 15000, volatility: 0.20 }
+    ];
+    
+    // İşletme verileri
+    let businessData = [
+      { id: 201, name: "Kafe", cost: 300000, monthlyIncome: 25000, risk: 0.3 },
+      { id: 202, name: "E-Ticaret", cost: 150000, monthlyIncome: 15000, risk: 0.25 },
+      { id: 203, name: "Restoran", cost: 500000, monthlyIncome: 45000, risk: 0.35 }
+    ];
 
     const marketConfig = {
       phone: { min: 10000, max: 100000, items: [
@@ -195,7 +268,18 @@
 
     let marketData = { phone: [], car: [], house: [] };
     let crashCategory = null;
+    let inflationRate = 0.02;
+    
+    // Görevler
+    let quests = [
+      { id: 1, name: "İlk Milyon", desc: "Toplam varlığını 1.000.000 TL yap", target: 1000000, completed: false },
+      { id: 2, name: "Emlak Kralı", desc: "5 ev al", target: 5, completed: false },
+      { id: 3, name: "Kira Geliri", desc: "Aylık kira gelirini 50.000 TL yap", target: 50000, completed: false },
+      { id: 4, name: "Borçsuz Hayat", desc: "Hiç borç almadan 100.000 TL biriktir", target: 100000, completed: false },
+      { id: 5, name: "Girişimci", desc: "Bir işletme kur", target: 1, completed: false }
+    ];
 
+    // ============ BAŞLATMA ============
     function initMarket() {
       for (let cat in marketConfig) {
         marketData[cat] = marketConfig[cat].items.map(item => ({
@@ -206,10 +290,77 @@
       }
     }
 
+    // ============ ENFLASYON ============
+    function applyInflation() {
+      inflationRate = 0.01 + (Math.random() * 0.02);
+      
+      houses.forEach(h => {
+        if (h.currentRent > 0) {
+          h.currentRent = Math.floor(h.currentRent * (1 + inflationRate));
+        }
+      });
+    }
+
+    // ============ BEKLENMEDİK GİDERLER ============
+    function applyRandomExpense() {
+      if (Math.random() > 0.35) return;
+      
+      const expenses = [
+        { name: "Araba arızası", min: 500, max: 5000 },
+        { name: "Ev tadilatı", min: 1000, max: 10000 },
+        { name: "Telefon kırıldı", min: 2000, max: 8000 },
+        { name: "Hastalık masrafı", min: 1000, max: 6000 },
+        { name: "Deprem sigortası", min: 1500, max: 4000 }
+      ];
+      
+      const expense = expenses[Math.floor(Math.random() * expenses.length)];
+      let amount = Math.floor(Math.random() * (expense.max - expense.min) + expense.min);
+      
+      if (difficulty === "easy") amount = Math.floor(amount * 0.6);
+      else if (difficulty === "hard") amount = Math.floor(amount * 1.5);
+      
+      money -= amount;
+      log(`<span class="negative">⚠️ ${expense.name}: ${amount.toLocaleString()} TL harcandı.</span>`);
+    }
+
+    // ============ VERGİ SİSTEMİ ============
+    function calculateTax() {
+      if (month !== 12) return;
+      
+      let taxableIncome = Math.max(0, totalEarned - 50000);
+      let taxRate = 0.15;
+      
+      if (difficulty === "hard") taxRate = 0.25;
+      else if (difficulty === "easy") taxRate = 0.10;
+      
+      let tax = Math.floor(taxableIncome * taxRate);
+      if (tax > 0) {
+        money -= tax;
+        totalPaidTax += tax;
+        log(`<span class="negative">💰 ${tax.toLocaleString()} TL vergi ödendi. (${taxRate*100}%)</span>`);
+      }
+      totalEarned = 0;
+    }
+
+    // ============ KREDİ NOTU ============
+    function updateCreditScore() {
+      if (debt === 0) {
+        creditScore = Math.min(1000, creditScore + 10);
+      } else {
+        creditScore = Math.max(300, creditScore - 5);
+      }
+      
+      let debtRatio = debt / (money + 1);
+      if (debtRatio > 2) creditScore = Math.max(300, creditScore - 20);
+    }
+
+    // ============ FİYAT GÜNCELLEME ============
     function updatePrice(cat) {
       const config = marketConfig[cat];
       marketData[cat].forEach(item => {
         let changePercent = (Math.random() * 0.2) - 0.08;
+        changePercent += inflationRate;
+        
         let newPrice = item.price * (1 + changePercent);
         if (newPrice < config.min) newPrice = config.min + 2000;
         if (newPrice > config.max) newPrice = config.max - 2000;
@@ -217,15 +368,171 @@
       });
     }
 
+    // ============ KİRA RİSKİ ============
+    function applyRentRisk() {
+      houses.forEach(h => {
+        if (h.currentRent > 0 && Math.random() < 0.15) {
+          let lostRent = h.currentRent;
+          h.currentRent = 0;
+          log(`<span class="negative">🏠 ${h.model} kiracı ödemedi! ${lostRent.toLocaleString()} TL kaybedildi.</span>`);
+        }
+      });
+    }
+
+    // ============ KRİPTO GÜNCELLEME ============
+    function updateCrypto() {
+      cryptoData.forEach(c => {
+        let change = (Math.random() * 2 - 1) * c.volatility;
+        c.price = Math.floor(c.price * (1 + change));
+        if (c.price < 100) c.price = 100;
+      });
+    }
+
+    // ============ İŞLETME GÜNCELLEME ============
+    function updateBusinesses() {
+      businesses.forEach(b => {
+        let income = b.monthlyIncome;
+        let risk = Math.random();
+        
+        if (risk < b.risk) {
+          let loss = Math.floor(income * (0.1 + Math.random() * 0.3));
+          money -= loss;
+          log(`<span class="negative">🏢 ${b.name} zarar etti! ${loss.toLocaleString()} TL kaybedildi.</span>`);
+        } else {
+          let profit = Math.floor(income * (0.8 + Math.random() * 0.4));
+          money += profit;
+          totalEarned += profit;
+          log(`<span class="positive">🏢 ${b.name} ${profit.toLocaleString()} TL kazandı.</span>`);
+        }
+      });
+    }
+
+    // ============ SATIŞ FİYATI HESAPLAMA (KAR GARANTİLİ) ============
+    function calculateSellPrice(item, type) {
+      let basePrice;
+      let buyPrice = item.buyPrice || item.cost || 0;
+      
+      // Minimum %5, maksimum %10 kar garantisi
+      const minProfit = 0.05;
+      const maxProfit = 0.10;
+      const profitRate = minProfit + (Math.random() * (maxProfit - minProfit));
+      
+      if (type === 'crypto') {
+        basePrice = item.price;
+        // Kriptoda da kar garantisi
+        let calculatedPrice = Math.floor(basePrice * (1 + profitRate));
+        // Ama piyasa fiyatından çok sapmasın
+        let marketPrice = cryptoData.find(c => c.id === item.id).price;
+        let maxDeviation = 0.15;
+        let minPrice = Math.floor(marketPrice * (1 - maxDeviation));
+        let maxPrice = Math.floor(marketPrice * (1 + maxDeviation));
+        return Math.max(minPrice, Math.min(maxPrice, calculatedPrice));
+      }
+      
+      if (type === 'business') {
+        basePrice = item.cost;
+        // İşletmelerde de kar garantili
+        return Math.floor(basePrice * (1 + profitRate));
+      }
+      
+      // Telefon ve arabalar için amortisman + kar garantisi
+      if (type === 'phone' || type === 'car') {
+        let monthsPassed = Math.floor((year - 2026) * 12 + month - 1);
+        let depreciationRate = 0.01 * monthsPassed; // Her ay %1 değer kaybı (daha yumuşak)
+        depreciationRate = Math.min(0.3, depreciationRate); // Max %30 değer kaybı
+        
+        // Minimum karı da ekle
+        let baseWithDepreciation = buyPrice * (1 - depreciationRate);
+        let minPrice = buyPrice * (1 + minProfit);
+        let calculatedPrice = Math.floor(baseWithDepreciation * (1 + profitRate));
+        
+        // Hem kar garantisi hem de çok düşük olmaması için
+        return Math.max(minPrice, calculatedPrice);
+      }
+      
+      // Evler için değer artışı + kar garantisi
+      if (type === 'house') {
+        let monthsPassed = Math.floor((year - 2026) * 12 + month - 1);
+        let appreciationRate = 0.015 * monthsPassed; // Her ay %1.5 değer artışı
+        appreciationRate = Math.min(0.4, appreciationRate); // Max %40 değer artışı
+        
+        let calculatedPrice = Math.floor(buyPrice * (1 + appreciationRate) * (1 + profitRate));
+        let minPrice = buyPrice * (1 + minProfit);
+        
+        // En az %5 kar garantisi
+        return Math.max(minPrice, calculatedPrice);
+      }
+      
+      // Fallback - her zaman kar
+      return Math.floor(buyPrice * (1 + profitRate));
+    }
+
+    // ============ SATIŞ ============
+    function sellItem(type, index) {
+      if (actions <= 0) return log("❌ İşlem hakkın kalmadı!");
+      
+      let list = type === 'car' ? cars : type === 'phone' ? phones : 
+                 type === 'crypto' ? cryptos : type === 'business' ? businesses : houses;
+      let item = list[index];
+      
+      let sellPrice = calculateSellPrice(item, type);
+      
+      // Zorluk seviyesine göre satış fiyatı ayarla
+      if (difficulty === "hard") sellPrice = Math.floor(sellPrice * 0.9);
+      else if (difficulty === "easy") sellPrice = Math.floor(sellPrice * 1.1);
+      
+      // Vergi sadece yıllık olarak kesilecek, satışta vergi yok
+      // Ama toplam kazanca eklenir
+      let buyPrice = item.buyPrice || item.cost || 0;
+      let profit = sellPrice - buyPrice;
+      
+      money += sellPrice;
+      actions--;
+      totalEarned += profit; // Sadece karı toplam kazanca ekle
+      
+      list.splice(index, 1);
+      
+      let profitText = profit >= 0 ? `<span class="positive">+${profit.toLocaleString()} TL kar</span>` : 
+                                     `<span class="negative">${profit.toLocaleString()} TL zarar</span>`;
+      log(`🔻 ${item.name || item.model} ${sellPrice.toLocaleString()} TL'ye satıldı. (${profitText})`);
+      updateDisplay();
+      renderOwned();
+    }
+
+    // ============ KİRA BELİRLEME ============
+    function setRent(index) {
+      let house = houses[index];
+      let input = document.getElementById(`rent-house-${index}`);
+      let rentPrice = parseInt(input.value);
+
+      const maxRent = Math.floor(house.buyPrice * 0.01);
+
+      if (rentPrice > maxRent) {
+        return log(`⚠️ Kira çok yüksek! Max kira: ${maxRent.toLocaleString()} TL (Alış fiyatının %1'i).`);
+      }
+
+      house.currentRent = rentPrice;
+      log(`🏠 ${house.model} için aylık kira ${rentPrice.toLocaleString()} TL olarak belirlendi.`);
+      renderOwned();
+    }
+
+    // ============ AYI GEÇ ============
     function nextMonth() {
       month++;
-      if (month > 12) { month = 1; year++; }
+      if (month > 12) { 
+        month = 1; 
+        year++;
+        calculateTax();
+      }
       actions = 6;
 
-      // Sabit gider (Hayat pahalılığı)
-      money -= 8000;
+      applyInflation();
+      
+      let livingCost = 8000;
+      if (difficulty === "hard") livingCost = 12000;
+      else if (difficulty === "easy") livingCost = 5000;
+      money -= livingCost;
 
-      // Ev kiralarını topla
       let totalRent = 0;
       houses.forEach(h => {
         if (h.currentRent > 0) {
@@ -234,18 +541,27 @@
       });
       if (totalRent > 0) {
         money += totalRent;
+        totalEarned += totalRent;
+        totalRentIncome += totalRent;
         log(`🏠 Evlerden toplam ${totalRent.toLocaleString()} TL kira geliri aldın.`);
       }
 
-      // Otomatik Borç ödemesi (Her ay 5k)
+      applyRentRisk();
+
       if (debt > 0) {
         let payment = Math.min(debt, 5000);
+        let interest = Math.floor(payment * 0.2);
         debt -= payment;
-        money -= (payment + 1000); // 5k ana para + 1k faiz/masraf
-        log(`💸 Banka borç taksiti (${(payment + 1000).toLocaleString()} TL) ödendi. Kalan borç: ${debt.toLocaleString()} TL`);
+        money -= (payment + interest);
+        log(`💸 Banka borç taksiti (${(payment + interest).toLocaleString()} TL) ödendi. Kalan borç: ${debt.toLocaleString()} TL`);
+        updateCreditScore();
       }
 
+      applyRandomExpense();
+
       for (let cat in marketData) { updatePrice(cat); }
+      updateCrypto();
+      updateBusinesses();
 
       if (Math.random() > 0.75 && !crashCategory) {
         const categories = ['phone', 'car', 'house'];
@@ -256,18 +572,60 @@
         crashCategory = null;
       }
 
+      checkQuests();
       renderMarket();
       renderOwned();
       updateDisplay();
     }
 
+    // ============ ALIM ============
     function buyItem(id) {
-      if (actions <= 0) return log("İşlem hakkın kalmadı!");
-      let item = marketData[currentMenu].find(i => i.id === id);
-      if (money >= item.price) {
-        money -= item.price;
+      if (actions <= 0) return log("❌ İşlem hakkın kalmadı!");
+      
+      let item;
+      let price;
+      
+      if (currentMenu === 'crypto') {
+        item = cryptoData.find(c => c.id === id);
+        price = item.price;
+        if (money >= price) {
+          money -= price;
+          actions--;
+          let owned = { ...item, buyPrice: price, type: 'crypto' };
+          cryptos.push(owned);
+          log(`✅ ${item.name} satın alındı.`);
+          updateDisplay();
+          renderOwned();
+        } else {
+          log("❌ Paran yetmiyor!");
+        }
+        return;
+      }
+      
+      if (currentMenu === 'business') {
+        item = businessData.find(b => b.id === id);
+        price = item.cost;
+        if (money >= price) {
+          money -= price;
+          actions--;
+          let owned = { ...item, buyPrice: price, type: 'business' };
+          businesses.push(owned);
+          log(`✅ ${item.name} kuruldu!`);
+          updateDisplay();
+          renderOwned();
+        } else {
+          log("❌ Paran yetmiyor!");
+        }
+        return;
+      }
+      
+      item = marketData[currentMenu].find(i => i.id === id);
+      price = item.price;
+      
+      if (money >= price) {
+        money -= price;
         actions--;
-        let owned = { ...item, buyPrice: item.price, type: currentMenu, currentRent: 0 };
+        let owned = { ...item, buyPrice: price, type: currentMenu, currentRent: 0 };
         if (currentMenu === 'car') cars.push(owned);
         else if (currentMenu === 'phone') phones.push(owned);
         else houses.push(owned);
@@ -280,54 +638,176 @@
       }
     }
 
-    function sellItem(type, index) {
-      if (actions <= 0) return log("İşlem hakkın kalmadı!");
-      let list = type === 'car' ? cars : type === 'phone' ? phones : houses;
-      let item = list[index];
-      let input = document.getElementById(`sell-${type}-${index}`);
-      let sellPrice = parseInt(input.value);
-
-      const maxSellPrice = Math.floor(item.buyPrice * 1.5);
-
-      if (sellPrice > maxSellPrice) {
-        return log(`⚠️ Çok pahalı! Satış fiyatı max 1.5 kat (${maxSellPrice.toLocaleString()} TL) olabilir.`);
-      }
-
-      money += sellPrice;
-      actions--;
-      list.splice(index, 1);
-      log(`🔻 ${item.model} ${sellPrice.toLocaleString()} TL'ye satıldı.`);
-      updateDisplay();
-      renderOwned();
-    }
-
-    function setRent(index) {
-      let house = houses[index];
-      let input = document.getElementById(`rent-house-${index}`);
-      let rentPrice = parseInt(input.value);
-
-      const maxRent = Math.floor(house.buyPrice * 0.01); // %1 kuralı
-
-      if (rentPrice > maxRent) {
-        return log(`⚠️ Kira çok yüksek! Max kira: ${maxRent.toLocaleString()} TL (Alış fiyatının %1'i).`);
-      }
-
-      house.currentRent = rentPrice;
-      log(`🏠 ${house.model} için aylık kira ${rentPrice.toLocaleString()} TL olarak belirlendi.`);
-      renderOwned();
-    }
-
+    // ============ ÇALIŞMA ============
     function work() {
-      if (actions <= 0) return log("İşlem hakkın kalmadı!");
-      money += 500;
+      if (actions <= 0) return log("❌ İşlem hakkın kalmadı!");
+      
+      let salary = 5000;
+      salary = Math.floor(salary * (1 + inflationRate));
+      if (difficulty === "hard") salary = Math.floor(salary * 0.8);
+      else if (difficulty === "easy") salary = Math.floor(salary * 1.2);
+      
+      money += salary;
+      totalEarned += salary;
       actions--;
-      log("💼 İşte çalışarak 500 TL kazandın.");
+      log(`💼 İşte çalışarak ${salary.toLocaleString()} TL kazandın.`);
       updateDisplay();
     }
 
+    // ============ KREDİ/BORÇ ============
+    function takeLoan() {
+      if (debt > 0) {
+        log("❌ Zaten borcun var! Önce borcunu kapat.");
+        return;
+      }
+      
+      let maxLoan = 50000;
+      if (creditScore > 700) maxLoan = 100000;
+      if (creditScore > 900) maxLoan = 200000;
+      
+      debt = maxLoan;
+      money += maxLoan;
+      updateCreditScore();
+      updateDisplay();
+      log(`💸 ${maxLoan.toLocaleString()} TL borç alındı. Her ay 5k + faiz ödenecek.`);
+    }
+
+    function repayLoan() {
+      if (money >= debt) {
+        money -= debt;
+        log(`💰 ${debt.toLocaleString()} TL ödenerek borç tamamen kapatıldı.`);
+        debt = 0;
+        updateCreditScore();
+        updateDisplay();
+      } else {
+        log("❌ Borcu kapatmak için yeterli bakiyen yok!");
+      }
+    }
+
+    // ============ GÖREVLER ============
+    function checkQuests() {
+      let totalWealth = money + calculateAssetValue();
+      
+      quests.forEach(q => {
+        if (q.completed) return;
+        
+        switch(q.id) {
+          case 1:
+            if (totalWealth >= q.target) {
+              q.completed = true;
+              log(`🎉 GÖREV TAMAMLANDI: ${q.name}!`);
+              money += 50000;
+            }
+            break;
+          case 2:
+            if (houses.length >= q.target) {
+              q.completed = true;
+              log(`🎉 GÖREV TAMAMLANDI: ${q.name}!`);
+            }
+            break;
+          case 3:
+            let monthlyRent = houses.reduce((sum, h) => sum + h.currentRent, 0);
+            if (monthlyRent >= q.target) {
+              q.completed = true;
+              log(`🎉 GÖREV TAMAMLANDI: ${q.name}!`);
+            }
+            break;
+          case 4:
+            if (debt === 0 && money >= q.target) {
+              q.completed = true;
+              log(`🎉 GÖREV TAMAMLANDI: ${q.name}!`);
+            }
+            break;
+          case 5:
+            if (businesses.length >= q.target) {
+              q.completed = true;
+              log(`🎉 GÖREV TAMAMLANDI: ${q.name}!`);
+            }
+            break;
+        }
+      });
+    }
+
+    function showQuests() {
+      let html = '<h3>🎯 Görevler</h3>';
+      quests.forEach(q => {
+        html += `<div class="quest-item">
+          <strong>${q.name}</strong> ${q.completed ? '✅' : '⏳'}<br>
+          <small>${q.desc}</small>
+        </div>`;
+      });
+      document.getElementById("marketSection").innerHTML = html;
+    }
+
+    // ============ İSTATİSTİKLER ============
+    function showStats() {
+      let totalWealth = money + calculateAssetValue();
+      let monthlyRent = houses.reduce((sum, h) => sum + h.currentRent, 0);
+      
+      let html = `
+        <h3>📊 İstatistikler</h3>
+        <div class="stat-grid">
+          <div><strong>Toplam Varlık:</strong> ${totalWealth.toLocaleString()} TL</div>
+          <div><strong>Nakit:</strong> ${money.toLocaleString()} TL</div>
+          <div><strong>Toplam Kazanç:</strong> ${totalEarned.toLocaleString()} TL</div>
+          <div><strong>Ödenen Vergi:</strong> ${totalPaidTax.toLocaleString()} TL</div>
+          <div><strong>Aylık Kira:</strong> ${monthlyRent.toLocaleString()} TL</div>
+          <div><strong>Toplam Kira Geliri:</strong> ${totalRentIncome.toLocaleString()} TL</div>
+          <div><strong>Kredi Notu:</strong> ${creditScore}</div>
+          <div><strong>Borç:</strong> ${debt.toLocaleString()} TL</div>
+          <div><strong>Varlık Sayısı:</strong> ${phones.length + cars.length + houses.length + cryptos.length + businesses.length}</div>
+        </div>
+      `;
+      document.getElementById("marketSection").innerHTML = html;
+    }
+
+    // ============ VARLIK DEĞERİ ============
+    function calculateAssetValue() {
+      let total = 0;
+      
+      phones.forEach(p => total += p.buyPrice);
+      cars.forEach(c => total += c.buyPrice);
+      houses.forEach(h => total += h.buyPrice);
+      cryptos.forEach(c => total += c.price);
+      businesses.forEach(b => total += b.cost);
+      
+      return total;
+    }
+
+    // ============ ARAYÜZ ============
     function renderMarket() {
       const container = document.getElementById("marketSection");
       if (!currentMenu) return;
+      
+      if (currentMenu === 'crypto') {
+        container.innerHTML = `<h3>₿ Kripto Piyasası</h3>`;
+        cryptoData.forEach(item => {
+          container.innerHTML += `
+            <div class="market-item">
+              <strong>${item.name}</strong><br>
+              Fiyat: ${item.price.toLocaleString()} TL<br>
+              <small>Volatilite: %${(item.volatility * 100).toFixed(0)}</small><br>
+              <button onclick="buyItem(${item.id})">Satın Al</button>
+            </div>`;
+        });
+        return;
+      }
+      
+      if (currentMenu === 'business') {
+        container.innerHTML = `<h3>🏢 İş Kur</h3>`;
+        businessData.forEach(item => {
+          container.innerHTML += `
+            <div class="market-item">
+              <strong>${item.name}</strong><br>
+              Kurulum: ${item.cost.toLocaleString()} TL<br>
+              Aylık Gelir: ${item.monthlyIncome.toLocaleString()} TL<br>
+              <small>Risk: %${(item.risk * 100).toFixed(0)}</small><br>
+              <button onclick="buyItem(${item.id})">Kur</button>
+            </div>`;
+        });
+        return;
+      }
+      
       container.innerHTML = `<h3>${currentMenu.toUpperCase()} Pazarı</h3>`;
       marketData[currentMenu].forEach(item => {
         container.innerHTML += `
@@ -343,80 +823,119 @@
       const container = document.getElementById("ownedItems");
       container.innerHTML = "";
       
-      const renderList = (list, type) => {
+      const renderList = (list, type, label) => {
+        if (list.length === 0) return;
+        
+        container.innerHTML += `<h4>${label}</h4>`;
         list.forEach((item, i) => {
+          let sellPrice = calculateSellPrice(item, type);
+          let buyPrice = item.buyPrice || item.cost || 0;
+          
+          // Zorluk seviyesine göre satış fiyatı
+          let displayPrice = sellPrice;
+          if (difficulty === "hard") displayPrice = Math.floor(sellPrice * 0.9);
+          else if (difficulty === "easy") displayPrice = Math.floor(sellPrice * 1.1);
+          
+          let profit = displayPrice - buyPrice;
+          let profitPercent = ((profit / buyPrice) * 100).toFixed(1);
+          
+          let profitClass = profit >= 0 ? 'positive' : 'negative';
+          let profitText = profit >= 0 ? `+${profit.toLocaleString()} TL (%${profitPercent})` : 
+                                          `${profit.toLocaleString()} TL (%${profitPercent})`;
+          
           let extraHtml = "";
           if (type === 'house') {
+            let maxRent = Math.floor(item.buyPrice * 0.01);
             extraHtml = `
-              <small>Kira (Max %1): ${Math.floor(item.buyPrice * 0.01).toLocaleString()} TL</small>
+              <small>Kira (Max %1): ${maxRent.toLocaleString()} TL</small>
               <input type="number" id="rent-house-${i}" value="${item.currentRent || 0}">
               <button onclick="setRent(${i})">Kira Belirle</button>
             `;
           }
+          
           container.innerHTML += `
             <div class="owned-item">
-              <strong>${item.model}</strong><br>
-              <small>Alış: ${item.buyPrice.toLocaleString()} TL | Max Satış: ${Math.floor(item.buyPrice * 1.5).toLocaleString()} TL</small>
+              <strong>${item.name || item.model}</strong><br>
+              <small>Alış: ${buyPrice.toLocaleString()} TL</small><br>
+              <span class="sell-price">💰 Satış: ${displayPrice.toLocaleString()} TL</span>
+              <span class="profit-badge ${profitClass}">${profitText}</span><br>
               ${extraHtml}
-              <input type="number" id="sell-${type}-${i}" value="${Math.floor(item.buyPrice * 1.1)}">
-              <button onclick="sellItem('${type}', ${i})">Sat</button>
+              <div class="owned-item-actions">
+                <button onclick="sellItem('${type}', ${i})" ${actions <= 0 ? 'disabled' : ''}>
+                  🏷️ Hemen Sat
+                </button>
+              </div>
             </div>`;
         });
       };
 
-      renderList(phones, 'phone');
-      renderList(cars, 'car');
-      renderList(houses, 'house');
+      renderList(phones, 'phone', '📱 Telefonlar');
+      renderList(cars, 'car', '🚗 Arabalar');
+      renderList(houses, 'house', '🏠 Evler');
+      renderList(cryptos, 'crypto', '₿ Kripto');
+      renderList(businesses, 'business', '🏢 İşletmeler');
     }
 
     function updateDisplay() {
       document.getElementById("money").innerText = money.toLocaleString();
-      document.getElementById("time").innerText = `${month} / ${year}`;
+      document.getElementById("total-wealth").innerText = (money + calculateAssetValue()).toLocaleString();
+      
+      const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 
+                      'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+      document.getElementById("time").innerText = `${months[month-1]} ${year}`;
       document.getElementById("actions").innerText = actions;
+      
       const d = document.getElementById("debt-status");
       const db = document.getElementById("debt-button");
       
       if (debt > 0) {
         d.classList.remove("hidden");
         document.getElementById("debt-amount").innerText = debt.toLocaleString();
+        document.getElementById("credit-score").innerText = creditScore;
         db.disabled = true;
       } else {
         d.classList.add("hidden");
         db.disabled = false;
+        if (creditScore < 1000) {
+          creditScore = Math.min(1000, creditScore + 5);
+        }
       }
     }
 
     function log(msg) {
       const l = document.getElementById("log");
       l.innerHTML = `<p>> ${msg}</p>` + l.innerHTML;
+      if (l.children.length > 50) {
+        l.removeChild(l.lastChild);
+      }
     }
 
-    function openMenu(m) { currentMenu = m; renderMarket(); }
-    function setTheme(t) { document.body.className = t + '-mode'; }
-    function openSettings() { document.getElementById("settings-menu").classList.toggle("active"); }
+    // ============ MENÜLER ============
+    function openMenu(m) { 
+      currentMenu = m; 
+      renderMarket(); 
+    }
     
-    function takeLoan() { 
-      if(debt === 0){
-        debt = 50000; 
-        money += 50000; 
-        updateDisplay(); 
-        log("💸 50.000 TL borç alındı. Her ay 5k ödenecek.");
-      }
+    function setTheme(t) { 
+      document.body.className = t + '-mode'; 
+    }
+    
+    function openSettings() { 
+      document.getElementById("settings-menu").classList.toggle("active"); 
+    }
+    
+    function setDifficulty(d) {
+      difficulty = d;
+      log(`⚙️ Zorluk seviyesi: ${d.toUpperCase()}`);
+      openSettings();
     }
 
-    function repayLoan() { 
-      if(money >= debt) {
-        money -= debt; 
-        log(`💰 ${debt.toLocaleString()} TL ödenerek borç tamamen kapatıldı.`);
-        debt = 0; 
-        updateDisplay(); 
-      } else {
-        log("❌ Borcu kapatmak için yeterli bakiyen yok!");
-      }
-    }
-
+    // ============ BAŞLAT ============
     initMarket();
     updateDisplay();
+    log("🚀 MSZ Girişim Simülatörü 2.0 başlatıldı!");
+    log("💡 Artık HER SATIŞTA minimum %5 kar garantisi!");
+    log("💰 Satış fiyatı: %5-%10 arası kar ile otomatik belirlenir.");
   </script>
 </body>
 </html>
