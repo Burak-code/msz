@@ -6,18 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSZ</title>
 
-    <!-- Fonts & Icons -->
-    <script src="https://cdn.tailwindcss.com">
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <!-- Word dosyası okumak için mammoth.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js">
-    </script>
 
     <script>
         tailwind.config = {
@@ -26,10 +18,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: {
-                            light: '#3b82f6',
-                            dark: '#60a5fa',
-                        },
+                        primary: { light: '#3b82f6', dark: '#60a5fa' },
                         glass: 'rgba(255, 255, 255, 0.1)',
                         darkbg: '#050505'
                     }
@@ -39,17 +28,16 @@
     </script>
 
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             transition: background-color 0.5s ease, color 0.5s ease;
             overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-
         .bg-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
             background-image: url('bgopaks.png');
             background-size: cover;
@@ -57,7 +45,6 @@
             opacity: 0.12;
             pointer-events: none;
         }
-
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
@@ -65,29 +52,18 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .dark .glass-card {
             background: rgba(20, 20, 20, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .neon-logo {
             text-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6;
             animation: pulse 2s infinite ease-in-out;
         }
-
         @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.8;
-                transform: scale(0.98);
-            }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
         }
-
         .nav-link {
             position: relative;
             cursor: pointer;
@@ -102,49 +78,13 @@
             background: #3b82f6;
             transition: width 0.3s ease;
         }
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
+        .nav-link:hover::after { width: 100%; }
         #mobile-menu {
             transition: transform 0.3s ease-in-out;
         }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 10px;
-        }
-
-        .btn-glow {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-glow::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            transform: scale(0.5);
-        }
-        .btn-glow:hover::before {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .btn-glow:active {
-            transform: scale(0.95);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
 
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6, #6366f1);
@@ -164,32 +104,9 @@
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
         }
-        .btn-primary:active {
-            transform: scale(0.96);
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: inherit;
-            padding: 12px 28px;
-            border-radius: 100px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-        }
-        .btn-secondary:active {
-            transform: scale(0.96);
-        }
+        .btn-primary:active { transform: scale(0.96); }
 
-        /* Haber Bileşeni - Sol Alt */
+        /* ============ HABER BİLEŞENİ ============ */
         .news-popup {
             position: fixed;
             bottom: 30px;
@@ -197,21 +114,12 @@
             z-index: 999;
             animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
-
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
         .news-trigger {
-            width: 70px;
-            height: 70px;
+            width: 70px; height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
@@ -227,9 +135,7 @@
             transform: scale(1.1) rotate(5deg);
             box-shadow: 0 12px 40px rgba(59, 130, 246, 0.6);
         }
-        .news-trigger:active {
-            transform: scale(0.9);
-        }
+        .news-trigger:active { transform: scale(0.9); }
         .news-trigger i {
             font-size: 28px;
             color: white;
@@ -237,14 +143,12 @@
         }
         .news-badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -5px; right: -5px;
             background: #ef4444;
             color: white;
             font-size: 10px;
             font-weight: bold;
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -252,7 +156,6 @@
             border: 2px solid white;
             box-shadow: 0 2px 10px rgba(239, 68, 68, 0.5);
         }
-
         .news-panel {
             position: fixed;
             bottom: 110px;
@@ -290,9 +193,6 @@
             font-weight: bold;
             flex-shrink: 0;
         }
-        .news-panel-header i {
-            font-size: 18px;
-        }
         .news-close {
             cursor: pointer;
             opacity: 0.7;
@@ -301,10 +201,7 @@
             border-radius: 8px;
             background: rgba(255,255,255,0.1);
         }
-        .news-close:hover {
-            opacity: 1;
-            background: rgba(255,255,255,0.2);
-        }
+        .news-close:hover { opacity: 1; background: rgba(255,255,255,0.2); }
         .news-list {
             padding: 12px 16px 16px 16px;
             max-height: 340px;
@@ -322,29 +219,21 @@
             gap: 12px;
             align-items: flex-start;
         }
-        .dark .news-item {
-            background: rgba(255,255,255,0.03);
-        }
+        .dark .news-item { background: rgba(255,255,255,0.03); }
         .news-item:hover {
             background: rgba(59, 130, 246, 0.08);
             border-left-color: #3b82f6;
             transform: translateX(4px);
         }
         .news-item-img {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border-radius: 10px;
             object-fit: cover;
             flex-shrink: 0;
             background: #e5e7eb;
         }
-        .dark .news-item-img {
-            background: #374151;
-        }
-        .news-item-content {
-            flex: 1;
-            min-width: 0;
-        }
+        .dark .news-item-img { background: #374151; }
+        .news-item-content { flex: 1; min-width: 0; }
         .news-item-title {
             font-weight: 600;
             font-size: 14px;
@@ -373,35 +262,6 @@
             padding: 30px 0;
             opacity: 0.5;
         }
-
-        /* Word'den gelen resimler için */
-        .news-item-img.word-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        /* Tıklama Ripple */
-        .click-ripple {
-            position: fixed;
-            border-radius: 50%;
-            background: rgba(59, 130, 246, 0.3);
-            transform: scale(0);
-            animation: rippleAnim 0.6s ease-out forwards;
-            pointer-events: none;
-            z-index: 9999;
-        }
-        @keyframes rippleAnim {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* Yükleniyor animasyonu */
         .loading-spinner {
             display: flex;
             flex-direction: column;
@@ -413,13 +273,138 @@
             font-size: 30px;
             color: #3b82f6;
         }
+        .click-ripple {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out forwards;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        @keyframes rippleAnim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* ============ HABER DETAY MODAL ============ */
+        .news-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: modalFade 0.3s ease;
+        }
+        .news-modal.active {
+            display: flex;
+        }
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .news-modal-content {
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+        .dark .news-modal-content {
+            background: rgba(20,20,20,0.98);
+            border-color: rgba(255,255,255,0.05);
+        }
+        .news-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            color: inherit;
+        }
+        .news-modal-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        .news-modal-img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        .news-modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .news-modal-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+        .news-modal-date {
+            font-size: 13px;
+            opacity: 0.4;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .news-modal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .news-modal-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+        .news-modal-link i {
+            font-size: 14px;
+        }
+        .news-modal-link.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100">
 
     <div class="bg-overlay"></div>
 
-    <!-- Tıklama Sesi (Web Audio API) -->
     <script>
         function playClickSound() {
             try {
@@ -436,7 +421,6 @@
                 oscillator.stop(audioCtx.currentTime + 0.1);
             } catch(e) {}
         }
-
         function createRipple(e) {
             const ripple = document.createElement('div');
             ripple.className = 'click-ripple';
@@ -448,22 +432,16 @@
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 600);
         }
-
         document.addEventListener('click', function(e) {
-            const target = e.target.closest('button, .nav-link, .news-trigger, .news-close, .news-item, a, [onclick], .btn-primary, .btn-secondary');
-            if (target) {
-                playClickSound();
-                createRipple(e);
-            }
+            const target = e.target.closest('button, .nav-link, .news-trigger, .news-close, .news-item, a, [onclick], .btn-primary, .news-modal-close');
+            if (target) { playClickSound(); createRipple(e); }
         });
     </script>
 
+    <!-- HEADER -->
     <header class="fixed top-0 w-full z-50 glass-card">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">
-                MSZ
-            </h1>
-
+            <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">MSZ</h1>
             <nav class="hidden md:flex space-x-8 font-semibold">
                 <span class="nav-link" onclick="updateUI('html')">HTML</span>
                 <span class="nav-link" onclick="updateUI('home')">Ana Sayfa</span>
@@ -472,14 +450,8 @@
                 <span class="nav-link" onclick="updateUI('portfolio')">Portfolyo</span>
                 <span class="nav-link" onclick="updateUI('contact')">İletişim</span>
             </nav>
-
-            <button id="menu-btn" class="md:hidden text-2xl focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <div class="text-sm opacity-50 hidden md:block">
-                Burak
-            </div>
+            <button id="menu-btn" class="md:hidden text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
+            <div class="text-sm opacity-50 hidden md:block">Burak</div>
         </div>
     </header>
 
@@ -493,9 +465,7 @@
         <span onclick="toggleMenu(); updateUI('contact')">İletişim</span>
     </div>
 
-    <main id="app-content" class="pt-32 pb-20 px-6 max-w-6xl mx-auto min-h-screen">
-        <!-- JS enjeksiyon alanı -->
-    </main>
+    <main id="app-content" class="pt-32 pb-20 px-6 max-w-6xl mx-auto min-h-screen"></main>
 
     <footer class="py-10 text-center glass-card border-t dark:border-gray-800">
         <p class="opacity-70">&copy; 2025 Burak. Tüm Hakları Saklıdır.</p>
@@ -506,11 +476,11 @@
         </div>
     </footer>
 
-    <!-- ============ HABER BİLEŞENİ (SOL ALT) ============ -->
+    <!-- ============ HABER BİLEŞENİ ============ -->
     <div class="news-popup">
-        <div class="news-trigger" id="newsTrigger" title="Haberler">
+        <div class="news-trigger" id="newsTrigger">
             <i class="fas fa-newspaper"></i>
-            <span class="news-badge" id="newsBadge">...</span>
+            <span class="news-badge" id="newsBadge">0</span>
         </div>
     </div>
 
@@ -522,339 +492,256 @@
         <div class="news-list" id="newsList">
             <div class="loading-spinner">
                 <i class="fas fa-spinner fa-spin"></i>
-                <span>Word belgesi okunuyor...</span>
+                <span>Haberler yükleniyor...</span>
             </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js">
-    </script>
+    <!-- ============ HABER DETAY MODAL ============ -->
+    <div class="news-modal" id="newsModal">
+        <div class="news-modal-content">
+            <button class="news-modal-close" onclick="modalKapat()">&times;</button>
+            <img class="news-modal-img" id="modalImg" src="" alt="Haber görseli">
+            <div class="news-modal-title" id="modalTitle">Başlık</div>
+            <div class="news-modal-desc" id="modalDesc">Açıklama</div>
+            <div class="news-modal-date" id="modalDate">
+                <i class="far fa-clock"></i> <span id="modalDateText">Tarih</span>
+            </div>
+            <div class="modal-buttons">
+                <a class="news-modal-link" id="modalLink" href="#" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Detayları Gör
+                </a>
+                <button class="btn-primary" onclick="modalKapat()" style="padding:12px 24px;">
+                    <i class="fas fa-times"></i> Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
+        // ============ HABER VERİLERİ (HTML İÇİNE GÖMÜLÜ) ============
+        const haberler = [
+            {
+                id: 1,
+                baslik: "Web Sitemiz Gelişiyor❤️‍🔥",
+                ozet: "Web sitemiz herşeye rağmen hala gelişmekte. Eğer önerileriniz varsa instagram adresimden yazabilirsiniz. Sizlerden gelen geri bildirimler bizim için çok değerli!",
+                tarih: "2026-08-02",
+                link: "https://www.instagram.com/burak_msz/",
+                resim: "favicon.png"
+            },
+        ];
+
         // ============ SAYFA İÇERİKLERİ ============
         const pages = {
             home: `
-                    <div class="text-center py-20" data-aos="zoom-out">
-                        <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-                            Merhaba, ben <span class="text-blue-600 dark:text-blue-400">Burak</span>.
-                        </h2>
-                        <p class="text-xl md:text-2xl opacity-80 max-w-2xl mx-auto mb-10">
-                            Geleceği kodlayan bir teknoloji tutkunu. Web geliştirme, oyun tasarımı ve dijital dünyanın her köşesindeyim.
-                        </p>
-                        <button onclick="updateUI('experiences')" class="btn-primary">
-                            Projelere Göz At <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                `,
+                <div class="text-center py-20" data-aos="zoom-out">
+                    <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">Merhaba, ben <span class="text-blue-600 dark:text-blue-400">Burak</span>.</h2>
+                    <p class="text-xl md:text-2xl opacity-80 max-w-2xl mx-auto mb-10">Geleceği kodlayan bir teknoloji tutkunu. Web geliştirme, oyun tasarımı ve dijital dünyanın her köşesindeyim.</p>
+                    <button onclick="updateUI('experiences')" class="btn-primary">Projelere Göz At <i class="fas fa-arrow-right"></i></button>
+                </div>
+            `,
             about: `
-                    <div class="glass-card rounded-3xl p-8 md:p-12" data-aos="fade-up">
-                        <h2 class="text-4xl font-bold mb-8 flex items-center"><i class="fas fa-user-astronaut mr-4 text-blue-500"></i> Hakkımda</h2>
-                        <div class="grid md:grid-cols-2 gap-10 text-lg leading-relaxed opacity-90">
-                            <div>
-                                <p class="mb-4">Kodlama dünyasına adım atmış, kendini sürekli geliştiren bir geliştiriciyim. İngilizcem B1-B2 seviyesinde ve teknik dökümanları rahatlıkla tarayabiliyorum.</p>
-                                <p>Oyun yapımından müzik prodüksiyonuna, YouTube içeriklerinden web tasarıma kadar birçok alanda aktifim.</p>
-                            </div>
-                            <div class="bg-blue-500/10 rounded-2xl p-6 border border-blue-500/20">
-                                <h3 class="font-bold text-xl mb-4 text-blue-600 dark:text-blue-400">MSZ Vizyonu</h3>
-                                <p>Her şeyden önce sarsılmaz bir disiplin gerekir. MSZ, dünyanın en iyi tasarımlarını ve teknolojilerini üretmek için kurduğum bir vizyondur.</p>
-                            </div>
+                <div class="glass-card rounded-3xl p-8 md:p-12" data-aos="fade-up">
+                    <h2 class="text-4xl font-bold mb-8 flex items-center"><i class="fas fa-user-astronaut mr-4 text-blue-500"></i> Hakkımda</h2>
+                    <div class="grid md:grid-cols-2 gap-10 text-lg leading-relaxed opacity-90">
+                        <div>
+                            <p class="mb-4">Kodlama dünyasına adım atmış, kendini sürekli geliştiren bir geliştiriciyim. İngilizcem B1-B2 seviyesinde ve teknik dökümanları rahatlıkla tarayabiliyorum.</p>
+                            <p>Oyun yapımından müzik prodüksiyonuna, YouTube içeriklerinden web tasarıma kadar birçok alanda aktifim.</p>
+                        </div>
+                        <div class="bg-blue-500/10 rounded-2xl p-6 border border-blue-500/20">
+                            <h3 class="font-bold text-xl mb-4 text-blue-600 dark:text-blue-400">MSZ Vizyonu</h3>
+                            <p>Her şeyden önce sarsılmaz bir disiplin gerekir. MSZ, dünyanın en iyi tasarımlarını ve teknolojilerini üretmek için kurduğum bir vizyondur.</p>
                         </div>
                     </div>
-                `,
+                </div>
+            `,
             experiences: `
-                    <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">Dijital Deneyimler</h2>
-                    <div class="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        ${[
-                            {title: "MSZ AI", desc: "Ücretsiz ve güncel yapay zeka botu.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
-                            {title: "Stumble Boys", desc: "HTML tabanlı, akıcı platform oyunu.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
-                            {title: "Bayrak Tahmin Et", desc: "Rank sistemli coğrafya oyunu.", link: "oyun1.html", icon: "fa-flag"},
-                            {title: "MSZ Trade", desc: "Ekonomi odaklı strateji simülasyonu.", link: "oyun2.html", icon: "fa-chart-line"},
-                            {title: "Üniversite Planı", desc: "Öğrenciler için dijital asistan.", link: "oyun3.html", icon: "fa-university"},
-                            {title: "Skor Oyunu", desc: "Mouse testi ve hız odaklı mini oyun.", link: "plazma.html", icon: "fa-bolt"},
-                            {title: "Team-Menager", desc: "Milli futbol takımını yöneterek dünya kupası yolculuğu.", link: "team-menager.html", icon: "fa-chart-line"},
-                            {title: "Game Studio", desc: "Geleceğin oyun stüdyosunun temelleri.", link: "#", disabled: true, icon: "fa-rocket"}
-                        ].map(p => `
-                                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
-                                    <i class="fas ${p.icon} text-4xl text-blue-500 mb-4 opacity-80 group-hover:scale-110 transition-transform"></i>
-                                    <h3 class="text-2xl font-bold mb-3">${p.title}</h3>
-                                    <p class="opacity-70 mb-6 text-sm">${p.desc}</p>
-                                    <a href="${p.link}" class="inline-flex items-center font-bold text-blue-500 hover:text-blue-700 ${p.disabled ? 'opacity-50 cursor-not-allowed' : ''}" ${p.disabled ? 'onclick="return false"' : 'target="_blank"'}>
-                                        ${p.disabled ? 'Çok Yakında' : 'İncele <i class="fas fa-arrow-right ml-2"></i>'}
-                                    </a>
-                                </div>
-                            `).join('')}
-                    </div>
-                `,
+                <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">Dijital Deneyimler</h2>
+                <div class="grid md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${[
+                        {title: "MSZ AI", desc: "Ücretsiz ve güncel yapay zeka botu.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
+                        {title: "Stumble Boys", desc: "HTML tabanlı, akıcı platform oyunu.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
+                        {title: "Bayrak Tahmin Et", desc: "Rank sistemli coğrafya oyunu.", link: "oyun1.html", icon: "fa-flag"},
+                        {title: "MSZ Trade", desc: "Ekonomi odaklı strateji simülasyonu.", link: "oyun2.html", icon: "fa-chart-line"},
+                        {title: "Üniversite Planı", desc: "Öğrenciler için dijital asistan.", link: "oyun3.html", icon: "fa-university"},
+                        {title: "Skor Oyunu", desc: "Mouse testi ve hız odaklı mini oyun.", link: "plazma.html", icon: "fa-bolt"},
+                        {title: "Team-Menager", desc: "Milli futbol takımını yöneterek dünya kupası yolculuğu.", link: "team-menager.html", icon: "fa-chart-line"},
+                        {title: "Game Studio", desc: "Geleceğin oyun stüdyosunun temelleri.", link: "#", disabled: true, icon: "fa-rocket"}
+                    ].map(p => `
+                        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group" data-aos="fade-up">
+                            <i class="fas ${p.icon} text-4xl text-blue-500 mb-4 opacity-80 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="text-2xl font-bold mb-3">${p.title}</h3>
+                            <p class="opacity-70 mb-6 text-sm">${p.desc}</p>
+                            <a href="${p.link}" class="inline-flex items-center font-bold text-blue-500 hover:text-blue-700 ${p.disabled ? 'opacity-50 cursor-not-allowed' : ''}" ${p.disabled ? 'onclick="return false"' : 'target="_blank"'}">${p.disabled ? 'Çok Yakında' : 'İncele <i class="fas fa-arrow-right ml-2"></i>'}</a>
+                        </div>
+                    `).join('')}
+                </div>
+            `,
             portfolio: `
-                    <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">MSZ Gelecek Hedefleri</h2>
-                    <div class="space-y-8">
-                        <div class="glass-card p-8 rounded-3xl border-l-8 border-blue-600" data-aos="fade-left">
-                            <h3 class="text-2xl font-bold mb-3">Realistic Game</h3>
-                            <p class="opacity-80">Dünyayı birebir dijital ortama aktarmak. Bir oyun değil, tam teşekküllü bir yaşam simülasyonu hedefi.</p>
-                        </div>
-                        <div class="glass-card p-8 rounded-3xl border-l-8 border-purple-500" data-aos="fade-right">
-                            <h3 class="text-2xl font-bold mb-3">BİG BANG</h3>
-                            <p class="opacity-80">İnsanlık tarihinin icatlarını analiz edip, geleceği kurtaracak fikirler üretmeyi hedefleyen inovasyon merkezi.</p>
-                        </div>
+                <h2 class="text-4xl font-bold mb-10 text-center" data-aos="fade-down">MSZ Gelecek Hedefleri</h2>
+                <div class="space-y-8">
+                    <div class="glass-card p-8 rounded-3xl border-l-8 border-blue-600" data-aos="fade-left">
+                        <h3 class="text-2xl font-bold mb-3">Realistic Game</h3>
+                        <p class="opacity-80">Dünyayı birebir dijital ortama aktarmak. Bir oyun değil, tam teşekküllü bir yaşam simülasyonu hedefi.</p>
                     </div>
-                `,
+                    <div class="glass-card p-8 rounded-3xl border-l-8 border-purple-500" data-aos="fade-right">
+                        <h3 class="text-2xl font-bold mb-3">BİG BANG</h3>
+                        <p class="opacity-80">İnsanlık tarihinin icatlarını analiz edip, geleceği kurtaracak fikirler üretmeyi hedefleyen inovasyon merkezi.</p>
+                    </div>
+                </div>
+            `,
             contact: `
-                    <div class="max-w-3xl mx-auto glass-card p-10 rounded-3xl text-center" data-aos="zoom-in">
-                        <h2 class="text-4xl font-bold mb-8">Bağlantı Kur</h2>
-                        <p class="mb-10 opacity-70">Projeleriniz veya tanışmak için bana ulaşın.</p>
-                        <div class="grid gap-6 text-left">
-                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                                <div class="flex items-center"><i class="fas fa-envelope text-red-400 mr-4 text-2xl"></i> <span>Gmail</span></div>
-                                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            </a>
-                            <a href="https://instagram.com/burak_msz/" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                                <div class="flex items-center"><i class="fab fa-instagram text-pink-500 mr-4 text-2xl"></i> <span>@burak_msz</span></div>
-                                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            </a>
-                            <a href="https://youtube.com/@msz-burak" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
-                                <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-4 text-2xl"></i> <span>MSZ Burak</span></div>
-                                <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            </a>
-                        </div>
+                <div class="max-w-3xl mx-auto glass-card p-10 rounded-3xl text-center" data-aos="zoom-in">
+                    <h2 class="text-4xl font-bold mb-8">Bağlantı Kur</h2>
+                    <p class="mb-10 opacity-70">Projeleriniz veya tanışmak için bana ulaşın.</p>
+                    <div class="grid gap-6 text-left">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
+                            <div class="flex items-center"><i class="fas fa-envelope text-red-400 mr-4 text-2xl"></i> <span>Gmail</span></div>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
+                        <a href="https://instagram.com/burak_msz/" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
+                            <div class="flex items-center"><i class="fab fa-instagram text-pink-500 mr-4 text-2xl"></i> <span>@burak_msz</span></div>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
+                        <a href="https://youtube.com/@msz-burak" target="_blank" class="flex items-center justify-between p-6 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
+                            <div class="flex items-center"><i class="fab fa-youtube text-red-600 mr-4 text-2xl"></i> <span>MSZ Burak</span></div>
+                            <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
                     </div>
-                `,
+                </div>
+            `,
             html: `
-                    <div class="space-y-10">
-                        <div class="text-center" data-aos="fade-down">
-                            <h2 class="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
-                                <i class="fab fa-html5 text-orange-500"></i> HTML Demoları
-                            </h2>
-                            <p class="text-lg md:text-xl opacity-80 max-w-2xl mx-auto leading-relaxed">
-                                Selam burada yapmış olduğum html demoları görebilirsiniz. Sizin için uyarlayarak web sitenizi yapabilirim.
-                            </p>
-                        </div>
-
-                        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                            ${[
-                                {title: "CV", file: "ito.chef.html", img: "https://st2.depositphotos.com/1967477/8956/v/450/depositphotos_89562614-stock-illustration-cartoon-funny-italian-chef-cartoon.jpg", icon: "fa-utensils"},
-                                {title: "Restoran", file: "restoran.html", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&crop=center", icon: "fa-utensils"},
-                                {title: "Berber", file: "berber.html", img: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&crop=center", icon: "fa-cut"},
-                                {title: "Spor", file: "spor.html", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop&crop=center", icon: "fa-dumbbell"},
-                                {title: "Emlakçı", file: "emlak.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center", icon: "fa-building"},
-                                {title: "Fotoğrafçı", file: "fotoğrafçı.html", img: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&h=400&fit=crop&crop=center", icon: "fa-camera"}
-                            ].map((item, index) => `
-                                    <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10" data-aos="fade-up" data-aos-delay="${index * 80}">
-                                        <div class="relative overflow-hidden h-48">
-                                            <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                            <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-bold text-white flex items-center gap-1.5">
-                                                <i class="fas ${item.icon}"></i> ${item.title}
-                                            </div>
-                                        </div>
-                                        <div class="p-5 flex items-center justify-between">
-                                            <div>
-                                                <h3 class="text-xl font-bold">${item.title}</h3>
-                                                <p class="text-sm opacity-60">HTML demosu</p>
-                                            </div>
-                                            <a href="${item.file}" target="_blank" class="btn-primary text-sm py-2 px-5">
-                                                İncele <i class="fas fa-arrow-right text-xs"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                        </div>
-
-                        <div class="text-center pt-6 opacity-60 text-sm" data-aos="fade-up">
-                            <i class="fas fa-external-link-alt mr-1"></i> Tıkladığınızda yeni sekmede açılır.
-                        </div>
+                <div class="space-y-10">
+                    <div class="text-center" data-aos="fade-down">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3"><i class="fab fa-html5 text-orange-500"></i> HTML Demoları</h2>
+                        <p class="text-lg md:text-xl opacity-80 max-w-2xl mx-auto leading-relaxed">Selam burada yapmış olduğum html demoları görebilirsiniz. Sizin için uyarlayarak web sitenizi yapabilirim.</p>
                     </div>
-                `
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        ${[
+                            {title: "CV", file: "ito.chef.html", img: "https://st2.depositphotos.com/1967477/8956/v/450/depositphotos_89562614-stock-illustration-cartoon-funny-italian-chef-cartoon.jpg", icon: "fa-utensils"},
+                            {title: "Restoran", file: "restoran.html", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&crop=center", icon: "fa-utensils"},
+                            {title: "Berber", file: "berber.html", img: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&crop=center", icon: "fa-cut"},
+                            {title: "Spor", file: "spor.html", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop&crop=center", icon: "fa-dumbbell"},
+                            {title: "Emlakçı", file: "emlak.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center", icon: "fa-building"},
+                            {title: "Fotoğrafçı", file: "fotoğrafçı.html", img: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&h=400&fit=crop&crop=center", icon: "fa-camera"}
+                        ].map((item, index) => `
+                            <div class="glass-card rounded-2xl overflow-hidden group transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10" data-aos="fade-up" data-aos-delay="${index * 80}">
+                                <div class="relative overflow-hidden h-48">
+                                    <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-bold text-white flex items-center gap-1.5"><i class="fas ${item.icon}"></i> ${item.title}</div>
+                                </div>
+                                <div class="p-5 flex items-center justify-between">
+                                    <div><h3 class="text-xl font-bold">${item.title}</h3><p class="text-sm opacity-60">HTML demosu</p></div>
+                                    <a href="${item.file}" target="_blank" class="btn-primary text-sm py-2 px-5">İncele <i class="fas fa-arrow-right text-xs"></i></a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="text-center pt-6 opacity-60 text-sm" data-aos="fade-up"><i class="fas fa-external-link-alt mr-1"></i> Tıkladığınızda yeni sekmede açılır.</div>
+                </div>
+            `
         };
 
         const updateUI = (page) => {
-            const main = document.getElementById('app-content');
-            main.innerHTML = pages[page] || pages.home;
+            document.getElementById('app-content').innerHTML = pages[page] || pages.home;
             AOS.refresh();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         const toggleMenu = () => {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('translate-x-full');
+            document.getElementById('mobile-menu').classList.toggle('translate-x-full');
         };
 
         document.getElementById('menu-btn').addEventListener('click', toggleMenu);
         document.getElementById('close-menu').addEventListener('click', toggleMenu);
-
         document.getElementById('logo-theme-toggle').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
         });
 
-        // ============ WORD BELGESİNDEN HABER OKUMA ============
-        async function loadNewsFromWord() {
+        // ============ MODAL FONKSİYONLARI ============
+        function modalAc(haber) {
+            const modal = document.getElementById('newsModal');
+            document.getElementById('modalImg').src = haber.resim || 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
+            document.getElementById('modalImg').alt = haber.baslik;
+            document.getElementById('modalTitle').textContent = haber.baslik;
+            document.getElementById('modalDesc').textContent = haber.ozet;
+            document.getElementById('modalDateText').textContent = new Date(haber.tarih).toLocaleDateString('tr-TR') + ' ' + new Date(haber.tarih).toLocaleTimeString('tr-TR');
+            
+            const linkBtn = document.getElementById('modalLink');
+            if (haber.link && haber.link !== '#' && haber.link !== 'https://...') {
+                linkBtn.href = haber.link;
+                linkBtn.classList.remove('disabled');
+                linkBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> Detayları Gör';
+            } else {
+                linkBtn.href = '#';
+                linkBtn.classList.add('disabled');
+                linkBtn.innerHTML = '<i class="fas fa-link"></i> Link Yok';
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function modalKapat() {
+            const modal = document.getElementById('newsModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Modal dışına tıklayınca kapat
+        document.getElementById('newsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                modalKapat();
+            }
+        });
+
+        // ESC tuşu ile kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                modalKapat();
+            }
+        });
+
+        // ============ HABERLERİ GÖSTER ============
+        function haberleriGoster() {
             const list = document.getElementById('newsList');
             const badge = document.getElementById('newsBadge');
-
-            try {
-                // haber.docx dosyasını fetch ile al
-                const response = await fetch('haber.docx');
-                if (!response.ok) throw new Error('NOT PAGES RECOGNİZED');
-
-                const arrayBuffer = await response.arrayBuffer();
-
-                // mammoth ile oku
-                const result = await mammoth.convertToHtml({
-                    arrayBuffer: arrayBuffer,
-                    convertImage: mammoth.images.imgElement((image) => {
-                        // Resimleri base64'e çevir
-                        return image.read("base64").then((imageBuffer) => {
-                            return {
-                                src: "data:" + image.contentType + ";base64," + imageBuffer
-                            };
-                        });
-                    })
-                });
-
-                const htmlContent = result.value;
-
-                // HTML içeriğini parse et
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(htmlContent, 'text/html');
-
-                // Resimleri ve metinleri topla
-                let items = [];
-                const body = doc.body;
-
-                // Paragrafları ve resimleri sırayla al
-                const children = body.children;
-                let currentText = '';
-                let currentImg = null;
-
-                for (let i = 0; i < children.length; i++) {
-                    const el = children[i];
-
-                    if (el.tagName === 'P') {
-                        const text = el.textContent.trim();
-                        if (text.length > 0) {
-                            // Önceki resim varsa onunla birleştir
-                            if (currentImg) {
-                                items.push({
-                                    text: text,
-                                    img: currentImg
-                                });
-                                currentImg = null;
-                            } else {
-                                // Sadece metin
-                                items.push({
-                                    text: text,
-                                    img: null
-                                });
-                            }
-                        }
-                    } else if (el.tagName === 'IMG') {
-                        const src = el.getAttribute('src');
-                        if (src && src.startsWith('data:image')) {
-                            currentImg = src;
-                        }
-                    } else if (el.tagName === 'FIGURE') {
-                        // Figure içindeki img'i bul
-                        const img = el.querySelector('img');
-                        if (img) {
-                            const src = img.getAttribute('src');
-                            if (src && src.startsWith('data:image')) {
-                                currentImg = src;
-                            }
-                        }
-                        // Figure içindeki figcaption veya metin
-                        const caption = el.querySelector('figcaption');
-                        if (caption) {
-                            const text = caption.textContent.trim();
-                            if (text.length > 0) {
-                                items.push({
-                                    text: text,
-                                    img: currentImg || null
-                                });
-                                currentImg = null;
-                            }
-                        }
-                    }
-                }
-
-                // Eğer hiç öğe yoksa, düz metin olarak al
-                if (items.length === 0) {
-                    const allText = body.textContent.trim();
-                    if (allText.length > 0) {
-                        // Paragraflara böl
-                        const paragraphs = allText.split(/\n\s*\n/).filter(p => p.trim().length > 0);
-                        items = paragraphs.map(p => ({
-                            text: p.trim(),
-                            img: null
-                        }));
-                    }
-                }
-
-                // Word'den resim çıkarma işlemi
-                // Eğer resim varsa ve metin yoksa, resmi göster
-                const finalItems = [];
-                let tempImg = null;
-
-                for (const item of items) {
-                    if (item.img && !item.text) {
-                        // Sadece resim varsa
-                        finalItems.push({
-                            text: '📷 Görsel',
-                            img: item.img
-                        });
-                    } else if (item.img && item.text) {
-                        finalItems.push(item);
-                    } else if (item.text) {
-                        finalItems.push(item);
-                    }
-                }
-
-                // Hiç haber yoksa örnek ver
-                if (finalItems.length === 0) {
-                    finalItems.push({
-                        text: 'Word belgesinden haber okunamadı. Örnek haber gösteriliyor.',
-                        img: null
-                    });
-                    finalItems.push({
-                        text: 'haber.docx dosyasını kontrol edin.',
-                        img: null
-                    });
-                }
-
-                // Maksimum 8 haber göster
-                const displayItems = finalItems.slice(0, 8);
-                badge.textContent = displayItems.length;
-
-                // Haberleri listele
-                list.innerHTML = displayItems.map((item, i) => `
-                        <div class="news-item" onclick="alert('${item.text.replace(/'/g, "\\'")}')">
-                            ${item.img ? `<img src="${item.img}" class="news-item-img word-image" alt="Haber görseli">` : ''}
-                            <div class="news-item-content">
-                                <div class="news-item-title">${item.text.length > 60 ? item.text.substring(0, 60) + '...' : item.text}</div>
-                                <div class="news-item-date">
-                                    <i class="far fa-clock"></i> ${new Date().toLocaleDateString('tr-TR')}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-
-            } catch (error) {
-                console.error('Word okuma hatası:', error);
+            
+            if (!haberler || haberler.length === 0) {
                 list.innerHTML = `
-                        <div class="news-item">
-                            <div class="news-item-content">
-                                <div class="news-item-title">Haber yok</div>
-                                <div class="news-item-desc">Daha sonra gelin</div>
-                                <div class="news-item-date">Hata: ${error.message}</div>
-                            </div>
-                        </div>
-                        <div class="news-item" onclick="loadNewsFromWord()">
-                            <div class="news-item-content">
-                                <div class="news-item-title">🔄 Tekrar dene</div>
-                                <div class="news-item-date">Tıkla</div>
-                            </div>
-                        </div>
-                    `;
-                badge.textContent = '!';
+                    <div class="news-empty">
+                        <i class="fas fa-newspaper text-4xl mb-3 opacity-30"></i>
+                        <p>Henüz haber yok.</p>
+                    </div>
+                `;
+                badge.textContent = '0';
+                return;
             }
+
+            const sirali = [...haberler].sort((a, b) => new Date(b.tarih) - new Date(a.tarih));
+            const gosterilecek = sirali.slice(0, 8);
+            
+            badge.textContent = haberler.length;
+
+            list.innerHTML = gosterilecek.map((haber, index) => {
+                const imgSrc = haber.resim && haber.resim !== '' ? haber.resim : 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
+                
+                return `
+                    <div class="news-item" onclick="modalAc(haberler.find(h => h.id === ${haber.id}))">
+                        <img src="${imgSrc}" class="news-item-img" alt="Haber görseli" onerror="this.src='https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ'">
+                        <div class="news-item-content">
+                            <div class="news-item-title">${haber.baslik || 'Başlıksız'}</div>
+                            <div class="news-item-desc">${haber.ozet || 'Özet yok'}</div>
+                            <div class="news-item-date">
+                                <i class="far fa-clock"></i> ${haber.tarih ? new Date(haber.tarih).toLocaleDateString('tr-TR') : 'Tarih yok'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // ============ HABER PANELİ KONTROLÜ ============
@@ -862,13 +749,10 @@
         const newsPanel = document.getElementById('newsPanel');
         const newsClose = document.getElementById('newsClose');
 
-        let newsLoaded = false;
-
         newsTrigger.addEventListener('click', () => {
             newsPanel.classList.toggle('active');
-            if (newsPanel.classList.contains('active') && !newsLoaded) {
-                loadNewsFromWord();
-                newsLoaded = true;
+            if (newsPanel.classList.contains('active')) {
+                haberleriGoster();
             }
         });
 
@@ -888,9 +772,9 @@
         window.onload = () => {
             AOS.init({ duration: 800, once: true });
             updateUI('home');
-
-            // Haber sayısını göster (yüklenene kadar)
-            document.getElementById('newsBadge').textContent = '...';
+            
+            document.getElementById('newsBadge').textContent = haberler.length;
+            haberleriGoster();
         };
     </script>
 </body>
