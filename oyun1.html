@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bayrak Tahmin Oyunu</title>
+  <title>FlaQuiz</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -62,7 +62,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     #logo {
       font-family: 'Inter', sans-serif;
@@ -153,6 +153,9 @@
       box-sizing: border-box;
       width: 100%;
     }
+    #difficulty {
+      padding: 20px;
+    }
     #difficulty h1, #difficulty h2 {
       margin-bottom: 15px;
     }
@@ -170,6 +173,46 @@
     #difficulty button:hover {
       background-color: #005f99;
       transform: translateY(-2px);
+    }
+    .settings-box {
+      background: var(--card-bg-light);
+      padding: 20px 30px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 300px;
+      max-width: 90%;
+    }
+    .dark-mode .settings-box {
+      background: var(--card-bg-dark);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .settings-box label {
+      display: block;
+      margin: 10px 0 5px 0;
+      font-weight: bold;
+    }
+    .settings-box select, .settings-box input[type="range"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color-light);
+      background: var(--bg-color-light);
+      color: var(--text-color-light);
+    }
+    .dark-mode .settings-box select, .dark-mode .settings-box input[type="range"] {
+      background: var(--bg-color-dark);
+      border-color: var(--border-color-dark);
+      color: var(--text-color-dark);
+    }
+    .settings-box .theme-toggle-start {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
+    .settings-box .theme-toggle-start label {
+      margin: 0;
     }
     #flag {
       width: 320px;
@@ -363,6 +406,31 @@
     .exit-btn:hover {
       background-color: #c00028;
     }
+    #credit {
+      font-size: 14px;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(255, 7, 58, 0.1);
+      border-radius: 8px;
+      border: 1px solid var(--neon-red);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      color: var(--text-color-light);
+    }
+    .dark-mode #credit {
+      color: var(--text-color-dark);
+      background: rgba(255, 7, 58, 0.2);
+    }
+    #credit:hover {
+      background: rgba(255, 7, 58, 0.2);
+      transform: scale(1.02);
+    }
+    #credit a {
+      color: var(--neon-red);
+      text-decoration: none;
+    }
 
     @media (max-width: 768px) {
       #main-container {
@@ -413,24 +481,51 @@
         margin-top: 20px;
         justify-content: center;
       }
+      .settings-box {
+        width: 100%;
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
 
 <div id="difficulty">
-  <h1>Bayrak Tahmin Oyunu</h1>
+  <h1>Flaquiz V2</h1>
   <h2 id="difficulty-title">Seviye Seçin:</h2>
   <button id="easy-btn" onclick="startGame('easy')">Kolay</button>
   <button id="normal-btn" onclick="startGame('normal')">Normal</button>
   <button id="hard-btn" onclick="startGame('hard')">Zor</button>
   <button id="insane-btn" onclick="startGame('insane')">Efsane</button>
+  
+  <div class="settings-box">
+    <div class="theme-toggle-start">
+      <label id="theme-label-start">🌙 Tema:</label>
+      <label class="theme-switch">
+        <input type="checkbox" id="theme-toggle-start">
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <label for="lang-select-start">🌐 Dil:</label>
+    <select id="lang-select-start" onchange="setLanguage(this.value)">
+      <option value="tr">🇹🇷 Türkçe</option>
+      <option value="en">🇬🇧 English</option>
+    </select>
+    
+    <label for="delay-slider-start">⏱️ Geçiş Süresi: <span id="delay-value-start">1.0</span>s</label>
+    <input type="range" id="delay-slider-start" min="0.1" max="2" value="1" step="0.1">
+  </div>
+
+  <div id="credit" onclick="window.open('https://burak-code.github.io/msz/', '_blank')">
+    ✨ burak_msz tarafından geliştirildi v2 ✨
+  </div>
 </div>
 
 <div id="main-container" style="display: none;">
   <div id="sidebar">
     <div id="sidebar-top">
-      <div id="logo">MSZ</div>
+      <div id="logo">Flaquiz</div>
       <label class="switch-container">
         <span id="theme-text">Aydınlık</span>
         <label class="theme-switch">
@@ -456,12 +551,15 @@
       <input type="range" id="delay-slider" min="0.1" max="2" value="1" step="0.1">
     </div>
     <button id="exit-btn" class="exit-btn" onclick="exitGame()"></button>
+    <div id="credit" onclick="window.open('https://burak-code.github.io/msz/', '_blank')">
+      ✨ burak_msz tarafından geliştirildi v2 ✨
+    </div>
   </div>
 
   <div id="game">
     <div id="topbar">
       <div id="game-title-container">
-        <h1 id="game-title">Bayrak Tahmin Oyunu</h1>
+        <h1 id="game-title">Flaquiz V2</h1>
       </div>
     </div>
     <img id="flag" src="" alt="Bayrak">
@@ -484,7 +582,6 @@
 </div>
 
 <script>
-  // Bayrak verilerini hem Türkçe hem de İngilizce isimlerle güncelledim.
   const flags = [
     { country_tr: "Filistin", country_en: "Palestine", img: "https://flagcdn.com/w320/ps.png" },
     { country_tr: "Türkiye", country_en: "Türkiye", img: "https://flagcdn.com/w320/tr.png" },
@@ -534,7 +631,7 @@
 
   const translations = {
     tr: {
-      title: "Bayrak Tahmin Oyunu",
+      title: "Flaquiz V2",
       difficultyTitle: "Seviye Seçin:",
       easy: "Kolay",
       normal: "Normal",
@@ -560,9 +657,11 @@
       darkTheme: "Karanlık",
       exit: "Çıkış",
       delay: "Geçiş Süresi:",
+      credit: "✨ burak_msz tarafından geliştirildi v2 ✨",
+      theme: "🌙 Tema:"
     },
     en: {
-      title: "Flag Guessing Game",
+      title: "Flaquiz V2",
       difficultyTitle: "Select Difficulty:",
       easy: "Easy",
       normal: "Normal",
@@ -588,6 +687,8 @@
       darkTheme: "Dark",
       exit: "Exit",
       delay: "Transition Delay:",
+      credit: "✨ developed by burak_msz v2 ✨",
+      theme: "🌙 Theme:"
     }
   };
 
@@ -601,11 +702,15 @@
   function setLanguage(lang) {
     currentLang = lang;
     const t = translations[currentLang];
+    
     document.getElementById("difficulty-title").textContent = t.difficultyTitle;
     document.getElementById("easy-btn").textContent = t.easy;
     document.getElementById("normal-btn").textContent = t.normal;
     document.getElementById("hard-btn").textContent = t.hard;
     document.getElementById("insane-btn").textContent = t.insane;
+    document.querySelector("#difficulty h1").textContent = t.title;
+    document.getElementById("theme-label-start").textContent = t.theme;
+    
     document.getElementById("rank-label").textContent = t.rank;
     document.getElementById("score-label").textContent = t.score;
     document.getElementById("timer-label").textContent = t.timer;
@@ -617,24 +722,59 @@
     document.getElementById("rank-500").textContent = t.rank500;
     document.getElementById("rank-1000").textContent = t.rank1000;
     document.getElementById("game-title").textContent = t.title;
-    document.getElementById("theme-text").textContent = document.body.classList.contains('dark-mode') ? t.darkTheme : t.lightTheme;
     document.getElementById("exit-btn").textContent = t.exit;
     document.getElementById("delay-label").textContent = `${t.delay} ${answerDelay.toFixed(1)}s`;
+    
+    // Credit yazısını güncelle
+    document.querySelectorAll('#credit').forEach(el => {
+      el.textContent = t.credit;
+    });
+    
+    document.getElementById("lang-select-start").value = lang;
     updateCategory();
+    updateThemeText();
   }
 
-  const themeToggle = document.getElementById('theme-toggle');
-  themeToggle.addEventListener('change', function() {
-    document.body.classList.toggle('dark-mode');
+  function updateThemeText() {
     const t = translations[currentLang];
-    document.getElementById("theme-text").textContent = this.checked ? t.darkTheme : t.lightTheme;
+    const isDark = document.body.classList.contains('dark-mode');
+    document.getElementById("theme-text").textContent = isDark ? t.darkTheme : t.lightTheme;
+    document.getElementById("theme-toggle-start").checked = isDark;
+    document.getElementById("theme-toggle").checked = isDark;
+  }
+
+  // Tema toggle - Başlangıç sayfası
+  document.getElementById('theme-toggle-start').addEventListener('change', function() {
+    document.body.classList.toggle('dark-mode', this.checked);
+    document.getElementById('theme-toggle').checked = this.checked;
+    updateThemeText();
+  });
+
+  // Tema toggle - Oyun içi
+  document.getElementById('theme-toggle').addEventListener('change', function() {
+    document.body.classList.toggle('dark-mode', this.checked);
+    document.getElementById('theme-toggle-start').checked = this.checked;
+    updateThemeText();
+  });
+
+  const delaySliderStart = document.getElementById('delay-slider-start');
+  delaySliderStart.addEventListener('input', function() {
+    answerDelay = parseFloat(this.value);
+    document.getElementById("delay-value-start").textContent = this.value;
+    document.getElementById("delay-slider").value = this.value;
+    document.getElementById("delay-value").textContent = this.value;
+    const t = translations[currentLang];
+    document.getElementById("delay-label").textContent = `${t.delay} ${answerDelay.toFixed(1)}s`;
   });
 
   const delaySlider = document.getElementById('delay-slider');
   delaySlider.addEventListener('input', function() {
     answerDelay = parseFloat(this.value);
-    const t = translations[currentLang];
     document.getElementById("delay-value").textContent = this.value;
+    document.getElementById("delay-slider-start").value = this.value;
+    document.getElementById("delay-value-start").textContent = this.value;
+    const t = translations[currentLang];
+    document.getElementById("delay-label").textContent = `${t.delay} ${answerDelay.toFixed(1)}s`;
   });
 
   function updateCategory() {
@@ -689,7 +829,6 @@
     const t = translations[currentLang];
     const resultEl = document.getElementById("result");
     
-    // Doğru cevap için hangi anahtarı kullanacağımızı belirle
     const countryKey = `country_${currentLang}`;
     const correctAnswer = currentFlag[countryKey];
 
@@ -776,6 +915,17 @@
     document.getElementById("difficulty").style.display = "flex";
     document.getElementById("language-selector").style.display = "flex";
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setLanguage('tr');
+    const startVal = document.getElementById('delay-slider-start').value;
+    document.getElementById('delay-slider').value = startVal;
+    document.getElementById('delay-value').textContent = startVal;
+    document.getElementById('delay-value-start').textContent = startVal;
+    answerDelay = parseFloat(startVal);
+    const t = translations[currentLang];
+    document.getElementById('delay-label').textContent = `${t.delay} ${answerDelay.toFixed(1)}s`;
+  });
 </script>
 
 </body>
