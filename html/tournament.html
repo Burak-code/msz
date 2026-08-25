@@ -49,10 +49,10 @@
         .msz-logo a { color: #6b4f2e; text-decoration: none; }
         .msz-logo .sub { font-size: 0.55rem; display: block; text-align: center; opacity: 0.7; }
 
-        /* YOUTUBE LOGO - SOL ÜST (MSZ LOGOSUNUN ALTINA) */
+        /* YOUTUBE LOGO - SOL ÜST */
         .youtube-logo {
             position: fixed;
-            top: 100px; /* MSZ logosunun altına gelecek şekilde */
+            top: 100px;
             left: 24px;
             z-index: 20;
             background: #f5ede1;
@@ -95,10 +95,48 @@
         h1 {
             text-align: center;
             font-size: 2.8rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             color: #3d2b1a;
             border-bottom: 3px double #b5956e;
             padding-bottom: 0.6rem;
+        }
+
+        /* İSTATİSTİK KARTLARI */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #efe5d7;
+            border: 1px solid #d6c3ae;
+            border-left: 4px solid #8b6f4c;
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            text-align: center;
+        }
+        .stat-card .val { font-size: 1.4rem; font-weight: 700; color: #6b4f2e; }
+        .stat-card .lbl { font-size: 0.75rem; color: #7a6248; text-transform: uppercase; }
+
+        /* GERİ SAYIM */
+        .countdown-box {
+            background: #3d2b1a;
+            color: #f5ede1;
+            padding: 0.8rem;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .countdown-box span { color: #e4d5c2; font-size: 1.1rem; font-weight: 700; margin-left: 0.5rem; }
+
+        .code-instruction {
+            background: #e8dccc;
+            border-left: 5px solid #8b6f4c;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px 4px;
         }
 
         /* BRACKET */
@@ -137,6 +175,16 @@
             padding: 10px;
             box-shadow: 0 3px 0 #b5956e;
             border: 1px solid #d6c3ae;
+            position: relative;
+        }
+
+        .match-status {
+            font-size: 0.55rem;
+            text-align: right;
+            color: #8b6f4c;
+            font-weight: 700;
+            margin-bottom: 2px;
+            text-transform: uppercase;
         }
 
         .player {
@@ -148,6 +196,22 @@
             border-radius: 40px 4px;
             margin: 4px 0;
             border-left: 3px solid #b5956e;
+            transition: 0.2s;
+        }
+
+        /* Kazanan & Elenen Stilleri */
+        .player.winner {
+            border-left: 4px solid #2e7d32;
+            background: #e8f5e9;
+            font-weight: bold;
+        }
+        .player.winner::after {
+            content: '👑';
+            font-size: 0.7rem;
+            margin-left: 2px;
+        }
+        .player.loser {
+            opacity: 0.5;
         }
 
         .player a {
@@ -190,6 +254,75 @@
             opacity: 0.7;
         }
 
+        /* ŞAMPİYONLAR PANOSU & YOUTUBE SECTION */
+        .extra-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .section-box {
+            background: #efe5d7;
+            border: 1px solid #d6c3ae;
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .section-box h3 {
+            font-size: 1.1rem;
+            color: #3d2b1a;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid #b5956e;
+            padding-bottom: 0.3rem;
+        }
+
+        .hall-of-fame-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed #d6c3ae;
+            font-size: 0.85rem;
+        }
+
+        .champ-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .champ-links a {
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e4d5c2;
+            border: 1px solid #b5956e;
+            color: #3d2b1a;
+            transition: 0.2s;
+        }
+        .champ-links a:hover {
+            background: #b5956e;
+            color: #fff;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         .footnote {
             margin-top: 2.5rem;
             text-align: center;
@@ -197,14 +330,6 @@
             color: #7a6248;
             border-top: 2px dotted #d6c3ae;
             padding-top: 1.5rem;
-        }
-
-        .code-instruction {
-            background: #e8dccc;
-            border-left: 5px solid #8b6f4c;
-            padding: 1rem 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 8px 4px;
         }
 
         @media (max-width: 820px) {
@@ -225,9 +350,9 @@
         <span class="sub">efootball</span>
     </div>
 
-    <!-- YOUTUBE LOGO - SOL ÜST (MSZ ALTINDA) -->
+    <!-- YOUTUBE LOGO - SOL ÜST -->
     <a href="https://www.youtube.com/@msz-burak" target="_blank" class="youtube-logo">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#c4302b" stroke="none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#c4302b">
             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
         </svg>
         <span class="label">YouTube</span>
@@ -247,203 +372,217 @@
 
         <h1>⚽ MSZ EFOOTBALL 🏆 ELEME</h1>
 
+        <!-- GERİ SAYIM KUTUSU -->
+        <div class="countdown-box">
+            ⏳ Sonraki Turnuva Kayıt Kapanışına Kalan Süre: <span id="timer">Yükleniyor...</span>
+        </div>
+
+        <!-- İSTATİSTİK KARTLARI -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="val">100 ₺</div>
+                <div class="lbl">Büyük Ödül</div>
+            </div>
+            <div class="stat-card">
+                <div class="val">16</div>
+                <div class="lbl">Katılımcı Kapasitesi</div>
+            </div>
+            <div class="stat-card">
+                <div class="val">Ücretsiz</div>
+                <div class="lbl">Katılım Ücreti</div>
+            </div>
+        </div>
+
         <div class="code-instruction">
             📱 <strong>Mobildeysen sitede aşağı in!!!</strong><br>
             📝 <strong>Nasıl katılırım?</strong><br>
-            🗓️ <strong>Son tarihler her ayın 7'si. Ayın 7'sinden sorna kayıt yapmam. 2 kişi bile olsa turnuvayı yaparım. Kimse yoksa yapmam. Basit.</strong><br>
+            🗓️ <strong>Son tarihler her ayın 7'si. Ayın 7'sinden sonra kayıt yapmam. 2 kişi bile olsa turnuvayı yaparım. Kimse yoksa yapmam. Basit.</strong><br>
             • <strong>İnstagram:</strong> Sağ üstte instagram logosuna bas, dm'den yaz.<br>
-            • <strong>Ülke seçi:</strong> Bir ülke seç ve bana dm'de söyle. O ülke ile oynayacaksın.<br>
+            • <strong>Ülke seçimi:</strong> Bir ülke seç ve bana dm'de söyle. O ülke ile oynayacaksın.<br>
             • <strong>Ücret:</strong> Burada ücret ödemeyeceksin. Kazanırsan 100₺ cukka:D.<br>
             • <strong>İnstagram linkleri:</strong> Her oyuncunun instagram linki aşağıda mevcut. İsmine tıklayarak git. İnstagram vermek istemiyorsan dm'de belirt.<br>
             • <strong>📹 Her maç kayda alınıyor. Videoları soldaki YouTube logosundan giderek izleyebilirsiniz.</strong>
         </div>
 
-        <!-- BRACKET - SON 16'DAN BAŞLIYOR -->
+        <!-- BRACKET -->
         <div class="bracket">
 
-            <!-- SON 16 - 8 MAÇ (16 oyuncu) -->
+            <!-- SON 16 - 8 MAÇ (16 OYUNCU) -->
             <div class="round">
-                <div class="round-title">📋 son 16** YAKINDA **</div>
+                <div class="round-title">📋 son 16</div>
 
                 <!-- MAÇ 1 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 2 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 3 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 4 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 5 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 6 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 7 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
-
                 <!-- MAÇ 8 -->
                 <div class="match">
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="match-status">BEKLENİYOR</div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
-                    <div class="player">
-                        <img class="flag" src="bayrak.png">
-                        <a href="LINK" target="_blank">İSİM</a>
-                        <span class="score">0</span>
-                    </div>
+                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
             </div>
 
-            <!-- ÇEYREK FİNAL - 4 MAÇ -->
+            <!-- ÇEYREK FİNAL - 4 MAÇ (8 OYUNCU) -->
             <div class="round">
                 <div class="round-title">⚡ çeyrek</div>
 
+                <!-- MAÇ 1 -->
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="https://flagcdn.com/es.svg"><a href="https://www.instagram.com/lewend2121/" target="_blank">Levend</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="https://flagcdn.com/fr.svg"><a href="https://www.instagram.com/recep_korkmaz77" target="_blank">Recep</a><span class="score">0</span></div>
                 </div>
+                <!-- MAÇ 2 -->
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="https://flagcdn.com/br.svg"><a href="https://www.instagram.com/the3ren/" target="_blank">the3ren</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
+                <!-- MAÇ 3 -->
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
+                <!-- MAÇ 4 -->
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
             </div>
 
-            <!-- YARI FİNAL - 2 MAÇ -->
+            <!-- YARI FİNAL - 2 MAÇ (4 OYUNCU) -->
             <div class="round">
                 <div class="round-title">🔥 yarı final</div>
 
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
             </div>
 
-            <!-- FİNAL - 1 MAÇ -->
+            <!-- FİNAL - 1 MAÇ (2 OYUNCU) -->
             <div class="round">
                 <div class="round-title">🏁 final</div>
 
                 <div class="match">
+                    <div class="match-status">BEKLENİYOR</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                     <div class="vs-badge">vs</div>
                     <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
                 </div>
             </div>
 
+        </div>
+
+        <!-- ŞAMPİYONLAR & VİDEO BÖLÜMÜ -->
+        <div class="extra-sections">
+            <div class="section-box">
+                <h3>👑 Geçmiş Şampiyonlar (Hall of Fame)</h3>
+                <div class="hall-of-fame-item">
+                    <span>🏆 <strong>Ağustos:</strong> Hasancan (🇫🇷)</span>
+                    <div class="champ-links">
+                        <a href="https://www.instagram.com/hasancancakir_7/" target="_blank">📸 Insta</a>
+                        <a href="https://www.youtube.com/watch?v=mPHPKpnsq54" target="_blank">🎬 YouTube</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <h3>📹 Öne Çıkan Turnuva Videosu</h3>
+                <div class="video-container">
+                    <iframe src="https://youtu.be/nM4xBRnEXSk" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
         </div>
 
         <div class="footnote">✎ <code>MSZ EFOOTBALL 😊</code></div>
 
     </div>
 
+    <!-- GERİ SAYIM JAVASCRIPT -->
+    <script>
+        function updateCountdown() {
+            const now = new Date();
+            let targetDate = new Date(now.getFullYear(), now.getMonth(), 7, 23, 59, 59);
+
+            if (now.getDate() > 7) {
+                targetDate.setMonth(targetDate.getMonth() + 1);
+            }
+
+            const diff = targetDate - now;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('timer').innerText = 
+                `${days} Gün ${hours} Saat ${minutes} Dakika ${seconds} Saniye`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
 </body>
 </html>
