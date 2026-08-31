@@ -139,6 +139,43 @@
             border-radius: 8px 4px;
         }
 
+        /* TABS */
+        .tab-bar {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0 1.5rem;
+            border-bottom: 2px solid #cdbcab;
+            padding-bottom: 0.2rem;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #7a6248;
+            border-radius: 40px 8px 0 0;
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 4px solid transparent;
+        }
+        .tab-button.active {
+            color: #3d2b1a;
+            background: #efe5d7;
+            border-bottom: 4px solid #8b6f4c;
+        }
+        .tab-button:hover {
+            background: #e4d5c2;
+            color: #2d1f12;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+
         /* BRACKET */
         .bracket {
             display: flex;
@@ -199,7 +236,6 @@
             transition: 0.2s;
         }
 
-        /* Kazanan & Elenen Stilleri */
         .player.winner {
             border-left: 4px solid #2e7d32;
             background: #e8f5e9;
@@ -404,135 +440,186 @@
             • <strong>📹 Her maç kayda alınıyor. Videoları soldaki YouTube logosundan giderek izleyebilirsiniz.</strong>
         </div>
 
-        <!-- BRACKET -->
-        <div class="bracket">
+        <!-- TAB BAR -->
+        <div class="tab-bar">
+            <button class="tab-button active" data-tab="efootball">⚽ efootball</button>
+            <button class="tab-button" data-tab="haxball">🏒 haxball</button>
+        </div>
 
-            <!-- SON 16 - 8 MAÇ (16 OYUNCU) -->
-            <div class="round">
-                <div class="round-title">📋 son 16</div>
+        <!-- TAB PANEL: EFOOTBALL -->
+        <div id="efootball" class="tab-pane active">
+            <div class="bracket">
 
-                <!-- MAÇ 1 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                <!-- SON 16 - 8 MAÇ (16 OYUNCU) -->
+                <div class="round">
+                    <div class="round-title">📋 son 16</div>
+
+                    <!-- MAÇ 1 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 2 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 3 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 4 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 5 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 6 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 7 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 8 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
                 </div>
-                <!-- MAÇ 2 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+
+                <!-- ÇEYREK FİNAL - 4 MAÇ (8 OYUNCU) -->
+                <div class="round">
+                    <div class="round-title">⚡ çeyrek</div>
+
+                    <!-- MAÇ 1 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="https://flagcdn.com/es.svg"><a href="https://www.instagram.com/lewend2121/" target="_blank">Levend</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="https://flagcdn.com/fr.svg"><a href="https://www.instagram.com/recep_korkmaz77" target="_blank">Recep</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 2 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="https://flagcdn.com/br.svg"><a href="https://www.instagram.com/the3ren/" target="_blank">the3ren</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 3 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <!-- MAÇ 4 -->
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
                 </div>
-                <!-- MAÇ 3 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+
+                <!-- YARI FİNAL - 2 MAÇ (4 OYUNCU) -->
+                <div class="round">
+                    <div class="round-title">🔥 yarı final</div>
+
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
                 </div>
-                <!-- MAÇ 4 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+
+                <!-- FİNAL - 1 MAÇ (2 OYUNCU) -->
+                <div class="round">
+                    <div class="round-title">🏁 final</div>
+
+                    <div class="match">
+                        <div class="match-status">BEKLENİYOR</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                        <div class="vs-badge">vs</div>
+                        <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+                    </div>
                 </div>
-                <!-- MAÇ 5 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
-                <!-- MAÇ 6 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
-                <!-- MAÇ 7 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
-                <!-- MAÇ 8 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
+
             </div>
+        </div>
 
-            <!-- ÇEYREK FİNAL - 4 MAÇ (8 OYUNCU) -->
-            <div class="round">
-                <div class="round-title">⚡ çeyrek</div>
+        <!-- TAB PANEL: HAXBALL (boş, doldurulacak) -->
+        <div id="haxball" class="tab-pane">
+            <div class="bracket">
 
-                <!-- MAÇ 1 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="https://flagcdn.com/es.svg"><a href="https://www.instagram.com/lewend2121/" target="_blank">Levend</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="https://flagcdn.com/fr.svg"><a href="https://www.instagram.com/recep_korkmaz77" target="_blank">Recep</a><span class="score">0</span></div>
+                <!-- SON 16 - 8 MAÇ (16 OYUNCU) -->
+                <div class="round">
+                    <div class="round-title">📋 son 16</div>
+                    <!-- 8 maç, tamamen boş -->
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
                 </div>
-                <!-- MAÇ 2 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="https://flagcdn.com/br.svg"><a href="https://www.instagram.com/the3ren/" target="_blank">the3ren</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+
+                <!-- ÇEYREK FİNAL - 4 MAÇ -->
+                <div class="round">
+                    <div class="round-title">⚡ çeyrek</div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
                 </div>
-                <!-- MAÇ 3 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+
+                <!-- YARI FİNAL - 2 MAÇ -->
+                <div class="round">
+                    <div class="round-title">🔥 yarı final</div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
                 </div>
-                <!-- MAÇ 4 -->
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
+
+                <!-- FİNAL - 1 MAÇ -->
+                <div class="round">
+                    <div class="round-title">🏁 final</div>
+                    <div class="match"><div class="match-status">BEKLENİYOR</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div><div class="vs-badge">vs</div><div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div></div>
                 </div>
+
             </div>
-
-            <!-- YARI FİNAL - 2 MAÇ (4 OYUNCU) -->
-            <div class="round">
-                <div class="round-title">🔥 yarı final</div>
-
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
-            </div>
-
-            <!-- FİNAL - 1 MAÇ (2 OYUNCU) -->
-            <div class="round">
-                <div class="round-title">🏁 final</div>
-
-                <div class="match">
-                    <div class="match-status">BEKLENİYOR</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                    <div class="vs-badge">vs</div>
-                    <div class="player"><img class="flag" src="bayrak.png"><a href="LINK" target="_blank">İSİM</a><span class="score">0</span></div>
-                </div>
-            </div>
-
         </div>
 
         <!-- ŞAMPİYONLAR & VİDEO BÖLÜMÜ -->
@@ -540,7 +627,7 @@
             <div class="section-box">
                 <h3>👑 Geçmiş Şampiyonlar (Hall of Fame)</h3>
                 <div class="hall-of-fame-item">
-                    <span>🏆 <strong>Temmuz:</strong> Hasancan (🇫🇷)</span>
+                    <span>🏆 <strong>Temmuz:</strong> Hasancan (🇫🇷) <strong>Efootball</strong>  </span>
                     <div class="champ-links">
                         <a href="https://www.instagram.com/hasancancakir_7/" target="_blank">📸 Insta</a>
                         <a href="https://www.youtube.com/watch?v=mPHPKpnsq54" target="_blank">🎬 YouTube</a>
@@ -550,15 +637,15 @@
 
             <div class="section-box">
                 <h3>📹 Öne Çıkan Turnuva Videosu</h3>
-<div class="video-container">
-    <iframe 
-        src="https://www.youtube.com/embed/mPHPKpnsq54" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen>
-    </iframe>
-</div>
+                <div class="video-container">
+                    <iframe 
+                        src="https://www.youtube.com/embed/mPHPKpnsq54" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
             </div>
         </div>
 
@@ -589,6 +676,25 @@
 
         setInterval(updateCountdown, 1000);
         updateCountdown();
+
+        // TAB SWITCH
+        const tabs = document.querySelectorAll('.tab-button');
+        const panes = {
+            efootball: document.getElementById('efootball'),
+            haxball: document.getElementById('haxball')
+        };
+
+        tabs.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabs.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const target = this.dataset.tab;
+                Object.keys(panes).forEach(key => {
+                    panes[key].classList.toggle('active', key === target);
+                });
+            });
+        });
     </script>
 </body>
 </html>
