@@ -376,9 +376,104 @@
             .youtube-logo svg { width: 26px; height: 26px; }
             .msz-logo { left: 15px; padding: 8px 14px; font-size: 1rem; }
         }
+
+        /* ---- UYARI EKRANI (MODAL) ---- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-box {
+            background: #f5ede1;
+            max-width: 600px;
+            width: 100%;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border-left: 8px solid #c4302b;
+            text-align: center;
+            animation: modalFadeIn 0.4s ease;
+        }
+
+        .modal-box h2 {
+            font-size: 1.6rem;
+            color: #3d2b1a;
+            margin-bottom: 1rem;
+        }
+
+        .modal-box .icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-box p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #2d241a;
+            margin-bottom: 1.8rem;
+            font-weight: 500;
+        }
+
+        .modal-box .highlight {
+            color: #c4302b;
+            font-weight: 700;
+        }
+
+        .modal-box .btn-close {
+            background: #3d2b1a;
+            color: #f5ede1;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.25s;
+            letter-spacing: 1px;
+        }
+
+        .modal-box .btn-close:hover {
+            background: #6b4f2e;
+            transform: scale(1.04);
+        }
+
+        @keyframes modalFadeIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(-20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Modal kapanınca scroll engeli kalkar */
+        .no-scroll {
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
+
+    <!-- UYARI EKRANI (MODAL) -->
+    <div class="modal-overlay" id="warningModal">
+        <div class="modal-box">
+            <span class="icon">⚠️</span>
+            <h2>📢 SAYIN KATILIMCILAR</h2>
+            <p>
+                LÜTFEN INSTAGRAM DM'DEN <span class="highlight">"BURDAYIM"</span> YAZIN.<br>
+                AKSİ TAKDİRDE <span class="highlight">ELENİRSİNİZ</span>.<br>
+                <span style="font-size:0.9rem; opacity:0.7;">(Gerekçe: AFK kalmak)</span>
+            </p>
+            <button class="btn-close" onclick="kapatModal()">✅ TAMAM</button>
+        </div>
+    </div>
 
     <!-- SOL ÜST LOGO -->
     <div class="msz-logo">
@@ -694,6 +789,32 @@
                     panes[key].classList.toggle('active', key === target);
                 });
             });
+        });
+
+        // ---- UYARI EKRANI (MODAL) KONTROLÜ - DÜZELTİLDİ ----
+        function kapatModal() {
+            document.getElementById('warningModal').style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }
+
+        // Sayfa yüklenirken scroll'u engelle
+        document.body.classList.add('no-scroll');
+
+        // Modal dışına tıklayınca da kapansın
+        document.getElementById('warningModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                kapatModal();
+            }
+        });
+
+        // ESC tuşu ile kapatma (ekstra)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('warningModal');
+                if (modal.style.display !== 'none') {
+                    kapatModal();
+                }
+            }
         });
     </script>
 </body>
