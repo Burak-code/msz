@@ -10,6 +10,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Firebase SDK (modüler) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -108,7 +118,7 @@
         }
         .btn-primary:active { transform: scale(0.96); }
 
-        /* ============ NEWS COMPONENT ============ */
+        /* NEWS COMPONENT */
         .news-popup {
             position: fixed;
             bottom: 30px;
@@ -265,7 +275,7 @@
             color: #3b82f6;
         }
 
-        /* ============ NEWS DETAIL MODAL ============ */
+        /* NEWS DETAIL MODAL */
         .news-modal {
             position: fixed;
             top: 0; left: 0;
@@ -374,7 +384,7 @@
             flex-wrap: wrap;
         }
 
-        /* ============ COMMENTS ============ */
+        /* COMMENTS */
         .star-rating input { display: none; }
         .star-rating label {
             font-size: 32px;
@@ -383,9 +393,11 @@
             transition: color 0.2s ease;
         }
         .star-rating label:hover,
-        .star-rating label:hover ~ label,
+        .star-rating label:hover ~ label {
+            color: #f59e0b !important;
+        }
         .star-rating input:checked ~ label {
-            color: #f59e0b;
+            color: #f59e0b !important;
         }
         .star-rating {
             display: flex;
@@ -400,7 +412,7 @@
             background: rgba(59, 130, 246, 0.05);
         }
         .comment-banned {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.1) !important;
             border-left: 3px solid #ef4444;
         }
         .comment-banned .comment-text {
@@ -460,7 +472,7 @@
         </div>
     </footer>
 
-    <!-- ============ NEWS COMPONENT ============ -->
+    <!-- NEWS COMPONENT -->
     <div class="news-popup">
         <div class="news-trigger" id="newsTrigger">
             <i class="fas fa-newspaper"></i>
@@ -481,7 +493,7 @@
         </div>
     </div>
 
-    <!-- ============ NEWS DETAIL MODAL ============ -->
+    <!-- NEWS DETAIL MODAL -->
     <div class="news-modal" id="newsModal">
         <div class="news-modal-content">
             <button class="news-modal-close" onclick="modalKapat()">&times;</button>
@@ -502,7 +514,34 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // ============ FIREBASE IMPORT ============
+        import { initializeApp } from "firebase/app";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            query, 
+            orderBy, 
+            onSnapshot,
+            serverTimestamp 
+        } from "firebase/firestore";
+
+        // ============ FIREBASE CONFIG ============
+        const firebaseConfig = {
+            apiKey: "AIzaSyBThbJaWqGuMiFdClvNO5TSyEFoNfjRH50",
+            authDomain: "msz-f7bd3.firebaseapp.com",
+            projectId: "msz-f7bd3",
+            storageBucket: "msz-f7bd3.firebasestorage.app",
+            messagingSenderId: "33060146244",
+            appId: "1:33060146244:web:9a0c0692d016c83b5c4011",
+            measurementId: "G-YV0QXL9V49"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        console.log('🔥 Firebase connected!');
+
         // ============ NEWS DATA ============
         const haberler = [
             {
@@ -679,15 +718,15 @@
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Rating <span class="text-red-500">*</span></label>
                                 <div class="flex flex-row-reverse justify-end gap-1 text-4xl star-rating" id="starRating">
-                                    <input type="radio" name="rating" id="star5" value="5" onclick="setRating(5)">
+                                    <input type="radio" name="rating" id="star5" value="5">
                                     <label for="star5" title="5 stars">★</label>
-                                    <input type="radio" name="rating" id="star4" value="4" onclick="setRating(4)">
+                                    <input type="radio" name="rating" id="star4" value="4">
                                     <label for="star4" title="4 stars">★</label>
-                                    <input type="radio" name="rating" id="star3" value="3" onclick="setRating(3)">
+                                    <input type="radio" name="rating" id="star3" value="3">
                                     <label for="star3" title="3 stars">★</label>
-                                    <input type="radio" name="rating" id="star2" value="2" onclick="setRating(2)">
+                                    <input type="radio" name="rating" id="star2" value="2">
                                     <label for="star2" title="2 stars">★</label>
-                                    <input type="radio" name="rating" id="star1" value="1" onclick="setRating(1)">
+                                    <input type="radio" name="rating" id="star1" value="1">
                                     <label for="star1" title="1 star">★</label>
                                 </div>
                                 <p class="text-xs opacity-50 mt-1" id="ratingText">Tap a star to rate</p>
@@ -696,7 +735,7 @@
                                 <label class="block text-sm font-semibold mb-1">Message <span class="text-red-500">*</span></label>
                                 <textarea id="commentMsg" rows="3" placeholder="Write your comment..." class="w-full px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 focus:border-blue-500 focus:outline-none transition resize-none"></textarea>
                             </div>
-                            <button onclick="submitComment()" class="btn-primary w-full justify-center">
+                            <button onclick="window.submitComment()" class="btn-primary w-full justify-center">
                                 <i class="fas fa-paper-plane"></i> Send Comment
                             </button>
                         </div>
@@ -708,7 +747,7 @@
                             <h3 class="text-xl font-bold">📋 All Comments</h3>
                             <span class="text-sm opacity-50" id="commentCount">0 comments</span>
                         </div>
-                        <div id="commentList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scroll">
+                        <div id="commentList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
                             <div class="text-center py-8 opacity-40" id="emptyComment">
                                 <i class="fas fa-comment-slash text-4xl mb-2 block"></i>
                                 No comments yet. Be the first!
@@ -719,11 +758,10 @@
             `
         };
 
-        // ============ COMMENTS SYSTEM ============
+        // ============ COMMENTS SYSTEM (FIREBASE) ============
         let selectedRating = 0;
-        let commentIdCounter = 0;
+        let unsubscribeComments = null;
 
-        // Küfür/hakaret listesi
         const badWords = [
             'amk', 'siktir', 'orospu', 'piç', 'mal', 'gerizekalı', 'aptal', 'salak', 
             'embesil', 'ibne', 'göt', 'sik', 'yarrak', 'am', 'fuck', 'shit', 'bitch', 
@@ -739,7 +777,6 @@
 
         function filterBadWords(text) {
             let filtered = text;
-            // Küfürleri yıldızla değiştir
             badWords.forEach(word => {
                 const regex = new RegExp('\\b' + word + '\\b|' + word, 'gi');
                 filtered = filtered.replace(regex, '*****');
@@ -752,41 +789,20 @@
             return badWords.some(word => lower.includes(word));
         }
 
-        // Yorumları localStorage'dan al
-        function getComments() {
-            try {
-                const data = localStorage.getItem('msz_comments');
-                return data ? JSON.parse(data) : [];
-            } catch {
-                return [];
-            }
-        }
-
-        // Yorumları localStorage'a kaydet
-        function saveComments(comments) {
-            localStorage.setItem('msz_comments', JSON.stringify(comments));
-        }
-
-        // Yıldız seçme
-        function setRating(val) {
+        window.setRating = function(val) {
             selectedRating = val;
             document.querySelectorAll('.star-rating input').forEach(input => {
                 input.checked = parseInt(input.value) === val;
             });
             const labels = document.querySelectorAll('.star-rating label');
-            labels.forEach((label, index) => {
+            labels.forEach((label) => {
                 const starVal = parseInt(label.htmlFor.replace('star', ''));
-                if (starVal <= val) {
-                    label.style.color = '#f59e0b';
-                } else {
-                    label.style.color = '#ccc';
-                }
+                label.style.color = starVal <= val ? '#f59e0b' : '#ccc';
             });
             document.getElementById('ratingText').textContent = val + ' / 5 ★';
-        }
+        };
 
-        // Yorum gönderme
-        function submitComment() {
+        window.submitComment = async function() {
             const name = document.getElementById('commentName').value.trim();
             const message = document.getElementById('commentMsg').value.trim();
             const ig = document.getElementById('commentIg').value.trim();
@@ -811,51 +827,48 @@
             const filteredMessage = filterBadWords(message);
             const filteredName = filterBadWords(name);
 
-            const comments = getComments();
-            const newComment = {
-                id: Date.now(),
-                name: filteredName,
-                message: filteredMessage,
-                rating: selectedRating,
-                ig: ig || '',
-                email: email || '',
-                date: new Date().toISOString(),
-                isBanned: hasBadWords
-            };
+            try {
+                await addDoc(collection(db, "comments"), {
+                    name: filteredName,
+                    message: filteredMessage,
+                    rating: selectedRating,
+                    ig: ig || '',
+                    email: email || '',
+                    isBanned: hasBadWords,
+                    timestamp: serverTimestamp()
+                });
 
-            comments.unshift(newComment);
-            saveComments(comments);
-            renderComments();
+                document.getElementById('commentName').value = '';
+                document.getElementById('commentMsg').value = '';
+                document.getElementById('commentIg').value = '';
+                document.getElementById('commentEmail').value = '';
+                window.setRating(0);
+                document.querySelectorAll('.star-rating input').forEach(input => input.checked = false);
+                document.querySelectorAll('.star-rating label').forEach(label => label.style.color = '#ccc');
+                document.getElementById('ratingText').textContent = 'Tap a star to rate';
 
-            // Formu temizle
-            document.getElementById('commentName').value = '';
-            document.getElementById('commentMsg').value = '';
-            document.getElementById('commentIg').value = '';
-            document.getElementById('commentEmail').value = '';
-            setRating(0);
-            document.querySelectorAll('.star-rating input').forEach(input => input.checked = false);
-            document.querySelectorAll('.star-rating label').forEach(label => label.style.color = '#ccc');
-            document.getElementById('ratingText').textContent = 'Tap a star to rate';
-
-            if (hasBadWords) {
-                alert('⚠️ Your comment contains inappropriate language and has been marked as banned.');
-            } else {
-                alert('✅ Your comment has been posted successfully!');
+                if (hasBadWords) {
+                    alert('⚠️ Your comment contains inappropriate language and has been marked as banned.');
+                } else {
+                    alert('✅ Your comment has been posted successfully!');
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('❌ An error occurred. Please try again.');
             }
-        }
+        };
 
-        // Yorumları göster
-        function renderComments() {
-            const comments = getComments();
+        function renderComments(comments) {
             const list = document.getElementById('commentList');
             const count = document.getElementById('commentCount');
-            const empty = document.getElementById('emptyComment');
+
+            if (!list) return;
 
             count.textContent = comments.length + ' comments';
 
             if (comments.length === 0) {
                 list.innerHTML = `
-                    <div class="text-center py-8 opacity-40" id="emptyComment">
+                    <div class="text-center py-8 opacity-40">
                         <i class="fas fa-comment-slash text-4xl mb-2 block"></i>
                         No comments yet. Be the first!
                     </div>
@@ -864,9 +877,9 @@
             }
 
             list.innerHTML = comments.map(c => {
-                const date = new Date(c.date);
+                const date = c.timestamp?.toDate ? c.timestamp.toDate() : new Date(c.timestamp);
                 const dateStr = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-                const stars = '★'.repeat(c.rating) + '☆'.repeat(5-c.rating);
+                const stars = '★'.repeat(c.rating || 0) + '☆'.repeat(5-(c.rating || 0));
                 
                 let contactHtml = '';
                 if (c.ig) contactHtml += `<a href="https://instagram.com/${c.ig.replace('@','')}" target="_blank" class="text-pink-500 hover:underline text-sm"><i class="fab fa-instagram"></i> ${c.ig}</a>`;
@@ -894,30 +907,53 @@
             }).join('');
         }
 
+        function initComments() {
+            if (unsubscribeComments) {
+                unsubscribeComments();
+                unsubscribeComments = null;
+            }
+
+            const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
+            
+            unsubscribeComments = onSnapshot(q, (snapshot) => {
+                const comments = [];
+                snapshot.forEach((doc) => {
+                    comments.push({ id: doc.id, ...doc.data() });
+                });
+                renderComments(comments);
+            }, (error) => {
+                console.error('Error listening to comments:', error);
+            });
+        }
+
         // ============ PAGE TRANSITION ============
-        const updateUI = (page) => {
+        window.updateUI = function(page) {
             const content = document.getElementById('app-content');
             content.innerHTML = pages[page] || pages.home;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Comments sayfasına geçişte yorumları göster
             if (page === 'comments') {
-                setTimeout(renderComments, 50);
+                setTimeout(initComments, 100);
+            } else {
+                if (unsubscribeComments) {
+                    unsubscribeComments();
+                    unsubscribeComments = null;
+                }
             }
         };
 
-        const toggleMenu = () => {
+        window.toggleMenu = function() {
             document.getElementById('mobile-menu').classList.toggle('translate-x-full');
         };
 
-        document.getElementById('menu-btn').addEventListener('click', toggleMenu);
-        document.getElementById('close-menu').addEventListener('click', toggleMenu);
+        document.getElementById('menu-btn').addEventListener('click', window.toggleMenu);
+        document.getElementById('close-menu').addEventListener('click', window.toggleMenu);
         document.getElementById('logo-theme-toggle').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
         });
 
         // ============ MODAL FUNCTIONS ============
-        function modalAc(haber) {
+        window.modalAc = function(haber) {
             const modal = document.getElementById('newsModal');
             document.getElementById('modalImg').src = haber.resim || 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
             document.getElementById('modalImg').alt = haber.baslik;
@@ -938,20 +974,20 @@
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-        }
+        };
 
-        function modalKapat() {
+        window.modalKapat = function() {
             const modal = document.getElementById('newsModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
-        }
+        };
 
         document.getElementById('newsModal').addEventListener('click', function(e) {
-            if (e.target === this) modalKapat();
+            if (e.target === this) window.modalKapat();
         });
 
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') modalKapat();
+            if (e.key === 'Escape') window.modalKapat();
         });
 
         // ============ DISPLAY NEWS ============
@@ -979,7 +1015,7 @@
                 const imgSrc = haber.resim && haber.resim !== '' ? haber.resim : 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
                 
                 return `
-                    <div class="news-item" onclick="modalAc(haberler.find(h => h.id === ${haber.id}))">
+                    <div class="news-item" onclick="window.modalAc(haberler.find(h => h.id === ${haber.id}))">
                         <img src="${imgSrc}" class="news-item-img" alt="News image" loading="lazy" onerror="this.src='https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ'">
                         <div class="news-item-content">
                             <div class="news-item-title">${haber.baslik || 'Untitled'}</div>
@@ -1019,12 +1055,9 @@
 
         // ============ INITIALISE ============
         window.onload = () => {
-            updateUI('home');
+            window.updateUI('home');
             document.getElementById('newsBadge').textContent = haberler.length;
             haberleriGoster();
-            
-            // Comments sayfası açık değilse yorumları yükleme
-            // Ama comments sayfası açıldığında renderComments çağrılacak
         };
     </script>
 </body>
