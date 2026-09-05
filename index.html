@@ -118,7 +118,6 @@
         }
         .btn-primary:active { transform: scale(0.96); }
 
-        /* NEWS COMPONENT */
         .news-popup {
             position: fixed;
             bottom: 30px;
@@ -275,7 +274,6 @@
             color: #3b82f6;
         }
 
-        /* NEWS DETAIL MODAL */
         .news-modal {
             position: fixed;
             top: 0; left: 0;
@@ -384,7 +382,6 @@
             flex-wrap: wrap;
         }
 
-        /* COMMENTS */
         .star-rating input { display: none; }
         .star-rating label {
             font-size: 32px;
@@ -426,7 +423,6 @@
             letter-spacing: 2px;
         }
 
-        /* Rating Colors */
         .rating-1 { color: #ef4444; }
         .rating-2 { color: #ec4899; }
         .rating-3 { color: #9ca3af; }
@@ -449,7 +445,6 @@
 
     <div class="bg-overlay"></div>
 
-    <!-- HEADER -->
     <header class="fixed top-0 w-full z-50 glass-card">
         <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
             <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">MSZ</h1>
@@ -489,7 +484,6 @@
         </div>
     </footer>
 
-    <!-- NEWS COMPONENT -->
     <div class="news-popup">
         <div class="news-trigger" id="newsTrigger">
             <i class="fas fa-newspaper"></i>
@@ -510,7 +504,6 @@
         </div>
     </div>
 
-    <!-- NEWS DETAIL MODAL -->
     <div class="news-modal" id="newsModal">
         <div class="news-modal-content">
             <button class="news-modal-close" onclick="modalKapat()">&times;</button>
@@ -532,7 +525,6 @@
     </div>
 
     <script type="module">
-        // ============ FIREBASE IMPORT ============
         import { initializeApp } from "firebase/app";
         import { 
             getFirestore, 
@@ -544,7 +536,6 @@
             serverTimestamp 
         } from "firebase/firestore";
 
-        // ============ FIREBASE CONFIG ============
         const firebaseConfig = {
             apiKey: "AIzaSyBThbJaWqGuMiFdClvNO5TSyEFoNfjRH50",
             authDomain: "msz-f7bd3.firebaseapp.com",
@@ -559,7 +550,6 @@
         const db = getFirestore(app);
         console.log('🔥 Firebase connected!');
 
-        // ============ NEWS DATA ============
         const haberler = [
             {
                 id: 1,
@@ -595,7 +585,6 @@
             },
         ];
 
-        // ============ PAGE CONTENT ============
         const pages = {
             home: `
                 <div class="text-center py-16">
@@ -716,7 +705,6 @@
                     <h2 class="text-3xl font-bold mb-2 text-center">💬 Comments</h2>
                     <p class="text-center opacity-60 mb-8 text-sm">Share your thoughts about MSZ. Be respectful! 🙏</p>
 
-                    <!-- Yorum Formu -->
                     <div class="glass-card rounded-3xl p-6 mb-8">
                         <h3 class="text-xl font-bold mb-4">✍️ Write a Comment</h3>
                         <div class="space-y-4">
@@ -735,15 +723,15 @@
                             <div>
                                 <label class="block text-sm font-semibold mb-2">Rating <span class="text-red-500">*</span></label>
                                 <div class="flex flex-row-reverse justify-end gap-1 text-4xl star-rating" id="starRating">
-                                    <input type="radio" name="rating" id="star5" value="5" onclick="window.setRating(5)">
+                                    <input type="radio" name="rating" id="star5" value="5">
                                     <label for="star5" title="5 stars">★</label>
-                                    <input type="radio" name="rating" id="star4" value="4" onclick="window.setRating(4)">
+                                    <input type="radio" name="rating" id="star4" value="4">
                                     <label for="star4" title="4 stars">★</label>
-                                    <input type="radio" name="rating" id="star3" value="3" onclick="window.setRating(3)">
+                                    <input type="radio" name="rating" id="star3" value="3">
                                     <label for="star3" title="3 stars">★</label>
-                                    <input type="radio" name="rating" id="star2" value="2" onclick="window.setRating(2)">
+                                    <input type="radio" name="rating" id="star2" value="2">
                                     <label for="star2" title="2 stars">★</label>
-                                    <input type="radio" name="rating" id="star1" value="1" onclick="window.setRating(1)">
+                                    <input type="radio" name="rating" id="star1" value="1">
                                     <label for="star1" title="1 star">★</label>
                                 </div>
                                 <p class="text-xs opacity-50 mt-1" id="ratingText">Tap a star to rate</p>
@@ -758,7 +746,6 @@
                         </div>
                     </div>
 
-                    <!-- Yorum Listesi -->
                     <div class="glass-card rounded-3xl p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xl font-bold">📋 All Comments</h3>
@@ -775,21 +762,13 @@
             `
         };
 
-        // ============ COMMENTS SYSTEM (FIREBASE) ============
         let selectedRating = 0;
         let unsubscribeComments = null;
 
         const badWords = [
             'amk', 'siktir', 'orospu', 'piç', 'mal', 'gerizekalı', 'aptal', 'salak', 
             'embesil', 'ibne', 'göt', 'sik', 'yarrak', 'am', 'fuck', 'shit', 'bitch', 
-            'asshole', 'dick', 'porn', 'sex', 'nude', 'pussy', 'cunt', 'motherfucker',
-            'sikik', 'sikim', 'sikerim', 'sikeyim', 'sikicem', 'siksin', 'siktim',
-            'amcık', 'amına', 'amını', 'amı', 'götü', 'götün', 'götveren',
-            'yavşak', 'yobaz', 'gerizekali', 'salağa', 'salaklık', 'embesili',
-            'piçkur', 'piçler', 'oruspu', 'orospular', 'pezevenk', 'pezeveng',
-            'kahpe', 'fahişe', 'sürtük', 'kaltak', 'şerefsiz', 'namussuz',
-            'manyak', 'deli', 'kaçık', 'zırva', 'saçma', 'bok', 'boka', 'boktan',
-            'ahmak', 'budala', 'enay', 'enayi', 'gerzek', 'hödük', 'kötü', 'berbat'
+            'asshole', 'dick', 'porn', 'sex', 'nude', 'pussy', 'cunt', 'motherfucker'
         ];
 
         function filterBadWords(text) {
@@ -806,41 +785,34 @@
             return badWords.some(word => lower.includes(word));
         }
 
-        // Rating'i localStorage'a kaydet ve hemen uygula
         window.setRating = function(val) {
             selectedRating = val;
             localStorage.setItem('selectedRating', val);
             
-            // Radio butonlarını güncelle
-            document.querySelectorAll('.star-rating input').forEach(input => {
+            const inputs = document.querySelectorAll('.star-rating input');
+            inputs.forEach(input => {
                 input.checked = parseInt(input.value) === val;
             });
             
-            // Label renklerini güncelle
             const labels = document.querySelectorAll('.star-rating label');
-            labels.forEach((label) => {
+            labels.forEach(label => {
                 const starVal = parseInt(label.htmlFor.replace('star', ''));
                 label.style.color = starVal <= val ? '#f59e0b' : '#ccc';
             });
             
             const ratingText = document.getElementById('ratingText');
-            if (ratingText) {
-                ratingText.textContent = val + ' / 5 ★';
-            }
+            if (ratingText) ratingText.textContent = val + ' / 5 ★';
         };
 
-        // Sayfa yüklenince localStorage'dan rating'i geri yükle - HEMEN ÇALIŞTIR
         function restoreRating() {
             const savedRating = localStorage.getItem('selectedRating');
             if (savedRating && parseInt(savedRating) > 0) {
-                // Doğrudan setRating'i çağır, DOM hazır olacak
                 window.setRating(parseInt(savedRating));
                 return true;
             }
             return false;
         }
 
-        // Rating renk sınıfını al
         function getRatingClass(rating) {
             if (rating === 1) return 'rating-1';
             if (rating === 2) return 'rating-2';
@@ -850,7 +822,6 @@
             return '';
         }
 
-        // Yıldız HTML'ini oluştur (renkli)
         function getStars(rating) {
             const colorClass = getRatingClass(rating);
             return `<span class="comment-stars ${colorClass}">${'★'.repeat(rating)}${'☆'.repeat(5-rating)}</span>`;
@@ -862,20 +833,9 @@
             const ig = document.getElementById('commentIg').value.trim();
             const email = document.getElementById('commentEmail').value.trim();
 
-            if (!name) {
-                alert('⚠️ Please enter your name!');
-                document.getElementById('commentName').focus();
-                return;
-            }
-            if (!message) {
-                alert('⚠️ Please write a message!');
-                document.getElementById('commentMsg').focus();
-                return;
-            }
-            if (selectedRating === 0) {
-                alert('⚠️ Please select a rating!');
-                return;
-            }
+            if (!name) { alert('⚠️ Please enter your name!'); return; }
+            if (!message) { alert('⚠️ Please write a message!'); return; }
+            if (selectedRating === 0) { alert('⚠️ Please select a rating!'); return; }
 
             const hasBadWords = containsBadWords(name) || containsBadWords(message);
             const filteredMessage = filterBadWords(message);
@@ -901,13 +861,9 @@
                 document.querySelectorAll('.star-rating label').forEach(label => label.style.color = '#ccc');
                 document.getElementById('ratingText').textContent = 'Tap a star to rate';
 
-                if (hasBadWords) {
-                    alert('⚠️ Your comment contains inappropriate language and has been marked as banned.');
-                } else {
-                    alert('✅ Your comment has been posted successfully!');
-                }
+                alert(hasBadWords ? '⚠️ Your comment contains inappropriate language and has been marked as banned.' : '✅ Your comment has been posted successfully!');
             } catch (error) {
-                console.error('Error adding comment:', error);
+                console.error('Error:', error);
                 alert('❌ An error occurred. Please try again.');
             }
         };
@@ -915,10 +871,8 @@
         function renderComments(comments) {
             const list = document.getElementById('commentList');
             const count = document.getElementById('commentCount');
-
             if (!list) return;
 
-            // Toplam rating hesapla
             const totalComments = comments.length;
             let avgRating = 0;
             if (totalComments > 0) {
@@ -930,7 +884,6 @@
 
             count.textContent = totalComments + ' comments';
 
-            // Toplam rating HTML'i
             const ratingSummary = totalComments > 0 ? `
                 <div class="avg-rating-container mb-4 flex items-center justify-between flex-wrap gap-3">
                     <div class="flex items-center gap-3">
@@ -946,18 +899,23 @@
             ` : '';
 
             if (totalComments === 0) {
-                list.innerHTML = `
-                    ${ratingSummary}
-                    <div class="text-center py-8 opacity-40">
-                        <i class="fas fa-comment-slash text-4xl mb-2 block"></i>
-                        No comments yet. Be the first!
-                    </div>
-                `;
+                list.innerHTML = `${ratingSummary}<div class="text-center py-8 opacity-40"><i class="fas fa-comment-slash text-4xl mb-2 block"></i>No comments yet. Be the first!</div>`;
                 return;
             }
 
             list.innerHTML = ratingSummary + comments.map(c => {
-                const date = c.timestamp?.toDate ? c.timestamp.toDate() : new Date(c.timestamp);
+                // TARİH DÜZELTMESİ - Firebase timestamp'i doğru işle
+                let date;
+                if (c.timestamp && c.timestamp.toDate) {
+                    date = c.timestamp.toDate();
+                } else if (c.timestamp && c.timestamp.seconds) {
+                    date = new Date(c.timestamp.seconds * 1000);
+                } else if (c.timestamp) {
+                    date = new Date(c.timestamp);
+                } else {
+                    date = new Date();
+                }
+                
                 const dateStr = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
                 
                 let contactHtml = '';
@@ -992,11 +950,9 @@
                 unsubscribeComments = null;
             }
 
-            // Rating'i geri yükle - BURASI ÖNEMLİ
             restoreRating();
 
             const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
-            
             unsubscribeComments = onSnapshot(q, (snapshot) => {
                 const comments = [];
                 snapshot.forEach((doc) => {
@@ -1008,7 +964,6 @@
             });
         }
 
-        // ============ PAGE TRANSITION ============
         window.updateUI = function(page) {
             const content = document.getElementById('app-content');
             content.innerHTML = pages[page] || pages.home;
@@ -1016,9 +971,13 @@
             
             if (page === 'comments') {
                 setTimeout(() => {
-                    // Önce rating'i geri yükle
                     restoreRating();
-                    // Sonra comments'i başlat
+                    // Yıldızlara tıklama olaylarını manuel ekle
+                    document.querySelectorAll('.star-rating input').forEach(input => {
+                        input.addEventListener('click', function() {
+                            window.setRating(parseInt(this.value));
+                        });
+                    });
                     initComments();
                 }, 50);
             } else {
@@ -1039,7 +998,6 @@
             document.documentElement.classList.toggle('dark');
         });
 
-        // ============ MODAL FUNCTIONS ============
         window.modalAc = function(haber) {
             const modal = document.getElementById('newsModal');
             document.getElementById('modalImg').src = haber.resim || 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
@@ -1077,30 +1035,22 @@
             if (e.key === 'Escape') window.modalKapat();
         });
 
-        // ============ DISPLAY NEWS ============
         function haberleriGoster() {
             const list = document.getElementById('newsList');
             const badge = document.getElementById('newsBadge');
             
             if (!haberler || haberler.length === 0) {
-                list.innerHTML = `
-                    <div class="news-empty">
-                        <i class="fas fa-newspaper text-4xl mb-3 opacity-30"></i>
-                        <p>No news available.</p>
-                    </div>
-                `;
+                list.innerHTML = `<div class="news-empty"><i class="fas fa-newspaper text-4xl mb-3 opacity-30"></i><p>No news available.</p></div>`;
                 badge.textContent = '0';
                 return;
             }
 
             const sirali = [...haberler].sort((a, b) => new Date(b.tarih) - new Date(a.tarih));
             const gosterilecek = sirali.slice(0, 8);
-            
             badge.textContent = haberler.length;
 
             list.innerHTML = gosterilecek.map((haber) => {
                 const imgSrc = haber.resim && haber.resim !== '' ? haber.resim : 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
-                
                 return `
                     <div class="news-item" onclick="window.modalAc(haberler.find(h => h.id === ${haber.id}))">
                         <img src="${imgSrc}" class="news-item-img" alt="News image" loading="lazy" onerror="this.src='https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ'">
@@ -1116,7 +1066,6 @@
             }).join('');
         }
 
-        // ============ NEWS PANEL CONTROL ============
         const newsTrigger = document.getElementById('newsTrigger');
         const newsPanel = document.getElementById('newsPanel');
         const newsClose = document.getElementById('newsClose');
@@ -1140,7 +1089,6 @@
             }
         });
 
-        // ============ INITIALISE ============
         window.onload = () => {
             window.updateUI('home');
             document.getElementById('newsBadge').textContent = haberler.length;
