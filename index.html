@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark scroll-smooth">
 <head>
-     <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="icon" href="favicon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSZ</title>
@@ -373,6 +373,47 @@
             gap: 10px;
             flex-wrap: wrap;
         }
+
+        /* ============ COMMENTS ============ */
+        .star-rating input { display: none; }
+        .star-rating label {
+            font-size: 32px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #f59e0b;
+        }
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+        .comment-item {
+            transition: all 0.2s ease;
+        }
+        .comment-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .comment-banned {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+        }
+        .comment-banned .comment-text {
+            filter: blur(3px);
+            user-select: none;
+        }
+        .comment-text {
+            word-break: break-word;
+        }
+        .comment-stars {
+            color: #f59e0b;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100">
@@ -383,13 +424,14 @@
     <header class="fixed top-0 w-full z-50 glass-card">
         <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
             <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">MSZ</h1>
-            <nav class="hidden md:flex space-x-8 font-semibold text-sm">
+            <nav class="hidden md:flex space-x-8 font-semibold text-sm items-center">
                 <span class="nav-link" onclick="updateUI('html')">HTML</span>
                 <span class="nav-link" onclick="updateUI('home')">Home</span>
                 <span class="nav-link" onclick="updateUI('about')">About Me</span>
                 <span class="nav-link" onclick="updateUI('experiences')">Experience</span>
                 <span class="nav-link" onclick="updateUI('portfolio')">Portfolio</span>
                 <span class="nav-link" onclick="updateUI('contact')">Contact</span>
+                <span class="nav-link font-bold text-blue-600 dark:text-blue-400" onclick="updateUI('comments')">📨 Comments</span>
             </nav>
             <button id="menu-btn" class="md:hidden text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
             <div class="text-sm opacity-50 hidden md:block">Burak</div>
@@ -404,6 +446,7 @@
         <span onclick="toggleMenu(); updateUI('experiences')">Experience</span>
         <span onclick="toggleMenu(); updateUI('portfolio')">Portfolio</span>
         <span onclick="toggleMenu(); updateUI('contact')">Contact</span>
+        <span onclick="toggleMenu(); updateUI('comments')" class="text-blue-600">📨 Comments</span>
     </div>
 
     <main id="app-content" class="pt-28 pb-16 px-6 max-w-6xl mx-auto min-h-screen"></main>
@@ -611,14 +654,256 @@
                     </div>
                     <div class="text-center pt-4 opacity-60 text-sm"><i class="fas fa-external-link-alt mr-1"></i> Opens in a new tab when clicked.</div>
                 </div>
+            `,
+            comments: `
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-2 text-center">💬 Comments</h2>
+                    <p class="text-center opacity-60 mb-8 text-sm">Share your thoughts about MSZ. Be respectful! 🙏</p>
+
+                    <!-- Yorum Formu -->
+                    <div class="glass-card rounded-3xl p-6 mb-8">
+                        <h3 class="text-xl font-bold mb-4">✍️ Write a Comment</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="commentName" placeholder="Your name..." class="w-full px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">Instagram (optional)</label>
+                                <input type="text" id="commentIg" placeholder="@username" class="w-full px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">Gmail (optional)</label>
+                                <input type="email" id="commentEmail" placeholder="example@gmail.com" class="w-full px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Rating <span class="text-red-500">*</span></label>
+                                <div class="flex flex-row-reverse justify-end gap-1 text-4xl star-rating" id="starRating">
+                                    <input type="radio" name="rating" id="star5" value="5" onclick="setRating(5)">
+                                    <label for="star5" title="5 stars">★</label>
+                                    <input type="radio" name="rating" id="star4" value="4" onclick="setRating(4)">
+                                    <label for="star4" title="4 stars">★</label>
+                                    <input type="radio" name="rating" id="star3" value="3" onclick="setRating(3)">
+                                    <label for="star3" title="3 stars">★</label>
+                                    <input type="radio" name="rating" id="star2" value="2" onclick="setRating(2)">
+                                    <label for="star2" title="2 stars">★</label>
+                                    <input type="radio" name="rating" id="star1" value="1" onclick="setRating(1)">
+                                    <label for="star1" title="1 star">★</label>
+                                </div>
+                                <p class="text-xs opacity-50 mt-1" id="ratingText">Tap a star to rate</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-1">Message <span class="text-red-500">*</span></label>
+                                <textarea id="commentMsg" rows="3" placeholder="Write your comment..." class="w-full px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 focus:border-blue-500 focus:outline-none transition resize-none"></textarea>
+                            </div>
+                            <button onclick="submitComment()" class="btn-primary w-full justify-center">
+                                <i class="fas fa-paper-plane"></i> Send Comment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Yorum Listesi -->
+                    <div class="glass-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">📋 All Comments</h3>
+                            <span class="text-sm opacity-50" id="commentCount">0 comments</span>
+                        </div>
+                        <div id="commentList" class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scroll">
+                            <div class="text-center py-8 opacity-40" id="emptyComment">
+                                <i class="fas fa-comment-slash text-4xl mb-2 block"></i>
+                                No comments yet. Be the first!
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `
         };
 
-        // Page transition - optimised
+        // ============ COMMENTS SYSTEM ============
+        let selectedRating = 0;
+        let commentIdCounter = 0;
+
+        // Küfür/hakaret listesi
+        const badWords = [
+            'amk', 'siktir', 'orospu', 'piç', 'mal', 'gerizekalı', 'aptal', 'salak', 
+            'embesil', 'ibne', 'göt', 'sik', 'yarrak', 'am', 'fuck', 'shit', 'bitch', 
+            'asshole', 'dick', 'porn', 'sex', 'nude', 'pussy', 'cunt', 'motherfucker',
+            'sikik', 'sikim', 'sikerim', 'sikeyim', 'sikicem', 'siksin', 'siktim',
+            'amcık', 'amına', 'amını', 'amı', 'götü', 'götün', 'götveren',
+            'yavşak', 'yobaz', 'gerizekali', 'salağa', 'salaklık', 'embesili',
+            'piçkur', 'piçler', 'oruspu', 'orospular', 'pezevenk', 'pezeveng',
+            'kahpe', 'fahişe', 'sürtük', 'kaltak', 'şerefsiz', 'namussuz',
+            'manyak', 'deli', 'kaçık', 'zırva', 'saçma', 'bok', 'boka', 'boktan',
+            'ahmak', 'budala', 'enay', 'enayi', 'gerzek', 'hödük', 'kötü', 'berbat'
+        ];
+
+        function filterBadWords(text) {
+            let filtered = text;
+            // Küfürleri yıldızla değiştir
+            badWords.forEach(word => {
+                const regex = new RegExp('\\b' + word + '\\b|' + word, 'gi');
+                filtered = filtered.replace(regex, '*****');
+            });
+            return filtered;
+        }
+
+        function containsBadWords(text) {
+            const lower = text.toLowerCase();
+            return badWords.some(word => lower.includes(word));
+        }
+
+        // Yorumları localStorage'dan al
+        function getComments() {
+            try {
+                const data = localStorage.getItem('msz_comments');
+                return data ? JSON.parse(data) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        // Yorumları localStorage'a kaydet
+        function saveComments(comments) {
+            localStorage.setItem('msz_comments', JSON.stringify(comments));
+        }
+
+        // Yıldız seçme
+        function setRating(val) {
+            selectedRating = val;
+            document.querySelectorAll('.star-rating input').forEach(input => {
+                input.checked = parseInt(input.value) === val;
+            });
+            const labels = document.querySelectorAll('.star-rating label');
+            labels.forEach((label, index) => {
+                const starVal = parseInt(label.htmlFor.replace('star', ''));
+                if (starVal <= val) {
+                    label.style.color = '#f59e0b';
+                } else {
+                    label.style.color = '#ccc';
+                }
+            });
+            document.getElementById('ratingText').textContent = val + ' / 5 ★';
+        }
+
+        // Yorum gönderme
+        function submitComment() {
+            const name = document.getElementById('commentName').value.trim();
+            const message = document.getElementById('commentMsg').value.trim();
+            const ig = document.getElementById('commentIg').value.trim();
+            const email = document.getElementById('commentEmail').value.trim();
+
+            if (!name) {
+                alert('⚠️ Please enter your name!');
+                document.getElementById('commentName').focus();
+                return;
+            }
+            if (!message) {
+                alert('⚠️ Please write a message!');
+                document.getElementById('commentMsg').focus();
+                return;
+            }
+            if (selectedRating === 0) {
+                alert('⚠️ Please select a rating!');
+                return;
+            }
+
+            const hasBadWords = containsBadWords(name) || containsBadWords(message);
+            const filteredMessage = filterBadWords(message);
+            const filteredName = filterBadWords(name);
+
+            const comments = getComments();
+            const newComment = {
+                id: Date.now(),
+                name: filteredName,
+                message: filteredMessage,
+                rating: selectedRating,
+                ig: ig || '',
+                email: email || '',
+                date: new Date().toISOString(),
+                isBanned: hasBadWords
+            };
+
+            comments.unshift(newComment);
+            saveComments(comments);
+            renderComments();
+
+            // Formu temizle
+            document.getElementById('commentName').value = '';
+            document.getElementById('commentMsg').value = '';
+            document.getElementById('commentIg').value = '';
+            document.getElementById('commentEmail').value = '';
+            setRating(0);
+            document.querySelectorAll('.star-rating input').forEach(input => input.checked = false);
+            document.querySelectorAll('.star-rating label').forEach(label => label.style.color = '#ccc');
+            document.getElementById('ratingText').textContent = 'Tap a star to rate';
+
+            if (hasBadWords) {
+                alert('⚠️ Your comment contains inappropriate language and has been marked as banned.');
+            } else {
+                alert('✅ Your comment has been posted successfully!');
+            }
+        }
+
+        // Yorumları göster
+        function renderComments() {
+            const comments = getComments();
+            const list = document.getElementById('commentList');
+            const count = document.getElementById('commentCount');
+            const empty = document.getElementById('emptyComment');
+
+            count.textContent = comments.length + ' comments';
+
+            if (comments.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8 opacity-40" id="emptyComment">
+                        <i class="fas fa-comment-slash text-4xl mb-2 block"></i>
+                        No comments yet. Be the first!
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = comments.map(c => {
+                const date = new Date(c.date);
+                const dateStr = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+                const stars = '★'.repeat(c.rating) + '☆'.repeat(5-c.rating);
+                
+                let contactHtml = '';
+                if (c.ig) contactHtml += `<a href="https://instagram.com/${c.ig.replace('@','')}" target="_blank" class="text-pink-500 hover:underline text-sm"><i class="fab fa-instagram"></i> ${c.ig}</a>`;
+                if (c.email) contactHtml += (contactHtml ? ' • ' : '') + `<a href="mailto:${c.email}" class="text-blue-400 hover:underline text-sm"><i class="fas fa-envelope"></i> ${c.email}</a>`;
+                
+                const bannedClass = c.isBanned ? 'comment-banned' : '';
+                const bannedText = c.isBanned ? '<span class="text-red-500 text-xs font-bold ml-2">⚠️ BANNED</span>' : '';
+
+                return `
+                    <div class="comment-item p-4 rounded-2xl bg-white/40 dark:bg-white/5 border border-white/10 ${bannedClass}">
+                        <div class="flex justify-between items-start flex-wrap gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold text-lg">${c.name}</span>
+                                ${bannedText}
+                            </div>
+                            <span class="comment-stars text-sm">${stars}</span>
+                        </div>
+                        ${contactHtml ? `<div class="text-xs opacity-60 my-1">${contactHtml}</div>` : ''}
+                        <div class="comment-text ${c.isBanned ? 'text-red-400 italic' : ''} mt-1 text-sm leading-relaxed">
+                            ${c.isBanned ? '⚠️ This comment has been banned for inappropriate content.' : c.message}
+                        </div>
+                        <div class="text-xs opacity-40 mt-2">${dateStr}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============ PAGE TRANSITION ============
         const updateUI = (page) => {
             const content = document.getElementById('app-content');
             content.innerHTML = pages[page] || pages.home;
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Comments sayfasına geçişte yorumları göster
+            if (page === 'comments') {
+                setTimeout(renderComments, 50);
+            }
         };
 
         const toggleMenu = () => {
@@ -737,6 +1022,9 @@
             updateUI('home');
             document.getElementById('newsBadge').textContent = haberler.length;
             haberleriGoster();
+            
+            // Comments sayfası açık değilse yorumları yükleme
+            // Ama comments sayfası açıldığında renderComments çağrılacak
         };
     </script>
 </body>
