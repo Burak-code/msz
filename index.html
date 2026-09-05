@@ -806,30 +806,38 @@
             return badWords.some(word => lower.includes(word));
         }
 
-        // Rating'i localStorage'a kaydet
+        // Rating'i localStorage'a kaydet ve hemen uygula
         window.setRating = function(val) {
             selectedRating = val;
             localStorage.setItem('selectedRating', val);
             
+            // Radio butonlarını güncelle
             document.querySelectorAll('.star-rating input').forEach(input => {
                 input.checked = parseInt(input.value) === val;
             });
+            
+            // Label renklerini güncelle
             const labels = document.querySelectorAll('.star-rating label');
             labels.forEach((label) => {
                 const starVal = parseInt(label.htmlFor.replace('star', ''));
                 label.style.color = starVal <= val ? '#f59e0b' : '#ccc';
             });
-            document.getElementById('ratingText').textContent = val + ' / 5 ★';
+            
+            const ratingText = document.getElementById('ratingText');
+            if (ratingText) {
+                ratingText.textContent = val + ' / 5 ★';
+            }
         };
 
-        // Sayfa yüklenince localStorage'dan rating'i geri yükle
+        // Sayfa yüklenince localStorage'dan rating'i geri yükle - HEMEN ÇALIŞTIR
         function restoreRating() {
             const savedRating = localStorage.getItem('selectedRating');
             if (savedRating && parseInt(savedRating) > 0) {
-                setTimeout(() => {
-                    window.setRating(parseInt(savedRating));
-                }, 50);
+                // Doğrudan setRating'i çağır, DOM hazır olacak
+                window.setRating(parseInt(savedRating));
+                return true;
             }
+            return false;
         }
 
         // Rating renk sınıfını al
@@ -984,7 +992,7 @@
                 unsubscribeComments = null;
             }
 
-            // Rating'i geri yükle
+            // Rating'i geri yükle - BURASI ÖNEMLİ
             restoreRating();
 
             const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
@@ -1008,9 +1016,11 @@
             
             if (page === 'comments') {
                 setTimeout(() => {
+                    // Önce rating'i geri yükle
                     restoreRating();
+                    // Sonra comments'i başlat
                     initComments();
-                }, 100);
+                }, 50);
             } else {
                 if (unsubscribeComments) {
                     unsubscribeComments();
