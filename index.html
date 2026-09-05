@@ -427,11 +427,11 @@
         }
 
         /* Rating Colors */
-        .rating-1 { color: #ef4444; } /* Kırmızı */
-        .rating-2 { color: #ec4899; } /* Pembe */
-        .rating-3 { color: #9ca3af; } /* Beyaz/Gri */
-        .rating-4 { color: #34d399; } /* Açık Yeşil */
-        .rating-5 { color: #059669; } /* Koyu Yeşil */
+        .rating-1 { color: #ef4444; }
+        .rating-2 { color: #ec4899; }
+        .rating-3 { color: #9ca3af; }
+        .rating-4 { color: #34d399; }
+        .rating-5 { color: #059669; }
 
         .avg-rating-container {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
@@ -806,13 +806,14 @@
             return badWords.some(word => lower.includes(word));
         }
 
+        // Rating'i localStorage'a kaydet
         window.setRating = function(val) {
             selectedRating = val;
-            // Radio butonları güncelle
+            localStorage.setItem('selectedRating', val);
+            
             document.querySelectorAll('.star-rating input').forEach(input => {
                 input.checked = parseInt(input.value) === val;
             });
-            // Label renklerini güncelle
             const labels = document.querySelectorAll('.star-rating label');
             labels.forEach((label) => {
                 const starVal = parseInt(label.htmlFor.replace('star', ''));
@@ -820,6 +821,16 @@
             });
             document.getElementById('ratingText').textContent = val + ' / 5 ★';
         };
+
+        // Sayfa yüklenince localStorage'dan rating'i geri yükle
+        function restoreRating() {
+            const savedRating = localStorage.getItem('selectedRating');
+            if (savedRating && parseInt(savedRating) > 0) {
+                setTimeout(() => {
+                    window.setRating(parseInt(savedRating));
+                }, 50);
+            }
+        }
 
         // Rating renk sınıfını al
         function getRatingClass(rating) {
@@ -973,6 +984,9 @@
                 unsubscribeComments = null;
             }
 
+            // Rating'i geri yükle
+            restoreRating();
+
             const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
             
             unsubscribeComments = onSnapshot(q, (snapshot) => {
@@ -993,7 +1007,10 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
             if (page === 'comments') {
-                setTimeout(initComments, 100);
+                setTimeout(() => {
+                    restoreRating();
+                    initComments();
+                }, 100);
             } else {
                 if (unsubscribeComments) {
                     unsubscribeComments();
