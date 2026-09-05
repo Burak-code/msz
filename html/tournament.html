@@ -461,8 +461,8 @@
 </head>
 <body>
 
-    <!-- UYARI EKRANI (MODAL) -->
-    <div class="modal-overlay" id="warningModal">
+    <!-- UYARI EKRANI (MODAL) - SADECE 1-7 ARASI GÖSTERİLİR -->
+    <div class="modal-overlay" id="warningModal" style="display:none;">
         <div class="modal-box">
             <span class="icon">⚠️</span>
             <h2>📢 SAYIN KATILIMCILAR</h2>
@@ -792,14 +792,28 @@
             });
         });
 
-        // ---- UYARI EKRANI (MODAL) KONTROLÜ - DÜZELTİLDİ ----
+        // ---- UYARI EKRANI (MODAL) - SADECE 1-7 ARASI GÖSTER ---- 
         function kapatModal() {
             document.getElementById('warningModal').style.display = 'none';
             document.body.classList.remove('no-scroll');
         }
 
-        // Sayfa yüklenirken scroll'u engelle
-        document.body.classList.add('no-scroll');
+        function modalKontrol() {
+            const now = new Date();
+            const gun = now.getDate(); // 1-31 arası
+
+            // Eğer gün 1 ile 7 arasındaysa modalı göster
+            if (gun >= 1 && gun <= 7) {
+                document.getElementById('warningModal').style.display = 'flex';
+                document.body.classList.add('no-scroll');
+            } else {
+                // Değilse modal zaten kapalı, scroll'u açık bırak
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        // Sayfa yüklenince kontrol et
+        modalKontrol();
 
         // Modal dışına tıklayınca da kapansın
         document.getElementById('warningModal').addEventListener('click', function(e) {
@@ -808,7 +822,7 @@
             }
         });
 
-        // ESC tuşu ile kapatma (ekstra)
+        // ESC tuşu ile kapatma
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('warningModal');
