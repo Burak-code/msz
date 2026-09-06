@@ -1,73 +1,281 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MSZ | Sosyal Medya</title>
-<style>
-  /* Sayfanın tamamını dikey ve yatayda tam ortalamak için Flexbox */
-  body {
-      background-color: black;
-      color: white;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center; /* Yatayda ortala */
-      align-items: center;     /* Dikeyde ortala */
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSZ | Official Links</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons (v6.5.1 for guaranteed X icon support) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & Caveat for handwritten logo style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  /* Butonları dikey dizecek kapsayıcı kutu */
-  .container {
-      display: flex;
-      flex-direction: column;
-      gap: 16px; /* Butonlar arasındaki dikey boşluk */
-      width: 100%;
-      max-width: 320px; /* Mobil ekranlarda taşmasın diye */
-      padding: 20px;
-  }
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0e;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.8) 0%, transparent 80%);
+            min-height: 100vh;
+        }
 
-  /* Dev Boyutlu Buton Stili */
-  .btn {
-      width: 100%;
-      height: 60px;                  /* Yükseklik 60px'e çıkarıldı */
-      padding: 12px 24px;
-      border: 2px solid black;
-      border-radius: 30px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.8);
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 18px;               /* Yazı boyutu büyütüldü */
-      letter-spacing: 1px;
-      transition: all 0.2s ease;
-  }
+        .font-logo-script {
+            font-family: 'Caveat', cursive;
+        }
 
-  /* Fareyle üzerine gelince efekt */
-  .btn:hover {
-      background-color: #ffffff !important;
-      color: #000000 !important;
-      transform: translateY(-4px);   /* Yukarı kayma efekti */
-      box-shadow: 0 10px 20px rgba(255,255,255,0.2);
-  }
+        /* Card Realistic Shadows & Textures */
+        .card-shadow-dark {
+            box-shadow: 
+                0 20px 30px -10px rgba(0, 0, 0, 0.7),
+                0 10px 15px -5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+        }
 
-  /* Buton Renkleri */
-  .webs     { background-color: #d7ff00; color: black; }
-  .insta    { background-color: #c800ff; color: white; }
-  .yt       { background-color: #ff0000; color: white; }
-  .tt       { background-color: #424242; color: white; }
-  .linkedin { background-color: #0077b5; color: white; }
-  .x-corp   { background-color: #14171a; color: white; border: 2px solid #333; }
-</style>
+        .card-shadow-light {
+            box-shadow: 
+                0 20px 30px -10px rgba(0, 0, 0, 0.5),
+                0 10px 15px -5px rgba(0, 0, 0, 0.3),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        /* Debossed / Embossed 3D Lettering effect matching image */
+        .embossed-text-light {
+            color: rgba(0, 0, 0, 0.35);
+            text-shadow: 
+                1px 1px 1px rgba(255, 255, 255, 0.9),
+                -1px -1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card Hover Animations */
+        .card-interactive {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .card-interactive:hover {
+            transform: translateY(-6px) scale(1.015);
+        }
+
+        .card-dark-hover:hover {
+            box-shadow: 
+                0 25px 35px -10px rgba(0, 0, 0, 0.8),
+                0 0 20px 2px rgba(255, 255, 255, 0.08);
+        }
+
+        .card-light-hover:hover {
+            box-shadow: 
+                0 25px 35px -10px rgba(0, 0, 0, 0.6),
+                0 0 25px 5px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Instagram Gradient Icon Background */
+        .insta-gradient {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0d0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+    </style>
 </head>
-<body>
+<body class="text-gray-100 flex flex-col items-center justify-between p-4 sm:p-6 md:p-8">
 
-  <div class="container">
-    <button onclick="window.open('https://burak-code.github.io/msz/')" class="btn webs"> WEBS </button>
-    <button onclick="window.open('https://www.instagram.com/burak_msz/')" class="btn insta"> İNSTA </button>
-    <button onclick="window.open('https://www.youtube.com/@msz-burak')" class="btn yt"> YT </button>
-    <button onclick="window.open('https://www.tiktok.com/@arex_msz')" class="btn tt"> TİKTOK </button>
-    <button onclick="window.open('https://www.linkedin.com/in/burakmsz/')" class="btn linkedin"> LINKEDIN </button>
-    <button onclick="window.open('https://x.com/burak_msz__')" class="btn x-corp"> 𝕏 </button>
-  </div>
+    <main class="w-full max-w-2xl mx-auto my-auto flex flex-col items-center">
+        
+        <!-- Header Branding Container -->
+        <header class="text-center mb-8 flex flex-col items-center">
+            <!-- MSZ Main Logo (Loaded from msz_black.jpeg) -->
+            <div class="mb-4 flex flex-col items-center justify-center group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <img src="msz_black.jpeg" alt="MSZ Logo" class="h-16 object-contain transform transition group-hover:scale-105" onerror="this.style.display='none'; document.getElementById('header-fallback').style.display='flex';" />
+                <div id="header-fallback" class="hidden flex-col items-center">
+                    <span class="font-logo-script text-5xl font-bold tracking-wide text-white leading-none -mb-2 select-none">msz</span>
+                    <span class="text-2xl font-extrabold tracking-[0.2em] text-white leading-none select-none">MSZ</span>
+                </div>
+            </div>
 
+            <!-- Profile Avatar / Handle -->
+            <div class="relative mt-2 flex flex-col items-center">
+                <div class="w-20 h-20 rounded-full border-2 border-zinc-700 p-1 bg-zinc-900 shadow-xl overflow-hidden flex items-center justify-center">
+                    <img src="msz_black.jpeg" alt="MSZ Avatar" class="w-full h-full object-cover rounded-full" />
+                </div>
+                <h1 class="mt-3 text-lg font-semibold tracking-wider text-zinc-200">@burak_msz</h1>
+                <p class="text-xs text-zinc-400 font-medium tracking-wide">Sosyal Medya & Resmî Bağlantılar</p>
+            </div>
+        </header>
+
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-8">
+
+            <!-- CARD 1: INSTAGRAM (Dark Card Style) -->
+            <a href="https://www.instagram.com/burak_msz/" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-dark-hover bg-zinc-900 text-white border border-zinc-800/80 rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-dark group">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl insta-gradient flex items-center justify-center text-white text-2xl shadow-lg">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-white group-hover:text-pink-400 transition-colors">
+                            Instagram <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1 font-mono">instagram.com/burak_msz</p>
+                </div>
+            </a>
+
+            <!-- CARD 2: TIKTOK (White Card Style) -->
+            <a href="https://www.tiktok.com/@arex_msz" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-light-hover bg-zinc-100 text-zinc-900 border border-white rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-light group">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-white text-2xl shadow-md">
+                    <i class="fa-brands fa-tiktok"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-zinc-900 group-hover:text-black transition-colors">
+                            TikTok <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-500 mt-1 font-mono">tiktok.com/@arex_msz</p>
+                </div>
+            </a>
+
+            <!-- CARD 3: WEBSITE (White Card Style) -->
+            <a href="https://burak-code.github.io/msz/" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-light-hover bg-zinc-100 text-zinc-900 border border-white rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-light group">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl bg-lime-400 text-black flex items-center justify-center text-2xl font-bold shadow-md">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-zinc-900 group-hover:text-black transition-colors">
+                            Web Sitemiz <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-500 mt-1 font-mono">burak-code.github.io/msz</p>
+                </div>
+            </a>
+
+            <!-- CARD 4: X / TWITTER (Dark Card Style) -->
+            <a href="https://x.com/burak_msz__" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-dark-hover bg-zinc-900 text-white border border-zinc-800/80 rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-dark group">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white text-2xl shadow-lg">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-white group-hover:text-zinc-300 transition-colors">
+                            X (Twitter) <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1 font-mono">x.com/burak_msz__</p>
+                </div>
+            </a>
+
+            <!-- CARD 5: YOUTUBE (Dark Card Style) -->
+            <a href="https://www.youtube.com/@msz-burak" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-dark-hover bg-zinc-900 text-white border border-zinc-800/80 rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-dark group">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center text-white text-2xl shadow-lg">
+                    <i class="fa-brands fa-youtube"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-white group-hover:text-red-400 transition-colors">
+                            YouTube <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1 font-mono">youtube.com/@msz-burak</p>
+                </div>
+            </a>
+
+            <!-- CARD 6: LINKEDIN (White Card Style) -->
+            <a href="https://www.linkedin.com/in/burakmsz/" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-light-hover bg-zinc-100 text-zinc-900 border border-white rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-light group">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl bg-sky-700 text-white flex items-center justify-center text-2xl shadow-md">
+                    <i class="fa-brands fa-linkedin-in"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-zinc-900 group-hover:text-sky-700 transition-colors">
+                            LinkedIn <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-500 mt-1 font-mono">linkedin.com/in/burakmsz</p>
+                </div>
+            </a>
+
+            <!-- CARD 7: GMAIL (Dark Card Style - Updated target & email) -->
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=burakbilec123@gmail.com" target="_blank" rel="noopener noreferrer" 
+               class="card-interactive card-dark-hover bg-zinc-900 text-white border border-zinc-800/80 rounded-2xl p-6 flex flex-col justify-between h-44 relative overflow-hidden card-shadow-dark group md:col-span-2">
+                <div class="absolute top-4 right-5 opacity-40 group-hover:opacity-80 transition-opacity select-none">
+                    <img src="msz_black.jpeg" alt="MSZ" class="h-6 object-contain" />
+                </div>
+
+                <div class="w-12 h-12 rounded-xl bg-amber-500 text-black flex items-center justify-center text-2xl shadow-lg">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-bold tracking-wide text-white group-hover:text-amber-400 transition-colors">
+                            E-Posta / Gmail Gönder <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </h2>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1 font-mono">burakbilec123@gmail.com</p>
+                </div>
+            </a>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="mt-4 text-center text-xs text-zinc-500">
+        <p>© <span id="year"></span> MSZ. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
