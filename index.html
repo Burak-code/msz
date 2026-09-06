@@ -10,16 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase SDK (modüler) -->
-    <script type="importmap">
-        {
-            "imports": {
-                "firebase/app": "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js",
-                "firebase/firestore": "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js"
-            }
-        }
-    </script>
-
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -524,32 +514,8 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "firebase/app";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            query, 
-            orderBy, 
-            onSnapshot,
-            serverTimestamp 
-        } from "firebase/firestore";
-
-        const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: "",
-            measurementId: ""
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        console.log('🔥 Firebase connected!');
-
+    <script>
+        // ========== HABERLER ==========
         const haberler = [
             {
                 id: 1,
@@ -585,6 +551,7 @@
             },
         ];
 
+        // ========== PAGES ==========
         const pages = {
             home: `
                 <div class="text-center py-16">
@@ -740,7 +707,7 @@
                                 <label class="block text-sm font-semibold mb-1">Message <span class="text-red-500">*</span></label>
                                 <textarea id="commentMsg" rows="3" placeholder="Write your comment..." class="w-full px-4 py-3 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 focus:border-blue-500 focus:outline-none transition resize-none"></textarea>
                             </div>
-                            <button onclick="window.submitComment()" class="btn-primary w-full justify-center">
+                            <button onclick="submitComment()" class="btn-primary w-full justify-center">
                                 <i class="fas fa-paper-plane"></i> Send Comment
                             </button>
                         </div>
@@ -762,9 +729,7 @@
             `
         };
 
-        let selectedRating = 0;
-        let unsubscribeComments = null;
-
+        // ========== BAD WORDS FILTER ==========
         const badWords = [
             'amk', 'siktir', 'orospu', 'piç', 'mal', 'gerizekalı', 'aptal', 'salak', 
             'embesil', 'ibne', 'göt', 'sik', 'yarrak', 'am', 'fuck', 'shit', 'bitch', 
@@ -785,7 +750,22 @@
             return badWords.some(word => lower.includes(word));
         }
 
-        window.setRating = function(val) {
+        // ========== LOCAL STORAGE COMMENTS ==========
+        let selectedRating = 0;
+
+        function getComments() {
+            try {
+                return JSON.parse(localStorage.getItem('msz_comments') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function saveComments(comments) {
+            localStorage.setItem('msz_comments', JSON.stringify(comments));
+        }
+
+        function setRating(val) {
             selectedRating = val;
             localStorage.setItem('selectedRating', val);
             
@@ -802,12 +782,12 @@
             
             const ratingText = document.getElementById('ratingText');
             if (ratingText) ratingText.textContent = val + ' / 5 ★';
-        };
+        }
 
         function restoreRating() {
             const savedRating = localStorage.getItem('selectedRating');
             if (savedRating && parseInt(savedRating) > 0) {
-                window.setRating(parseInt(savedRating));
+                setRating(parseInt(savedRating));
                 return true;
             }
             return false;
@@ -827,7 +807,7 @@
             return `<span class="comment-stars ${colorClass}">${'★'.repeat(rating)}${'☆'.repeat(5-rating)}</span>`;
         }
 
-        window.submitComment = async function() {
+        function submitComment() {
             const name = document.getElementById('commentName').value.trim();
             const message = document.getElementById('commentMsg').value.trim();
             const ig = document.getElementById('commentIg').value.trim();
@@ -841,38 +821,38 @@
             const filteredMessage = filterBadWords(message);
             const filteredName = filterBadWords(name);
 
-            try {
-                await addDoc(collection(db, "comments"), {
-                    name: filteredName,
-                    message: filteredMessage,
-                    rating: selectedRating,
-                    ig: ig || '',
-                    email: email || '',
-                    isBanned: hasBadWords,
-                    timestamp: serverTimestamp()
-                });
+            const comments = getComments();
+            comments.unshift({
+                id: Date.now(),
+                name: filteredName,
+                message: filteredMessage,
+                rating: selectedRating,
+                ig: ig || '',
+                email: email || '',
+                isBanned: hasBadWords,
+                timestamp: new Date().toISOString()
+            });
+            saveComments(comments);
 
-                document.getElementById('commentName').value = '';
-                document.getElementById('commentMsg').value = '';
-                document.getElementById('commentIg').value = '';
-                document.getElementById('commentEmail').value = '';
-                window.setRating(0);
-                document.querySelectorAll('.star-rating input').forEach(input => input.checked = false);
-                document.querySelectorAll('.star-rating label').forEach(label => label.style.color = '#ccc');
-                document.getElementById('ratingText').textContent = 'Tap a star to rate';
+            document.getElementById('commentName').value = '';
+            document.getElementById('commentMsg').value = '';
+            document.getElementById('commentIg').value = '';
+            document.getElementById('commentEmail').value = '';
+            setRating(0);
+            document.querySelectorAll('.star-rating input').forEach(input => input.checked = false);
+            document.querySelectorAll('.star-rating label').forEach(label => label.style.color = '#ccc');
+            document.getElementById('ratingText').textContent = 'Tap a star to rate';
 
-                alert(hasBadWords ? '⚠️ Your comment contains inappropriate language and has been marked as banned.' : '✅ Your comment has been posted successfully!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ An error occurred. Please try again.');
-            }
-        };
+            renderComments();
+            alert(hasBadWords ? '⚠️ Your comment contains inappropriate language and has been marked as banned.' : '✅ Your comment has been posted successfully!');
+        }
 
-        function renderComments(comments) {
+        function renderComments() {
             const list = document.getElementById('commentList');
             const count = document.getElementById('commentCount');
             if (!list) return;
 
+            const comments = getComments();
             const totalComments = comments.length;
             let avgRating = 0;
             if (totalComments > 0) {
@@ -904,18 +884,7 @@
             }
 
             list.innerHTML = ratingSummary + comments.map(c => {
-                // TARİH DÜZELTMESİ - Firebase timestamp'i doğru işle
-                let date;
-                if (c.timestamp && c.timestamp.toDate) {
-                    date = c.timestamp.toDate();
-                } else if (c.timestamp && c.timestamp.seconds) {
-                    date = new Date(c.timestamp.seconds * 1000);
-                } else if (c.timestamp) {
-                    date = new Date(c.timestamp);
-                } else {
-                    date = new Date();
-                }
-                
+                const date = new Date(c.timestamp);
                 const dateStr = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
                 
                 let contactHtml = '';
@@ -944,27 +913,8 @@
             }).join('');
         }
 
-        function initComments() {
-            if (unsubscribeComments) {
-                unsubscribeComments();
-                unsubscribeComments = null;
-            }
-
-            restoreRating();
-
-            const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
-            unsubscribeComments = onSnapshot(q, (snapshot) => {
-                const comments = [];
-                snapshot.forEach((doc) => {
-                    comments.push({ id: doc.id, ...doc.data() });
-                });
-                renderComments(comments);
-            }, (error) => {
-                console.error('Error listening to comments:', error);
-            });
-        }
-
-        window.updateUI = function(page) {
+        // ========== UI FUNCTIONS ==========
+        function updateUI(page) {
             const content = document.getElementById('app-content');
             content.innerHTML = pages[page] || pages.home;
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -972,39 +922,28 @@
             if (page === 'comments') {
                 setTimeout(() => {
                     restoreRating();
-                    // Yıldızlara tıklama olaylarını manuel ekle
                     document.querySelectorAll('.star-rating input').forEach(input => {
                         input.addEventListener('click', function() {
-                            window.setRating(parseInt(this.value));
+                            setRating(parseInt(this.value));
                         });
                     });
-                    initComments();
+                    renderComments();
                 }, 50);
-            } else {
-                if (unsubscribeComments) {
-                    unsubscribeComments();
-                    unsubscribeComments = null;
-                }
             }
-        };
+        }
 
-        window.toggleMenu = function() {
+        function toggleMenu() {
             document.getElementById('mobile-menu').classList.toggle('translate-x-full');
-        };
+        }
 
-        document.getElementById('menu-btn').addEventListener('click', window.toggleMenu);
-        document.getElementById('close-menu').addEventListener('click', window.toggleMenu);
-        document.getElementById('logo-theme-toggle').addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-        });
-
-        window.modalAc = function(haber) {
+        // ========== NEWS FUNCTIONS ==========
+        function modalAc(haber) {
             const modal = document.getElementById('newsModal');
             document.getElementById('modalImg').src = haber.resim || 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
             document.getElementById('modalImg').alt = haber.baslik;
             document.getElementById('modalTitle').textContent = haber.baslik;
             document.getElementById('modalDesc').textContent = haber.ozet;
-            document.getElementById('modalDateText').textContent = new Date(haber.tarih).toLocaleDateString('en-GB') + ' ' + new Date(haber.tarih).toLocaleTimeString('en-GB');
+            document.getElementById('modalDateText').textContent = new Date(haber.tarih).toLocaleDateString('en-GB');
             
             const linkBtn = document.getElementById('modalLink');
             if (haber.link && haber.link !== '#' && haber.link !== 'https://...') {
@@ -1019,21 +958,13 @@
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
-        };
+        }
 
-        window.modalKapat = function() {
+        function modalKapat() {
             const modal = document.getElementById('newsModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
-        };
-
-        document.getElementById('newsModal').addEventListener('click', function(e) {
-            if (e.target === this) window.modalKapat();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') window.modalKapat();
-        });
+        }
 
         function haberleriGoster() {
             const list = document.getElementById('newsList');
@@ -1052,7 +983,7 @@
             list.innerHTML = gosterilecek.map((haber) => {
                 const imgSrc = haber.resim && haber.resim !== '' ? haber.resim : 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
                 return `
-                    <div class="news-item" onclick="window.modalAc(haberler.find(h => h.id === ${haber.id}))">
+                    <div class="news-item" onclick="modalAc(haberler.find(h => h.id === ${haber.id}))">
                         <img src="${imgSrc}" class="news-item-img" alt="News image" loading="lazy" onerror="this.src='https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ'">
                         <div class="news-item-content">
                             <div class="news-item-title">${haber.baslik || 'Untitled'}</div>
@@ -1065,6 +996,21 @@
                 `;
             }).join('');
         }
+
+        // ========== EVENT LISTENERS ==========
+        document.getElementById('menu-btn').addEventListener('click', toggleMenu);
+        document.getElementById('close-menu').addEventListener('click', toggleMenu);
+        document.getElementById('logo-theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        document.getElementById('newsModal').addEventListener('click', function(e) {
+            if (e.target === this) modalKapat();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') modalKapat();
+        });
 
         const newsTrigger = document.getElementById('newsTrigger');
         const newsPanel = document.getElementById('newsPanel');
@@ -1089,8 +1035,9 @@
             }
         });
 
+        // ========== INIT ==========
         window.onload = () => {
-            window.updateUI('home');
+            updateUI('home');
             document.getElementById('newsBadge').textContent = haberler.length;
             haberleriGoster();
         };
