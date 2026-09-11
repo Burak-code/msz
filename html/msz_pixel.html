@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-950 text-slate-100 select-none">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MSZ PİXEL</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Paho MQTT CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+  <style>
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      touch-action: none;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 5px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans overflow-hidden bg-slate-950 text-slate-100">
+
+  <!-- Login Overlay -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4">
+    <div class="bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center">
+      <div class="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-500/30 text-3xl">
+        <i class="fa-solid fa-paintbrush"></i>
+      </div>
+      <h1 class="text-2xl font-black text-white mb-2 tracking-wide">MSZ PİXEL</h1>
+      <p class="text-slate-400 text-xs sm:text-sm mb-6">Dünya haritası üzerinde istediğin pikselleri tek tek boya ve canlı sohbete katıl!</p>
+      
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div class="text-left">
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-2">Kullanıcı Adı</label>
+          <input type="text" id="usernameInput" required maxlength="16" placeholder="PikselRessami" 
+                 class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+          <span>Haritaya Katıl</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header Bar -->
+  <header class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between z-20 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-blue-600/20 border border-blue-500/40 rounded-xl flex items-center justify-center text-blue-400">
+        <i class="fa-solid fa-earth-americas text-lg"></i>
+      </div>
+      <div>
+        <h1 class="font-extrabold text-sm md:text-base leading-tight">MSZ PİXEL</h1>
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+          <span id="statusIndicator" class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          <span id="mqttStatus">MQTT Bağlanıyor...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleGrid()" id="gridBtn" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium border border-blue-500 flex items-center gap-1.5 transition-colors">
+        <i class="fa-solid fa-border-all"></i>
+        <span class="hidden sm:inline">Izgara</span>
+      </button>
+
+      <button onclick="resetView()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition-colors" title="Haritayı Ortala">
+        <i class="fa-solid fa-compress"></i>
+        <span class="hidden sm:inline">Ortala</span>
+      </button>
+
+      <button onclick="toggleAudio()" id="audioBtn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs border border-slate-700 transition-colors" title="Ses Aç/Kapat">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
+
+      <button onclick="toggleChat()" class="md:hidden p-2 bg-blue-600 text-white rounded-lg text-xs font-medium transition-colors" title="Chat">
+        <i class="fa-solid fa-comments"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="flex-1 flex relative overflow-hidden">
+    
+    <!-- Canvas Container -->
+    <div class="flex-1 relative bg-slate-950 flex items-center justify-center overflow-hidden cursor-crosshair" id="canvasViewport">
+      <canvas id="worldCanvas" class="shadow-2xl"></canvas>
+
+      <!-- Interactive Zoom Buttons -->
+      <div class="absolute bottom-5 left-5 flex flex-col bg-slate-900/90 backdrop-blur border border-slate-800 rounded-xl p-1 gap-1 shadow-2xl z-20">
+        <button onclick="zoomInButton()" class="w-9 h-9 flex items-center justify-center hover:bg-slate-800 text-slate-200 rounded-lg text-lg font-bold transition-colors active:scale-90" title="Yakınlaş (Büyüt)">
+          <i class="fa-solid fa-plus text-sm"></i>
+        </button>
+        <div class="h-px bg-slate-800"></div>
+        <button onclick="zoomOutButton()" class="w-9 h-9 flex items-center justify-center hover:bg-slate-800 text-slate-200 rounded-lg text-lg font-bold transition-colors active:scale-90" title="Uzaklaş (Küçült)">
+          <i class="fa-solid fa-minus text-sm"></i>
+        </button>
+        <div class="h-px bg-slate-800"></div>
+        <button onclick="resetView()" class="w-9 h-9 flex items-center justify-center hover:bg-slate-800 text-slate-200 rounded-lg text-xs font-bold transition-colors active:scale-90" title="Sıfırla">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
+
+      <!-- Live Coordinates Badge -->
+      <div class="absolute top-4 left-4 bg-slate-900/85 backdrop-blur border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-slate-300 shadow-md font-mono z-20 flex items-center gap-3">
+        <span id="coordDisplay">X: 0, Y: 0</span>
+        <span class="text-slate-700">|</span>
+        <span class="text-emerald-400 font-semibold">3x Harita | Sadece İç Karalar Boyanabilir (Sınırlar Korumalı)</span>
+      </div>
+    </div>
+
+    <!-- Chat Drawer -->
+    <div id="chatSidebar" class="w-full md:w-80 bg-slate-900 border-l border-slate-800 flex flex-col absolute md:relative inset-0 z-30 transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+      <!-- Chat Header -->
+      <div class="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-comments text-blue-400 text-sm"></i>
+          <span class="font-bold text-sm">Canlı Chat</span>
+        </div>
+        <button onclick="toggleChat()" class="md:hidden text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Messages list -->
+      <div id="chatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 font-sans text-xs scrollbar-thin">
+        <div class="bg-blue-950/40 border border-blue-800/40 text-blue-300 p-2.5 rounded-lg text-xs leading-relaxed">
+          🌍 <strong>Dünya Haritası 3x Ölçekte Hazır!</strong>
+          <br>Karalar beyaz, deniz sınırları siyah piksellerle kaplıdır. Denizler ve siyah kıyı çizgileri boyanamaz, sadece kara içlerine piksel koyabilirsiniz.
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-3 border-t border-slate-800 flex gap-2">
+        <input type="text" id="chatInput" placeholder="Mesaj yaz..." maxlength="100"
+               class="flex-1 bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-blue-500">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Color Palette Bar -->
+  <footer class="bg-slate-900 border-t border-slate-800 p-3 z-20 shrink-0">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 overflow-x-auto pb-1 scrollbar-thin">
+      
+      <div class="flex items-center gap-2 border-b sm:border-b-0 sm:border-r border-slate-800 pb-2 sm:pb-0 sm:pr-4 shrink-0">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Boyut:</span>
+        <div class="flex gap-1">
+          <button onclick="setBrushSize(1)" id="brushBtn1" class="w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold border border-blue-400">1x1</button>
+          <button onclick="setBrushSize(2)" id="brushBtn2" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold border border-slate-700 hover:bg-slate-700">2x2</button>
+          <button onclick="setBrushSize(3)" id="brushBtn3" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold border border-slate-700 hover:bg-slate-700">3x3</button>
+        </div>
+      </div>
+
+      <!-- Color Palette -->
+      <div id="paletteContainer" class="flex items-center gap-1.5 mx-auto overflow-x-auto py-0.5">
+        <!-- Palette injected via JS -->
+      </div>
+
+      <!-- Custom Color Picker -->
+      <div class="flex items-center gap-2 shrink-0 border-t sm:border-t-0 sm:border-l border-slate-800 pt-2 sm:pt-0 sm:pl-3">
+        <label class="text-xs text-slate-400 font-semibold">Özel Renk:</label>
+        <input type="color" id="customColorInput" onchange="selectCustomColor(this.value)" value="#ef4444" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0 p-0">
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const audio = {
+      enabled: true,
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            this.ctx = new AudioCtx();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playPaintSound() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.04);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.04);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.04);
+        } catch (e) {}
+      },
+      playChatSound() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(587.33, this.ctx.currentTime);
+          osc.frequency.setValueAtTime(880, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.2);
+        } catch (e) {}
+      }
+    };
+
+    // --- Application Constants & Config ---
+    const WORLD_WIDTH = 3000;  // Scaled 3x from 1000
+    const WORLD_HEIGHT = 1500; // Scaled 3x from 500
+
+    // Store land vs sea mask: 1 = Land, 0 = Sea
+    let landMask = new Uint8Array(WORLD_WIDTH * WORLD_HEIGHT);
+    // Store paintable pixels mask: 1 = Inner Land (Paintable), 0 = Sea & Coastlines (Blocked)
+    let paintableMask = new Uint8Array(WORLD_WIDTH * WORLD_HEIGHT);
+
+    // Palette choices
+    const PALETTE = [
+      { name: "Kırmızı", hex: "#ef4444" },
+      { name: "Siyah", hex: "#000000" },
+      { name: "Beyaz", hex: "#ffffff" },
+      { name: "Koyu Gri", hex: "#334155" },
+      { name: "Gri", hex: "#64748b" },
+      { name: "Koyu Kırmızı", hex: "#991b1b" },
+      { name: "Turuncu", hex: "#f97316" },
+      { name: "Sarı", hex: "#eab308" },
+      { name: "Açık Yeşil", hex: "#22c55e" },
+      { name: "Koyu Yeşil", hex: "#15803d" },
+      { name: "Açık Mavi", hex: "#38bdf8" },
+      { name: "Mavi", hex: "#2563eb" },
+      { name: "Lacivert", hex: "#1e3a8a" },
+      { name: "Mor", hex: "#a855f7" },
+      { name: "Pembe", hex: "#ec4899" },
+      { name: "Kahverengi", hex: "#78350f" }
+    ];
+
+    // MQTT Config
+    const MQTT_BROKER = "broker.emqx.io";
+    const MQTT_PORT = 8084;
+    const MQTT_TOPIC_PIXEL = "pixel_planet_live/pixel/v5";
+    const MQTT_TOPIC_CHAT = "pixel_planet_live/chat/v5";
+
+    // Application State
+    let username = "Oyuncu";
+    let selectedColor = PALETTE[0].hex; // Default Red
+    let brushSize = 1;
+    let showGrid = true;
+
+    // Login Form Handler
+    function handleLogin(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('usernameInput');
+      const val = input ? input.value.trim() : '';
+      if (val) {
+        username = val;
+      }
+      const modal = document.getElementById('loginModal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+      audio.init();
+    }
+
+    // Viewport Navigation (Zoom & Pan)
+    let zoomLevel = 0.8;
+    let viewX = 0;
+    let viewY = 0;
+    
+    // Drag detection for panning vs single tap
+    let isMouseDown = false;
+    let isDragging = false;
+    let dragStartX = 0, dragStartY = 0;
+    let dragStartViewX = 0, dragStartViewY = 0;
+    let touchStartDist = 0;
+
+    // Canvas Elements
+    const viewport = document.getElementById('canvasViewport');
+    const canvas = document.getElementById('worldCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Offscreen Canvas Buffer
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = WORLD_WIDTH;
+    offscreenCanvas.height = WORLD_HEIGHT;
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+
+    // Store Painted Pixels: key "x,y" -> hexColor
+    const modifiedPixels = new Map();
+
+    function loadWorldMap() {
+      const mapImg = new Image();
+      mapImg.crossOrigin = "anonymous";
+
+      mapImg.onload = () => {
+        // Create temporary canvas to extract pixel data from map image
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = WORLD_WIDTH;
+        tempCanvas.height = WORLD_HEIGHT;
+        const tempCtx = tempCanvas.getContext('2d');
+
+        // Fill white default background before drawing map image
+        tempCtx.fillStyle = "#ffffff";
+        tempCtx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        tempCtx.drawImage(mapImg, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        const imgData = tempCtx.getImageData(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        const data = imgData.data;
+
+        // 1. Identify land vs sea pixels
+        for (let i = 0; i < WORLD_WIDTH * WORLD_HEIGHT; i++) {
+          const r = data[i * 4];
+          const g = data[i * 4 + 1];
+          const b = data[i * 4 + 2];
+          // Non-pure white pixels in source map represent land
+          const isWhiteSea = (r > 240 && g > 240 && b > 240);
+          landMask[i] = isWhiteSea ? 0 : 1;
+        }
+
+        // 2. Generate final offscreen canvas map (Ocean, White Land, Black Coastline)
+        renderProcessedMapBuffer();
+        renderCanvas();
+      };
+
+      mapImg.onerror = () => {
+        drawFallbackWorldMap();
+        renderCanvas();
+      };
+
+      mapImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1280px-World_map_-_low_resolution.svg.png";
+    }
+
+    function renderProcessedMapBuffer() {
+      const outImgData = offscreenCtx.createImageData(WORLD_WIDTH, WORLD_HEIGHT);
+      const outData = outImgData.data;
+
+      // Ocean color (#0f172a)
+      const oceanR = 15, oceanG = 23, oceanB = 42;
+
+      for (let y = 0; y < WORLD_HEIGHT; y++) {
+        for (let x = 0; x < WORLD_WIDTH; x++) {
+          const idx = y * WORLD_WIDTH + x;
+          const outIdx = idx * 4;
+
+          if (landMask[idx] === 0) {
+            // Sea / Ocean Pixel -> Unpaintable
+            paintableMask[idx] = 0;
+            outData[outIdx] = oceanR;
+            outData[outIdx + 1] = oceanG;
+            outData[outIdx + 2] = oceanB;
+            outData[outIdx + 3] = 255;
+          } else {
+            // Check if land pixel borders sea (Coastline)
+            let isCoastline = false;
+            if (x === 0 || x === WORLD_WIDTH - 1 || y === 0 || y === WORLD_HEIGHT - 1) {
+              isCoastline = true;
+            } else {
+              if (landMask[idx - 1] === 0 || 
+                  landMask[idx + 1] === 0 || 
+                  landMask[idx - WORLD_WIDTH] === 0 || 
+                  landMask[idx + WORLD_WIDTH] === 0) {
+                isCoastline = true;
+              }
+            }
+
+            if (isCoastline) {
+              // Coastline -> Black pixel (Unpaintable)
+              paintableMask[idx] = 0;
+              outData[outIdx] = 0;
+              outData[outIdx + 1] = 0;
+              outData[outIdx + 2] = 0;
+              outData[outIdx + 3] = 255;
+            } else {
+              // Land Interior -> Pure White pixel (Paintable)
+              paintableMask[idx] = 1;
+              outData[outIdx] = 255;
+              outData[outIdx + 1] = 255;
+              outData[outIdx + 2] = 255;
+              outData[outIdx + 3] = 255;
+            }
+          }
+        }
+      }
+
+      offscreenCtx.putImageData(outImgData, 0, 0);
+    }
+
+    function drawFallbackWorldMap() {
+      // Procedural fallback map if image fails to load
+      landMask.fill(0);
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = WORLD_WIDTH;
+      tempCanvas.height = WORLD_HEIGHT;
+      const tCtx = tempCanvas.getContext('2d');
+
+      tCtx.fillStyle = "#000000";
+      tCtx.beginPath();
+      // Americas
+      tCtx.ellipse(WORLD_WIDTH * 0.25, WORLD_HEIGHT * 0.4, WORLD_WIDTH * 0.1, WORLD_HEIGHT * 0.24, 0, 0, Math.PI * 2);
+      tCtx.ellipse(WORLD_WIDTH * 0.32, WORLD_HEIGHT * 0.7, WORLD_WIDTH * 0.07, WORLD_HEIGHT * 0.22, 0, 0, Math.PI * 2);
+      // Eurasia & Africa
+      tCtx.ellipse(WORLD_WIDTH * 0.55, WORLD_HEIGHT * 0.36, WORLD_WIDTH * 0.15, WORLD_HEIGHT * 0.2, 0, 0, Math.PI * 2);
+      tCtx.ellipse(WORLD_WIDTH * 0.53, WORLD_HEIGHT * 0.6, WORLD_WIDTH * 0.09, WORLD_HEIGHT * 0.22, 0, 0, Math.PI * 2);
+      // Australia
+      tCtx.ellipse(WORLD_WIDTH * 0.82, WORLD_HEIGHT * 0.74, WORLD_WIDTH * 0.06, WORLD_HEIGHT * 0.09, 0, 0, Math.PI * 2);
+      tCtx.fill();
+
+      const imgData = tCtx.getImageData(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+      for (let i = 0; i < WORLD_WIDTH * WORLD_HEIGHT; i++) {
+        landMask[i] = imgData.data[i * 4 + 3] > 100 ? 1 : 0;
+      }
+
+      renderProcessedMapBuffer();
+    }
+
+    function updateCanvasDimensions() {
+      const nw = viewport.clientWidth;
+      const nh = viewport.clientHeight;
+
+      if (canvas.width !== nw || canvas.height !== nh) {
+        canvas.width = nw;
+        canvas.height = nh;
+        renderCanvas();
+      }
+    }
+
+    function renderCanvas() {
+      ctx.imageSmoothingEnabled = false;
+
+      // Dark Background
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+
+      // 1. Draw base world map buffer
+      const renderW = Math.floor(WORLD_WIDTH * zoomLevel);
+      const renderH = Math.floor(WORLD_HEIGHT * zoomLevel);
+      ctx.drawImage(offscreenCanvas, Math.floor(viewX), Math.floor(viewY), renderW, renderH);
+
+      // 2. Overlay User Painted Pixels
+      const pixelSize = Math.max(1, Math.ceil(zoomLevel));
+      modifiedPixels.forEach((color, key) => {
+        const commaIdx = key.indexOf(',');
+        const x = parseInt(key.substring(0, commaIdx), 10);
+        const y = parseInt(key.substring(commaIdx + 1), 10);
+
+        const screenX = Math.floor(viewX + x * zoomLevel);
+        const screenY = Math.floor(viewY + y * zoomLevel);
+
+        if (screenX + zoomLevel >= 0 && screenX <= canvas.width &&
+            screenY + zoomLevel >= 0 && screenY <= canvas.height) {
+          ctx.fillStyle = color;
+          ctx.fillRect(screenX, screenY, pixelSize, pixelSize);
+        }
+      });
+
+      // 3. Grid Overlay
+      if (showGrid && zoomLevel >= 3) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+        ctx.lineWidth = 1;
+
+        const startX = Math.max(0, Math.floor(-viewX / zoomLevel));
+        const endX = Math.min(WORLD_WIDTH, Math.ceil((canvas.width - viewX) / zoomLevel));
+        const startY = Math.max(0, Math.floor(-viewY / zoomLevel));
+        const endY = Math.min(WORLD_HEIGHT, Math.ceil((canvas.height - viewY) / zoomLevel));
+
+        for (let x = startX; x <= endX; x++) {
+          const gx = Math.floor(viewX + x * zoomLevel) + 0.5;
+          ctx.beginPath();
+          ctx.moveTo(gx, Math.max(0, viewY));
+          ctx.lineTo(gx, Math.min(canvas.height, viewY + WORLD_HEIGHT * zoomLevel));
+          ctx.stroke();
+        }
+
+        for (let y = startY; y <= endY; y++) {
+          const gy = Math.floor(viewY + y * zoomLevel) + 0.5;
+          ctx.beginPath();
+          ctx.moveTo(Math.max(0, viewX), gy);
+          ctx.lineTo(Math.min(canvas.width, viewX + WORLD_WIDTH * zoomLevel), gy);
+          ctx.stroke();
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function getPixelCoordsAt(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const canvasX = clientX - rect.left;
+      const canvasY = clientY - rect.top;
+
+      const px = Math.floor((canvasX - viewX) / zoomLevel);
+      const py = Math.floor((canvasY - viewY) / zoomLevel);
+
+      if (px >= 0 && px < WORLD_WIDTH && py >= 0 && py < WORLD_HEIGHT) {
+        return { x: px, y: py };
+      }
+      return null;
+    }
+
+    // Paint pixel logic with Sea & Coastline restriction
+    function paintPixelAt(startX, startY) {
+      const paintedList = [];
+      const half = Math.floor(brushSize / 2);
+
+      for (let dy = -half; dy < brushSize - half; dy++) {
+        for (let dx = -half; dx < brushSize - half; dx++) {
+          const px = startX + dx;
+          const py = startY + dy;
+          if (px >= 0 && px < WORLD_WIDTH && py >= 0 && py < WORLD_HEIGHT) {
+            
+            // Check if current pixel is Sea OR Coastline -> Prevent painting!
+            const idx = py * WORLD_WIDTH + px;
+            if (paintableMask[idx] === 0) {
+              continue; // Skip ocean and black coastline pixels
+            }
+
+            const key = `${px},${py}`;
+            if (modifiedPixels.get(key) !== selectedColor) {
+              modifiedPixels.set(key, selectedColor);
+              paintedList.push({ x: px, y: py, color: selectedColor });
+            }
+          }
+        }
+      }
+
+      if (paintedList.length > 0) {
+        audio.playPaintSound();
+        renderCanvas();
+
+        if (mqttClient && mqttClient.isConnected()) {
+          paintedList.forEach(p => {
+            const payload = JSON.stringify({ x: p.x, y: p.y, color: p.color, user: username });
+            const message = new Paho.MQTT.Message(payload);
+            message.destinationName = MQTT_TOPIC_PIXEL;
+            mqttClient.send(message);
+          });
+        }
+        if (localChannel) {
+          paintedList.forEach(p => {
+            localChannel.postMessage({ type: 'pixel', x: p.x, y: p.y, color: p.color, user: username });
+          });
+        }
+      }
+    }
+
+    function setBrushSize(size) {
+      brushSize = size;
+      [1, 2, 3].forEach(s => {
+        const btn = document.getElementById(`brushBtn${s}`);
+        if (btn) {
+          btn.className = s === size
+            ? "w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold border border-blue-400"
+            : "w-7 h-7 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold border border-slate-700 hover:bg-slate-700";
+        }
+      });
+    }
+
+    function applyZoom(factor, cx, cy) {
+      const oldZoom = zoomLevel;
+      zoomLevel = Math.max(0.3, Math.min(48, zoomLevel * factor));
+
+      if (cx === undefined || cy === undefined) {
+        cx = viewport.clientWidth / 2;
+        cy = viewport.clientHeight / 2;
+      }
+
+      viewX = cx - (cx - viewX) * (zoomLevel / oldZoom);
+      viewY = cy - (cy - viewY) * (zoomLevel / oldZoom);
+      renderCanvas();
+    }
+
+    function zoomInButton() { applyZoom(1.35); }
+    function zoomOutButton() { applyZoom(1 / 1.35); }
+
+    function resetView() {
+      zoomLevel = Math.min(viewport.clientWidth / WORLD_WIDTH, viewport.clientHeight / WORLD_HEIGHT) * 0.95;
+      if (zoomLevel < 0.2) zoomLevel = 0.8;
+      viewX = (viewport.clientWidth - WORLD_WIDTH * zoomLevel) / 2;
+      viewY = (viewport.clientHeight - WORLD_HEIGHT * zoomLevel) / 2;
+      renderCanvas();
+    }
+
+    function setupInteractions() {
+      // Mouse Events
+      viewport.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        isDragging = false;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        dragStartViewX = viewX;
+        dragStartViewY = viewY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        const coords = getPixelCoordsAt(e.clientX, e.clientY);
+        if (coords) {
+          document.getElementById('coordDisplay').innerText = `X: ${coords.x}, Y: ${coords.y}`;
+        }
+
+        if (!isMouseDown) return;
+
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+
+        // Threshold to distinguish click vs drag pan
+        if (Math.hypot(dx, dy) > 4) {
+          isDragging = true;
+          viewport.style.cursor = "grabbing";
+          viewX = dragStartViewX + dx;
+          viewY = dragStartViewY + dy;
+          renderCanvas();
+        }
+      });
+
+      window.addEventListener('mouseup', (e) => {
+        if (isMouseDown && !isDragging && e.button === 0) {
+          // Single tap/click -> Paint single pixel
+          const coords = getPixelCoordsAt(e.clientX, e.clientY);
+          if (coords) {
+            paintPixelAt(coords.x, coords.y);
+          }
+        }
+        isMouseDown = false;
+        isDragging = false;
+        viewport.style.cursor = "crosshair";
+      });
+
+      viewport.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      // Mouse Wheel Zoom
+      viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const factor = e.deltaY < 0 ? 1.2 : 0.833;
+        applyZoom(factor, mouseX, mouseY);
+      }, { passive: false });
+
+      // Touch Events for Mobile
+      viewport.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isMouseDown = true;
+          isDragging = false;
+          dragStartX = e.touches[0].clientX;
+          dragStartY = e.touches[0].clientY;
+          dragStartViewX = viewX;
+          dragStartViewY = viewY;
+        } else if (e.touches.length === 2) {
+          isMouseDown = false;
+          touchStartDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+        }
+      }, { passive: false });
+
+      viewport.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1 && isMouseDown) {
+          const touch = e.touches[0];
+          const dx = touch.clientX - dragStartX;
+          const dy = touch.clientY - dragStartY;
+
+          if (Math.hypot(dx, dy) > 4) {
+            isDragging = true;
+            viewX = dragStartViewX + dx;
+            viewY = dragStartViewY + dy;
+            renderCanvas();
+          }
+        } else if (e.touches.length === 2) {
+          const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          if (touchStartDist > 0) {
+            const factor = dist / touchStartDist;
+            const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            const rect = canvas.getBoundingClientRect();
+            applyZoom(factor, midX - rect.left, midY - rect.top);
+            touchStartDist = dist;
+          }
+        }
+      }, { passive: false });
+
+      viewport.addEventListener('touchend', (e) => {
+        if (isMouseDown && !isDragging) {
+          const touch = e.changedTouches[0];
+          if (touch) {
+            const coords = getPixelCoordsAt(touch.clientX, touch.clientY);
+            if (coords) {
+              paintPixelAt(coords.x, coords.y);
+            }
+          }
+        }
+        isMouseDown = false;
+        isDragging = false;
+      });
+
+      window.addEventListener('resize', () => {
+        updateCanvasDimensions();
+      });
+    }
+
+    let mqttClient = null;
+    let localChannel = null;
+
+    function initMQTT() {
+      // Local BroadcastChannel fallback for sandbox/iframe environments
+      if ('BroadcastChannel' in window && !localChannel) {
+        try {
+          localChannel = new BroadcastChannel('pixel_planet_sync');
+          localChannel.onmessage = (event) => {
+            const data = event.data;
+            if (data.type === 'pixel') {
+              modifiedPixels.set(`${data.x},${data.y}`, data.color);
+              renderCanvas();
+            } else if (data.type === 'chat') {
+              appendChatMessage(data.user, data.text, false);
+            }
+          };
+        } catch(e) {}
+      }
+
+      try {
+        const clientId = "pixel_usr_" + Math.random().toString(16).substr(2, 8);
+        mqttClient = new Paho.MQTT.Client(MQTT_BROKER, MQTT_PORT, clientId);
+
+        mqttClient.onConnectionLost = () => {
+          document.getElementById('mqttStatus').innerText = "Bağlantı Kesildi (Yeniden Bağlanıyor...)";
+          document.getElementById('statusIndicator').className = "inline-block w-2 h-2 rounded-full bg-amber-500 animate-ping";
+          setTimeout(initMQTT, 5000);
+        };
+
+        mqttClient.onMessageArrived = (message) => {
+          try {
+            const data = JSON.parse(message.payloadString);
+            if (message.destinationName === MQTT_TOPIC_PIXEL) {
+              modifiedPixels.set(`${data.x},${data.y}`, data.color);
+              renderCanvas();
+            } else if (message.destinationName === MQTT_TOPIC_CHAT) {
+              appendChatMessage(data.user, data.text, data.user === username);
+            }
+          } catch(e) {}
+        };
+
+        mqttClient.connect({
+          useSSL: true,
+          timeout: 5,
+          onSuccess: () => {
+            document.getElementById('mqttStatus').innerText = "Canlı Sunucu Bağlı";
+            document.getElementById('statusIndicator').className = "inline-block w-2 h-2 rounded-full bg-emerald-500";
+            mqttClient.subscribe(MQTT_TOPIC_PIXEL);
+            mqttClient.subscribe(MQTT_TOPIC_CHAT);
+          },
+          onFailure: () => {
+            document.getElementById('mqttStatus').innerText = "Çevrimdışı Mod";
+            document.getElementById('statusIndicator').className = "inline-block w-2 h-2 rounded-full bg-slate-500";
+          }
+        });
+      } catch (err) {
+        console.warn("MQTT WebSockets disallowed in sandbox context. Operating in local mode:", err);
+        document.getElementById('mqttStatus').innerText = "Yerel Mod (Sandbox)";
+        document.getElementById('statusIndicator').className = "inline-block w-2 h-2 rounded-full bg-slate-500";
+        mqttClient = null;
+      }
+    }
+
+    function toggleGrid() {
+      showGrid = !showGrid;
+      const btn = document.getElementById('gridBtn');
+      btn.className = showGrid 
+        ? "px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium border border-blue-500 flex items-center gap-1.5 transition-colors"
+        : "px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition-colors";
+      renderCanvas();
+    }
+
+    function toggleAudio() {
+      audio.enabled = !audio.enabled;
+      const btn = document.getElementById('audioBtn');
+      btn.innerHTML = audio.enabled 
+        ? `<i class="fa-solid fa-volume-high"></i>`
+        : `<i class="fa-solid fa-volume-xmark text-slate-500"></i>`;
+    }
+
+    function toggleChat() {
+      const sidebar = document.getElementById('chatSidebar');
+      sidebar.classList.toggle('translate-x-full');
+    }
+
+    function buildPaletteGUI() {
+      const container = document.getElementById('paletteContainer');
+      container.innerHTML = "";
+
+      PALETTE.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.type = "button";
+        btn.title = item.name;
+        const isSelected = selectedColor.toLowerCase() === item.hex.toLowerCase();
+
+        btn.className = `w-7 h-7 rounded-lg shrink-0 flex items-center justify-center border transition-all ${
+          isSelected ? "border-2 border-white ring-2 ring-blue-500/50" : "border-slate-700/80 hover:border-slate-400"
+        }`;
+        btn.style.backgroundColor = item.hex;
+
+        if (isSelected) {
+          btn.innerHTML = `<i class="fa-solid fa-check text-[10px] ${item.hex === '#ffffff' ? 'text-black' : 'text-white'}"></i>`;
+        }
+
+        btn.onclick = () => {
+          selectedColor = item.hex;
+          buildPaletteGUI();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function selectCustomColor(hex) {
+      selectedColor = hex;
+      buildPaletteGUI();
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendChatMessage(username, text, true);
+
+      if (mqttClient && mqttClient.isConnected()) {
+        const payload = JSON.stringify({ user: username, text: text });
+        const message = new Paho.MQTT.Message(payload);
+        message.destinationName = MQTT_TOPIC_CHAT;
+        mqttClient.send(message);
+      }
+      if (localChannel) {
+        localChannel.postMessage({ type: 'chat', user: username, text: text });
+      }
+
+      input.value = "";
+    }
+
+    function appendChatMessage(user, text, isSelf) {
+      const chatMessages = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `p-2 rounded-lg text-xs break-words ${
+        isSelf ? "bg-blue-600/20 border border-blue-500/30 text-blue-100 ml-4" : "bg-slate-800 border border-slate-700 text-slate-200 mr-4"
+      }`;
+      
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      div.innerHTML = `
+        <div class="flex items-center justify-between font-bold text-[11px] ${isSelf ? "text-blue-400" : "text-slate-400"} mb-0.5">
+          <span>${escapeHtml(user)}</span>
+          <span class="text-[9px] font-normal text-slate-500">${timeStr}</span>
+        </div>
+        <div>${escapeHtml(text)}</div>
+      `;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      if (!isSelf) {
+        audio.playChatSound();
+      }
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Window Load Initialization
+    window.onload = function() {
+      loadWorldMap();
+      buildPaletteGUI();
+      setupInteractions();
+      updateCanvasDimensions();
+      resetView();
+      initMQTT();
+    };
+  </script>
+</body>
+</html>
