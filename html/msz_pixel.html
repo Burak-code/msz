@@ -3,21 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MSZ Pixel - Dünya Haritası Piksel Boyama</title>
+  <title>MSZ Pixel </title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, collection, onSnapshot, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, collection, onSnapshot, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    window.FirebaseModules = {
-      initializeApp, getAuth, signInAnonymously, signInWithCustomToken,
-      getFirestore, doc, setDoc, collection, onSnapshot, addDoc, getDocs
-    };
-  </script>
+  // Firebase Konfigürasyonu
+  window.__firebase_config = {
+    apiKey: "AIzaSyCQqQqE9k6lVFa6E7SyO7DRhqTjVjEubfU",
+    authDomain: "msz-pixel.firebaseapp.com",
+    databaseURL: "https://msz-pixel-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "msz-pixel",
+    storageBucket: "msz-pixel.firebasestorage.app",
+    messagingSenderId: "1002783331591",
+    appId: "1:1002783331591:web:3a4ea203a5d7a239d0e1a2"
+  };
+  
+  window.__app_id = "msz-pixel";
+
+  window.FirebaseModules = {
+    initializeApp, getAuth, signInAnonymously, signInWithCustomToken,
+    getFirestore, doc, setDoc, collection, onSnapshot, addDoc, getDocs
+  };
+</script>
   <style>
     canvas { image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
     .scrollbar-thin::-webkit-scrollbar { width: 5px; }
