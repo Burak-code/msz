@@ -155,8 +155,8 @@
             position: fixed;
             bottom: 110px;
             left: 30px;
-            width: 360px;
-            max-height: 440px;
+            width: 380px;
+            max-height: 480px;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(16px);
             border-radius: 24px;
@@ -200,7 +200,7 @@
         .news-close:hover { opacity: 1; }
         .news-list {
             padding: 10px 14px 14px 14px;
-            max-height: 320px;
+            max-height: 360px;
             overflow-y: auto;
         }
         .news-item {
@@ -221,7 +221,7 @@
             transform: translateX(4px);
         }
         .news-item-img {
-            width: 48px; height: 48px;
+            width: 52px; height: 52px;
             border-radius: 10px;
             object-fit: cover;
             flex-shrink: 0;
@@ -252,6 +252,18 @@
             align-items: center;
             gap: 6px;
         }
+        .news-item-tag {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-bottom: 4px;
+        }
+        .news-item-tag.hot { background: #ef4444; color: white; }
+        .news-item-tag.new { background: #22c55e; color: white; }
+        .news-item-tag.update { background: #3b82f6; color: white; }
         .loading-spinner {
             display: flex;
             flex-direction: column;
@@ -280,14 +292,14 @@
             display: flex;
         }
         .news-modal-content {
-            max-width: 480px;
+            max-width: 560px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             background: rgba(255,255,255,0.98);
             backdrop-filter: blur(16px);
             border-radius: 28px;
-            padding: 28px;
+            padding: 32px;
             box-shadow: 0 30px 80px rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.2);
             position: relative;
@@ -316,15 +328,15 @@
         .news-modal-close:hover { opacity: 1; }
         .news-modal-img {
             width: 100%;
-            max-height: 180px;
+            max-height: 220px;
             object-fit: cover;
             border-radius: 16px;
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
         .news-modal-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             line-height: 1.3;
         }
         .news-modal-desc {
@@ -337,7 +349,7 @@
         .news-modal-date {
             font-size: 12px;
             opacity: 0.4;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -429,6 +441,151 @@
             font-size: 28px;
             letter-spacing: 3px;
         }
+
+        /* Job Cards */
+        .job-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 24px;
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .dark .job-card {
+            background: rgba(20, 20, 20, 0.6);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15);
+        }
+        .job-card .job-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 16px;
+            background: #e5e7eb;
+        }
+        .dark .job-card .job-img {
+            background: #374151;
+        }
+        .job-card .job-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .job-card .job-desc {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+        .job-card .job-price {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #22c55e;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 6px 18px;
+            border-radius: 100px;
+            align-self: flex-start;
+        }
+        .job-card .job-price i {
+            font-size: 14px;
+        }
+        .job-card .job-contact {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .job-card .job-contact a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .job-card .job-contact a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Floating Instagram */
+        .insta-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            box-shadow: 0 8px 32px rgba(220, 39, 67, 0.4);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        .insta-float:hover {
+            transform: scale(1.06) translateY(-2px);
+            box-shadow: 0 12px 40px rgba(220, 39, 67, 0.6);
+        }
+        .insta-float:active {
+            transform: scale(0.95);
+        }
+        .insta-float i {
+            font-size: 22px;
+        }
+        .insta-float .insta-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .insta-float .insta-text .insta-name {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .insta-float .insta-text .insta-cta {
+            font-size: 11px;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+        @media (max-width: 640px) {
+            .insta-float {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 16px;
+            }
+            .insta-float .insta-text .insta-cta {
+                display: none;
+            }
+            .insta-float i {
+                font-size: 20px;
+            }
+            .news-panel {
+                width: calc(100% - 40px);
+                left: 20px;
+                bottom: 100px;
+            }
+            .news-popup {
+                bottom: 20px;
+                left: 20px;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100">
@@ -445,7 +602,7 @@
                 <span class="nav-link" onclick="updateUI('experiences')">Experience</span>
                 <span class="nav-link" onclick="updateUI('portfolio')">Portfolio</span>
                 <span class="nav-link" onclick="updateUI('contact')">Contact</span>
-                <span class="nav-link font-bold text-blue-600 dark:text-blue-400" onclick="updateUI('comments')">📨 Comments</span>
+                <span class="nav-link font-bold text-blue-600 dark:text-blue-400" onclick="updateUI('jobs')">💼 Jobs</span>
             </nav>
             <button id="menu-btn" class="md:hidden text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
             <div class="text-sm opacity-50 hidden md:block">Burak</div>
@@ -460,7 +617,7 @@
         <span onclick="toggleMenu(); updateUI('experiences')">Experience</span>
         <span onclick="toggleMenu(); updateUI('portfolio')">Portfolio</span>
         <span onclick="toggleMenu(); updateUI('contact')">Contact</span>
-        <span onclick="toggleMenu(); updateUI('comments')" class="text-blue-600">📨 Comments</span>
+        <span onclick="toggleMenu(); updateUI('jobs')" class="text-blue-600">💼 Jobs</span>
     </div>
 
     <main id="app-content" class="pt-28 pb-16 px-6 max-w-6xl mx-auto min-h-screen"></main>
@@ -473,6 +630,15 @@
             <a href="mailto:burakbilec123@gmail.com" class="hover:text-blue-400 transition-colors"><i class="fas fa-envelope"></i></a>
         </div>
     </footer>
+
+    <!-- Floating Instagram Button - SADECE JOBS SAYFASINDA GÖRÜNÜR -->
+    <a href="https://instagram.com/burak_msz" target="_blank" id="instaFloat" class="insta-float" style="display:none;">
+        <i class="fab fa-instagram"></i>
+        <div class="insta-text">
+            <span class="insta-name">@burak_msz</span>
+            <span class="insta-cta">DM for work</span>
+        </div>
+    </a>
 
     <div class="news-popup">
         <div class="news-trigger" id="newsTrigger">
@@ -516,38 +682,49 @@
 
     <script>
         // ========== HABERLER ==========
+        // Her habere "tag" ve "detay" ekleyebilirsiniz.
+        // tag: "hot", "new", "update" veya boş bırakın
+        // detay: modalda görünecek uzun açıklama (ozet'ten farklı olarak)
         const haberler = [
             {
                 id: 1,
-                baslik: "Were new chatting site is ready. JUST FREE 😊",
-                ozet: "Pleaze tell me! İs good? Hey you go my cengO chats.",
+                baslik: "We're new chatting site is ready. JUST FREE 😊",
+                ozet: "Please tell me! Is it good? Hey you go my cengO chats.",
+                detay: "Merhaba arkadaşlar! Yeni sohbet sitemiz cengO artık yayında. Tamamen ücretsiz, hızlı ve güvenli. Odalar oluşturabilir, arkadaşlarınızla sohbet edebilir ve yeni insanlarla tanışabilirsiniz. Geri bildirimleriniz bizim için çok değerli. Hemen deneyin ve düşüncelerinizi bize iletin!",
                 tarih: "2026-08-21",
                 link: "https://burak-code.github.io/cengo/",
-                resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB28Iq68g69lkNltz3n_CcrfkJC7OpQlwU86t_Iflz5A&s=10"
+                resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB28Iq68g69lkNltz3n_CcrfkJC7OpQlwU86t_Iflz5A&s=10",
+                tag: "new"
             },
             {
                 id: 2,
                 baslik: "Our Website is Evolving🔥",
                 ozet: "Our website is still developing despite everything. If you have any suggestions, you can write to us via Instagram. Your feedback is very valuable to us!",
+                detay: "Web sitemiz her geçen gün büyümeye ve gelişmeye devam ediyor. Yeni özellikler, yeni tasarımlar ve daha iyi bir kullanıcı deneyimi için durmadan çalışıyoruz. Siz de fikirlerinizi ve önerilerinizi Instagram üzerinden bize iletebilirsiniz. Her geri bildirim bizim için altın değerinde!",
                 tarih: "2026-08-02",
                 link: "https://www.instagram.com/burak_msz/",
-                resim: "favicon.png"
+                resim: "favicon.png",
+                tag: "update"
             },
             {
                 id: 3,
-                baslik: "Award-Winning Efootball Tournament Postponed This Month",
-                ozet: "Every month, we host a free-to-enter efootball tournament with a £100 prize for the winner. Those who wish to participate can DM us on Instagram.",
-                tarih: "2026-08-02",
+                baslik: "MSZ HİRİNG",
+                ozet: "Go to Jobs section for hiring!",
+                detay: "MSZ is hiring to anyone. Because we are going a really company. But ı am alone. And need teammate.",
+                tarih: "2026-09-14",
                 link: "https://www.instagram.com/burak_msz/",
-                resim: "https://encrypted-tbn0.gstatic.com?q=tbn:ANd9GcSCxrioHi33E9aWS5_UxmDOPmopaPk9T65zd7t01yPf1g&s=10"
+                resim: "https://encrypted-tbn0.gstatic.com?q=tbn:ANd9GcSCxrioHi33E9aWS5_UxmDOPmopaPk9T65zd7t01yPf1g&s=10",
+                tag: "hot"
             },
             {
                 id: 4,
-                baslik: "MSZ EFOOTBALL TOURNAMENT IS FINALLY BACK",
-                ozet: "The infrastructure for the MSZ efootball tournament is ready. It will be held regularly every month.",
-                tarih: "2026-08-02",
+                baslik: "FINISH OF MSZ TOURNAMENT - EFOOTBALL",
+                ozet: "Last Efootball Tournament.",
+                detay: "This is the last tournament with efootball. We going haxball. Because efootball is not working any device. And this is not the talent. And were going for raw talent.",
+                tarih: "2026-09-14",
                 link: "html/tournament.html",
-                resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCxrioHi33E9aWS5_UxmDOPmopaPk9T65zd7t01yPf1g&s=10"
+                resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCxrioHi33E9aWS5_UxmDOPmopaPk9T65zd7t01yPf1g&s=10",
+                tag: "hot"
             },
         ];
 
@@ -582,10 +759,10 @@
                         {title: "cengO", desc: "Free, chat rooms.", link: "https://burak-code.github.io/cengo/", icon: "fa-envelope"},
                         {title: "MSZ MEDYA", desc: "A social media. Created by me. %100 Turkish...", link: "https://burak-code.github.io/msz-medya/", icon: "fa-phone"},
                         {title: "Online Chess", desc: "This is have rooms...", link: "html/satranç.html", icon: "fa-chess"},
-                        {title: "MSZ PİXEL", desc: "Pixel world. Paint.", link: "html/msz_pixel.html", icon: "fa-Crayon"},
+                        {title: "MSZ PİXEL", desc: "Pixel world. Paint.", link: "html/msz_pixel.html", icon: "fa-crayon"},
                         {title: "MSZ AI", desc: "Free and up-to-date artificial intelligence bot.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
                         {title: "MSZ TOURNAMENT", desc: "Knockout system efootball tournament.", link: "html/tournament.html", icon: "fa-football"},
-                        {title: "Stumble Boys", desc: "HTML-based, smooth platform game.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
+                        {title: "Stumble Guys", desc: "HTML-based, smooth platform game.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
                         {title: "Flag Quiz", desc: "Geography game with ranking system.", link: "html/oyun1.html", icon: "fa-flag"},
                         {title: "MSZ Trade", desc: "Economy-focused strategy simulation.", link: "html/oyun2.html", icon: "fa-chart-line"},
                         {title: "University Planner", desc: "Digital assistant for students.", link: "html/oyun3.html", icon: "fa-university"},
@@ -593,11 +770,13 @@
                         {title: "Team-Manager", desc: "Manage the national football team on a World Cup journey.", link: "html/team-menager.html", icon: "fa-football"},
                         {title: "Game Studio", desc: "The foundations of the game studio of the future.", link: "#", disabled: true, icon: "fa-rocket"}
                     ].map(p => `
-                        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group">
+                        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group cursor-pointer" onclick="${p.disabled ? '' : `window.open('${p.link}', '_blank')`}">
                             <i class="fas ${p.icon} text-3xl text-blue-500 mb-3 opacity-80"></i>
                             <h3 class="text-xl font-bold mb-2">${p.title}</h3>
                             <p class="opacity-70 mb-4 text-sm">${p.desc}</p>
-                            <a href="${p.link}" class="inline-flex items-center font-bold text-blue-500 hover:text-blue-700 text-sm ${p.disabled ? 'opacity-50 cursor-not-allowed' : ''}" ${p.disabled ? 'onclick="return false"' : 'target="_blank"'}">${p.disabled ? 'Coming Soon' : 'Explore <i class="fas fa-arrow-right ml-2"></i>'}</a>
+                            <span class="inline-flex items-center font-bold text-blue-500 group-hover:text-blue-700 text-sm ${p.disabled ? 'opacity-50' : ''}">
+                                ${p.disabled ? 'Coming Soon' : 'Explore <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>'}
+                            </span>
                         </div>
                     `).join('')}
                 </div>
@@ -670,11 +849,44 @@
                     <div class="text-center pt-4 opacity-60 text-sm"><i class="fas fa-external-link-alt mr-1"></i> Opens in a new tab when clicked.</div>
                 </div>
             `,
+            jobs: `
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-3 flex items-center justify-center gap-3"><i class="fas fa-briefcase text-blue-500"></i> Part-time Jobs</h2>
+                        <p class="text-base md:text-lg opacity-70 max-w-2xl mx-auto">Open positions and freelance opportunities. Contact me for collaboration!</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- ============================================ -->
+                        <!-- JOB CARD 1 - BURAYI DÜZENLEYEBİLİRSİNİZ      -->
+                        <!-- ============================================ -->
+                        <div class="job-card">
+                            <img class="job-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=300&fit=crop&crop=center" alt="Web Development">
+                            <div class="job-title">🌐 Web Development</div>
+                            <div class="job-desc">
+                                I need a a team. For msz. A programmer, a content creator. And they should have at least B1 level English proficiency. If you want to work on the msz team, send an Instagram DM. Only Turkish youths.
+                            </div>
+                            <div class="job-price">
+                                <i class="fas fa-tag"></i> Trial period - For a week!<br> After 1.000₺ / monthly
+                            </div>
+                            <div class="job-contact">
+                                <a href="https://instagram.com/burak_msz" target="_blank">
+                                    <i class="fab fa-instagram"></i> DM on Instagram
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İsterseniz buraya daha fazla kart ekleyebilirsiniz -->
+                    <div class="text-center mt-10 opacity-50 text-sm">
+                        <i class="fas fa-info-circle mr-1"></i> Custom projects available. DM for details.
+                    </div>
+                </div>
+            `,
             comments: `
                 <div class="max-w-4xl mx-auto">
                     <h2 class="text-3xl font-bold mb-2 text-center">💬 Comments</h2>
                     <p class="text-center opacity-60 mb-8 text-sm">Share your thoughts about MSZ. Be respectful! 🙏</p>
-                    <strong> STOP!🔴 NOT WORKİNG!! </strong>
 
                     <div class="glass-card rounded-3xl p-6 mb-8">
                         <h3 class="text-xl font-bold mb-4">✍️ Write a Comment</h3>
@@ -923,6 +1135,12 @@
             content.innerHTML = pages[page] || pages.home;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
+            // Instagram butonu sadece Jobs sayfasında görünsün
+            const instaBtn = document.getElementById('instaFloat');
+            if (instaBtn) {
+                instaBtn.style.display = (page === 'jobs') ? 'flex' : 'none';
+            }
+            
             if (page === 'comments') {
                 setTimeout(() => {
                     restoreRating();
@@ -941,12 +1159,22 @@
         }
 
         // ========== NEWS FUNCTIONS ==========
+        function getTagHtml(tag) {
+            if (!tag) return '';
+            const tags = {
+                hot: '<span class="news-item-tag hot">🔥 Hot</span>',
+                new: '<span class="news-item-tag new">✨ New</span>',
+                update: '<span class="news-item-tag update">🔄 Update</span>'
+            };
+            return tags[tag] || '';
+        }
+
         function modalAc(haber) {
             const modal = document.getElementById('newsModal');
             document.getElementById('modalImg').src = haber.resim || 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
             document.getElementById('modalImg').alt = haber.baslik;
             document.getElementById('modalTitle').textContent = haber.baslik;
-            document.getElementById('modalDesc').textContent = haber.ozet;
+            document.getElementById('modalDesc').textContent = haber.detay || haber.ozet || 'No details available.';
             document.getElementById('modalDateText').textContent = new Date(haber.tarih).toLocaleDateString('en-GB');
             
             const linkBtn = document.getElementById('modalLink');
@@ -990,6 +1218,7 @@
                     <div class="news-item" onclick="modalAc(haberler.find(h => h.id === ${haber.id}))">
                         <img src="${imgSrc}" class="news-item-img" alt="News image" loading="lazy" onerror="this.src='https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ'">
                         <div class="news-item-content">
+                            ${getTagHtml(haber.tag)}
                             <div class="news-item-title">${haber.baslik || 'Untitled'}</div>
                             <div class="news-item-desc">${haber.ozet || 'No summary'}</div>
                             <div class="news-item-date">
