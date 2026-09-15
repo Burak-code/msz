@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimSiyaset v1.4</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sol Navbar */
+        #navbar { width: 240px; background-color: #1e1e1e; border-right: 2px solid #333; display: flex; flex-direction: column; overflow-y: auto; }
+        #navbar .brand { padding: 15px; font-size: 16px; font-weight: bold; color: #4caf50; border-bottom: 1px solid #333; text-align: center; }
+        .nav-btn { background: none; border: none; color: #aaa; padding: 12px 15px; text-align: left; font-size: 13px; cursor: pointer; border-bottom: 1px solid #2a2a2a; }
+        .nav-btn:hover, .nav-btn.active { background-color: #2c2c2c; color: #4caf50; border-left: 4px solid #4caf50; }
+
+        /* Ana İçerik */
+        #main-container { flex: 1; display: flex; flex-direction: column; position: relative; }
+        #top-bar { background-color: #1e1e1e; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; font-size: 12px; }
+        .tab-content { display: none; flex: 1; padding: 20px; overflow-y: auto; }
+        .tab-content.active { display: flex; flex-direction: column; gap: 15px; }
+
+        .energy-container { width: 100px; background-color: #333; border-radius: 10px; height: 12px; overflow: hidden; display: inline-block; vertical-align: middle; }
+        .energy-bar { height: 100%; background-color: #4caf50; width: 100%; transition: width 0.3s ease; }
+
+        .card { background-color: #242424; padding: 15px; border-radius: 8px; border: 1px solid #383838; }
+        .card h3 { border-bottom: 1px solid #444; padding-bottom: 8px; margin-bottom: 12px; color: #4caf50; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
+        button { background-color: #4caf50; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        button:hover { background-color: #45a049; }
+        button.secondary { background-color: #2196F3; }
+        button.warning { background-color: #ff9800; }
+        button.danger { background-color: #f44336; }
+        button:disabled { background-color: #555 !important; cursor: not-allowed; }
+
+        input, select, textarea { width: 100%; padding: 8px; margin: 4px 0 10px 0; background-color: #333; color: white; border: 1px solid #555; border-radius: 4px; font-size: 12px; }
+        .avatar { width: 35px; height: 35px; object-fit: cover; border-radius: 50%; border: 2px solid #4caf50; vertical-align: middle; }
+        
+        .news-item, .chat-box, .logs-box { background-color: #2d2d2d; border: 1px solid #444; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .msg-item { padding: 6px; border-bottom: 1px solid #333; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; font-size: 13px; }
+        .log-item { padding: 4px 0; border-bottom: 1px solid #3d3d3d; font-size: 11px; color: #bbb; }
+
+        .id-badge { background: #333; color: #4caf50; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px; }
+
+        #custom-toast {
+            position: absolute; bottom: 20px; right: 20px;
+            background-color: #2e7d32; color: #fff; padding: 12px 20px;
+            border-radius: 6px; border-left: 5px solid #81c784;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 9999; display: none; font-size: 13px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-toast">Bildirim</div>
+
+    <div id="navbar">
+        <div class="brand">🏙️ SimSiyaset v1.4</div>
+        <button class="nav-btn active" onclick="switchTab('profile-tab')">👤 Profilim</button>
+        <button class="nav-btn" onclick="switchTab('work-tab')">🏭 Fabrikalar & Üretim</button>
+        <button class="nav-btn" onclick="switchTab('market-tab')">🛒 Borsa & Silah Pazarı</button>
+        <button class="nav-btn" onclick="switchTab('press-tab')">📰 Basın & Medya</button>
+        <button class="nav-btn" onclick="switchTab('party-tab')">🚩 Partiler & İttifak</button>
+        <button class="nav-btn" onclick="switchTab('chat-tab')">💬 Chat & İletişim</button>
+        <button class="nav-btn" onclick="switchTab('president-tab')">🏛️ Şehir Yönetimi</button>
+        <button class="nav-btn" onclick="switchTab('notifications-tab')">🔔 Bildirimler</button>
+    </div>
+
+    <div id="main-container">
+        <div id="top-bar">
+            <div><img id="top-bar-pp" src="" class="avatar"> <strong id="top-bar-name">Oyuncu</strong> <span id="top-bar-id" class="id-badge">ID: -</span></div>
+            <div><strong>Cüzdan:</strong> <span id="player-money" style="color:#4caf50;">₺1.000</span></div>
+            <div><strong>Silah:</strong> <span id="player-weapons" style="color:#ff9800;">0</span> Adet</div>
+            <div>
+                <strong>Enerji:</strong> 
+                <div class="energy-container"><div id="player-energy-bar" class="energy-bar"></div></div>
+                %<span id="player-energy-val">100</span>
+            </div>
+            <div><strong>Rol:</strong> <span id="user-role-badge" style="color:#2196F3;">Vatandaş</span></div>
+        </div>
+
+        <!-- TAB: PROFİLİM -->
+        <div id="profile-tab" class="tab-content active">
+            <div class="card">
+                <h3>👤 Profil & Vatandaşlık Kartı</h3>
+                <p style="margin-bottom: 10px;">Vatandaş Kimlik Numarası (ID): <strong id="profile-id-display" class="id-badge"></strong> <em>(Bu numara asla değişmez)</em></p>
+                
+                <label>Kullanıcı / Karakter Adı:</label>
+                <input type="text" id="profile-name-input">
+                
+                <label>Profil Resmi (PP):</label>
+                <input type="file" id="profile-pp-input" accept="image/*" onchange="updateProfilePP(event)">
+                <div style="margin: 10px 0;"><img id="profile-pp-preview" class="avatar" style="width:60px; height:60px;"></div>
+                
+                <button onclick="saveProfile()">Profil Bilgilerini Güncelle</button>
+            </div>
+        </div>
+
+        <!-- TAB: FABRİKALAR -->
+        <div id="work-tab" class="tab-content">
+            <div class="card">
+                <h3>🏛️ Devlet Fabrikası (NPC)</h3>
+                <p>Başlangıç sermayesi için çalışabilirsiniz. (Vergi kesilir)</p>
+                <button class="secondary" onclick="workAtNPC()" style="margin-top:10px;">⚙️ Tüm Enerji İle Çalış</button>
+            </div>
+
+            <div class="card" id="create-factory-card">
+                <h3>🏭 Özel Fabrika Kur (₺10.000)</h3>
+                <input type="text" id="factory-name-input" placeholder="Fabrika Adı">
+                <button onclick="createFactory()">Fabrikayı Kur</button>
+            </div>
+
+            <div class="card" id="my-factory-card" style="display:none;">
+                <h3>⚙️ Fabrikanız: <span id="my-factory-name"></span> <button class="danger" onclick="deleteFactory()">Kapat</button></h3>
+                <p>Kasa: ₺<span id="my-factory-balance">0</span> | Üretilen Silah: <span id="my-factory-weapons">0</span> Adet</p>
+                <button class="warning" onclick="withdrawFactoryWeapons()" style="margin-top:8px;">Silahları Envantere Çek</button>
+            </div>
+
+            <div class="card">
+                <h3>🏭 Tüm Fabrikalar</h3>
+                <div id="all-factories-list"></div>
+            </div>
+        </div>
+
+        <!-- TAB: BORSA VE PAZAR -->
+        <div id="market-tab" class="tab-content">
+            <div class="card">
+                <h3>🔫 Silah Pazarı</h3>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="market-sell-count" placeholder="Adet" style="margin:0;">
+                    <input type="number" id="market-sell-price" placeholder="Birim Fiyat (₺)" style="margin:0;">
+                    <button class="warning" onclick="sellWeaponToMarket()">Pazara Koy</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>🛒 Pazarki İlanlar</h3>
+                <div id="market-items-list"></div>
+            </div>
+        </div>
+
+        <!-- TAB: BASIN VE MEDYA -->
+        <div id="press-tab" class="tab-content">
+            <div class="card" id="create-newspaper-card">
+                <h3>📰 Gazete Kur</h3>
+                <input type="text" id="news-name-input" placeholder="Gazete Adı">
+                <button onclick="createNewspaper()">Gazeteyi Kur</button>
+            </div>
+
+            <div class="card" id="publish-news-card" style="display:none;">
+                <h3>✍️ Haber Paylaş <button class="danger" onclick="deleteNewspaper()">Gazeteyi Kapat</button></h3>
+                <input type="text" id="news-title" placeholder="Manşet">
+                <textarea id="news-content" placeholder="Haber Detayları..."></textarea>
+                <button onclick="publishNews()">Yayımla</button>
+            </div>
+
+            <div class="card">
+                <h3>🔥 Canlı Haber Akışı</h3>
+                <div id="news-feed"></div>
+            </div>
+        </div>
+
+        <!-- TAB: PARTİLER -->
+        <div id="party-tab" class="tab-content">
+            <div class="card" id="create-party-card">
+                <h3>🚩 Parti Kur</h3>
+                <input type="text" id="party-name-input" placeholder="Parti Adı">
+                <button onclick="createParty()">Parti Kur</button>
+            </div>
+            <div class="card">
+                <h3>🏛️ Aktif Partiler</h3>
+                <div id="all-parties-list"></div>
+            </div>
+        </div>
+
+        <!-- TAB: CHAT VE İLETİŞİM -->
+        <div id="chat-tab" class="tab-content">
+            <div class="card">
+                <h3>💬 Şehir Sohbeti</h3>
+                <div id="chat-messages" class="chat-box" style="height:250px; overflow-y:auto;"></div>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="chat-input" placeholder="Mesajınızı yazıp Enter'a basın..." onkeypress="handleChatKeyPress(event)" style="margin:0;">
+                    <button onclick="sendMessage()">Gönder</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: ŞEHİR YÖNETİMİ -->
+        <div id="president-tab" class="tab-content">
+            
+            <!-- BAŞKAN PANELİ -->
+            <div class="card" id="president-only-panel" style="display:none; border: 2px solid #ff9800;">
+                <h3 style="color:#ff9800;">👑 Şehir Başkanı Yönetim Sarayı</h3>
+                <p>Mevcut Şehir Hazinesi: <strong style="color:#4caf50;">₺<span id="president-treasury-val">0</span></strong></p>
+                
+                <div style="margin-top:10px;">
+                    <label>Şehir Vergi Oranını Belirle (%):</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="tax-rate-input" min="0" max="25" value="5" style="margin:0;">
+                        <button class="secondary" onclick="updateTaxRate()">Vergiyi Ayarla</button>
+                    </div>
+                </div>
+
+                <div style="margin-top:10px;">
+                    <label>Şehir Hazinesinden Muhafız Satın Al (1 Muhafız = ₺2.000):</label>
+                    <button class="warning" onclick="buyGuard()">Muhafız Satın Al (+1)</button>
+                </div>
+            </div>
+
+            <!-- VATANDAŞ PANELİ -->
+            <div class="card">
+                <h3>🏛️ Şehir Durumu</h3>
+                <p>Mevcut Başkan: <strong id="current-president" style="color:#4caf50;">Yok</strong></p>
+                <p>Şehir Hazinesi: <strong style="color:#4caf50;">₺<span id="citizen-treasury-view">100.000</span></strong></p>
+                <p>Uygulanan Vergi Oranı: <strong>%<span id="citizen-tax-view">5</span></strong></p>
+                <p>Şehir Muhafızı Savunma Gücü: <strong style="color:#2196F3;"><span id="city-guards">0</span> Muhafız</strong></p>
+            </div>
+
+            <div class="card">
+                <h3>🗳️ Başkanlık Seçimi</h3>
+                <div id="election-candidates-list"></div>
+                <button id="btn-become-candidate" class="secondary" onclick="becomeCandidate()" style="margin-top:10px;">Başkanlığa Aday Ol</button>
+            </div>
+
+            <!-- DARBE PANELİ -->
+            <div class="card" id="rebellion-card" style="border-color:#f44336;">
+                <h3 style="color:#f44336;">⚔️ Silahlı Darbe Girişimi</h3>
+                <p>Toplam İsyan Gücü: <strong style="color:#f44336;"><span id="rebellion-power">0</span> Silah</strong></p>
+                <button class="danger" onclick="joinRebellion()" style="margin-top:10px;">💥 İsyana Silah Bağışla</button>
+                <button class="danger" onclick="executeCoup()" style="margin-top:10px; background:#b71c1c;">💣 Darbeyi Başlat</button>
+            </div>
+        </div>
+
+        <!-- TAB: BİLDİRİMLER VE SİSTEM GÜNLÜĞÜ -->
+        <div id="notifications-tab" class="tab-content">
+            <div class="card">
+                <h3>🔔 Şehir & Sistem Bildirimleri</h3>
+                <div id="notifications-box" class="logs-box" style="height:350px; overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%234caf50'><circle cx='12' cy='8' r='4'/><path d='M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z'/></svg>";
+
+        function generateUniqueID() {
+            return "TR-" + Math.floor(100000 + Math.random() * 900000);
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById("custom-toast");
+            toast.innerText = msg;
+            toast.style.backgroundColor = isError ? "#c62828" : "#2e7d32";
+            toast.style.display = "block";
+            setTimeout(() => { toast.style.display = "none"; }, 3000);
+            addNotification(msg);
+        }
+
+        function addNotification(text) {
+            notifications.unshift({ time: new Date().toLocaleTimeString(), text: text });
+            renderNotifications();
+            saveData();
+        }
+
+        // --- STATE & İLK AYARLAR ---
+        let myData = JSON.parse(localStorage.getItem('sim_player')) || { 
+            id: generateUniqueID(), 
+            name: "Vatandaş", 
+            avatar: DEFAULT_AVATAR,
+            money: 1000, 
+            weapons: 0, 
+            energy: 100, 
+            newspaper: null, 
+            party: null, 
+            factory: null
+        };
+
+        // Eğer önceden ID oluşmamışsa atama yap
+        if (!myData.id) {
+            myData.id = generateUniqueID();
+        }
+
+        let factories = JSON.parse(localStorage.getItem('sim_factories')) || [];
+        let market = JSON.parse(localStorage.getItem('sim_market')) || [];
+        let newspapers = JSON.parse(localStorage.getItem('sim_newspapers')) || [];
+        let newsArticles = JSON.parse(localStorage.getItem('sim_articles')) || [];
+        let parties = JSON.parse(localStorage.getItem('sim_parties')) || [];
+        let chatMessages = JSON.parse(localStorage.getItem('sim_chats')) || [];
+        let notifications = JSON.parse(localStorage.getItem('sim_notifications')) || [];
+        let presidentId = localStorage.getItem('sim_president_id') || null;
+        let candidates = JSON.parse(localStorage.getItem('sim_candidates')) || []; // {id, name} nesneleri saklar
+        let cityState = JSON.parse(localStorage.getItem('sim_city')) || { treasury: 100000, taxRate: 5, guards: 10, rebelWeapons: 0 };
+
+        function saveData() {
+            localStorage.setItem('sim_player', JSON.stringify(myData));
+            localStorage.setItem('sim_factories', JSON.stringify(factories));
+            localStorage.setItem('sim_market', JSON.stringify(market));
+            localStorage.setItem('sim_newspapers', JSON.stringify(newspapers));
+            localStorage.setItem('sim_articles', JSON.stringify(newsArticles));
+            localStorage.setItem('sim_parties', JSON.stringify(parties));
+            localStorage.setItem('sim_chats', JSON.stringify(chatMessages));
+            localStorage.setItem('sim_notifications', JSON.stringify(notifications));
+            localStorage.setItem('sim_president_id', presidentId || "");
+            localStorage.setItem('sim_candidates', JSON.stringify(candidates));
+            localStorage.setItem('sim_city', JSON.stringify(cityState));
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- ENERJİ YENİLEME SİSTEMİ (10 SANİYEDE +%1) ---
+        setInterval(() => {
+            if (myData.energy < 100) {
+                myData.energy = Math.min(100, myData.energy + 1);
+                updateUI();
+                saveData();
+            }
+        }, 10000);
+
+        // --- PROFİL & KİMLİK SİSTEMİ ---
+        function updateProfilePP(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => { myData.avatar = evt.target.result; document.getElementById("profile-pp-preview").src = myData.avatar; };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfile() {
+            const newName = document.getElementById("profile-name-input").value.trim();
+            if (newName) {
+                myData.name = newName;
+                
+                // Sabit ID ile eşleşen tüm sahiplik adlarını güncelle
+                factories.forEach(f => { if(f.ownerId === myData.id) f.owner = newName; });
+                parties.forEach(p => { if(p.leaderId === myData.id) p.leader = newName; });
+                
+                let cand = candidates.find(c => c.id === myData.id);
+                if (cand) cand.name = newName;
+
+                showToast(`Profil isminiz '${newName}' olarak güncellendi. Kimliğiniz korundu.`);
+            }
+            updateUI();
+            renderFactories();
+            renderParties();
+            renderElection();
+            saveData();
+        }
+
+        // --- CHAT ---
+        function handleChatKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+        function sendMessage() {
+            const input = document.getElementById("chat-input");
+            const text = input.value.trim();
+            if (!text) return;
+            chatMessages.push({ id: Date.now(), senderId: myData.id, sender: myData.name, text: text });
+            input.value = "";
+            renderChat(); saveData();
+        }
+        function deleteMessage(msgId) {
+            chatMessages = chatMessages.filter(m => m.id !== msgId);
+            renderChat(); saveData();
+        }
+        function renderChat() {
+            document.getElementById("chat-messages").innerHTML = chatMessages.map(m => `
+                <div class="msg-item">
+                    <span><strong>${m.sender} <small class="id-badge">${m.senderId}</small>:</strong> ${m.text}</span>
+                    ${m.senderId === myData.id ? `<button class="danger" style="font-size:10px; padding:2px 5px;" onclick="deleteMessage(${m.id})">Sil</button>` : ''}
+                </div>
+            `).join('');
+            const box = document.getElementById("chat-messages");
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // --- PARTİ ---
+        function createParty() {
+            const name = document.getElementById("party-name-input").value.trim();
+            if (!name) return;
+            const p = { id: "p_" + Date.now(), name: name, leader: myData.name, leaderId: myData.id };
+            parties.push(p);
+            myData.party = p.id;
+            showToast(`${name} partisi kuruldu!`);
+            renderParties(); updateUI(); saveData();
+        }
+
+        function deleteParty(partyId) {
+            parties = parties.filter(p => p.id !== partyId);
+            myData.party = null;
+            showToast("Partiniz kapatıldı.");
+            renderParties(); updateUI(); saveData();
+        }
+
+        function renderParties() {
+            const myP = parties.find(p => p.leaderId === myData.id);
+            document.getElementById("create-party-card").style.display = myP ? "none" : "block";
+
+            document.getElementById("all-parties-list").innerHTML = parties.map(p => `
+                <div class="list-item">
+                    <span>🚩 <strong>${p.name}</strong> (Lider: ${p.leader})</span>
+                    ${p.leaderId === myData.id ? `<button class="danger" onclick="deleteParty('${p.id}')">Partiyi Kapat</button>` : ''}
+                </div>
+            `).join('') || "<p style='color:#777;'>Aktif parti bulunmuyor.</p>";
+        }
+
+        // --- BASIN & GAZETE ---
+        function createNewspaper() {
+            const name = document.getElementById("news-name-input").value.trim();
+            if (!name) return;
+            myData.newspaper = { name: name };
+            newspapers.push({ name: name, ownerId: myData.id });
+            renderNewsFeed(); updateUI(); saveData();
+        }
+
+        function deleteNewspaper() {
+            newsArticles = newsArticles.filter(a => a.ownerId !== myData.id);
+            myData.newspaper = null;
+            renderNewsFeed(); updateUI(); saveData();
+            showToast("Gazeteniz silindi.");
+        }
+
+        function publishNews() {
+            const title = document.getElementById("news-title").value;
+            const content = document.getElementById("news-content").value;
+            if (!title || !content) return;
+            newsArticles.unshift({ id: Date.now(), newspaper: myData.newspaper.name, title: title, content: content, ownerId: myData.id });
+            document.getElementById("news-title").value = "";
+            document.getElementById("news-content").value = "";
+            renderNewsFeed(); saveData();
+        }
+
+        function deleteArticle(id) {
+            newsArticles = newsArticles.filter(a => a.id !== id);
+            renderNewsFeed(); saveData();
+        }
+
+        function renderNewsFeed() {
+            document.getElementById("create-newspaper-card").style.display = myData.newspaper ? "none" : "block";
+            document.getElementById("publish-news-card").style.display = myData.newspaper ? "block" : "none";
+
+            document.getElementById("news-feed").innerHTML = newsArticles.map(a => `
+                <div class="news-item">
+                    <div style="display:flex; justify-content:space-between;">
+                        <h4>${a.title}</h4>
+                        ${a.ownerId === myData.id ? `<button class="danger" style="font-size:10px;" onclick="deleteArticle(${a.id})">Haberi Sil</button>` : ''}
+                    </div>
+                    <small style="color:#aaa;">${a.newspaper}</small>
+                    <p style="margin-top:5px;">${a.content}</p>
+                </div>
+            `).join('');
+        }
+
+        // --- FABRİKA & PAZAR ---
+        function workAtNPC() {
+            if (myData.energy <= 0) return showToast("Enerjin bitti!", true);
+            const gross = myData.energy * 50;
+            const tax = Math.floor(gross * (cityState.taxRate / 100));
+            const net = gross - tax;
+            myData.money += net;
+            cityState.treasury += tax;
+            myData.energy = 0;
+            showToast(`Devlet fabrikasında çalıştın: ₺${net} kazandın (₺${tax} Vergi).`);
+            updateUI(); saveData();
+        }
+
+        function createFactory() {
+            const name = document.getElementById("factory-name-input").value.trim();
+            if (!name || myData.money < 10000) return showToast("Yetersiz bakiye veya eksik isim!", true);
+            myData.money -= 10000;
+            const f = { id: "fac_" + Date.now(), name: name, owner: myData.name, ownerId: myData.id, balance: 0, weapons: 0 };
+            factories.push(f); myData.factory = f.id;
+            renderFactories(); updateUI(); saveData();
+        }
+
+        function deleteFactory() {
+            factories = factories.filter(f => f.ownerId !== myData.id);
+            myData.factory = null;
+            renderFactories(); updateUI(); saveData();
+        }
+
+        function withdrawFactoryWeapons() {
+            const fac = factories.find(f => f.ownerId === myData.id);
+            if (fac && fac.weapons > 0) {
+                myData.weapons += fac.weapons;
+                fac.weapons = 0;
+                renderFactories(); updateUI(); saveData();
+            }
+        }
+
+        function renderFactories() {
+            const myFac = factories.find(f => f.ownerId === myData.id);
+            document.getElementById("create-factory-card").style.display = myFac ? "none" : "block";
+            document.getElementById("my-factory-card").style.display = myFac ? "block" : "none";
+            if (myFac) {
+                document.getElementById("my-factory-name").innerText = myFac.name;
+                document.getElementById("my-factory-balance").innerText = myFac.balance;
+                document.getElementById("my-factory-weapons").innerText = myFac.weapons;
+            }
+            document.getElementById("all-factories-list").innerHTML = factories.map(f => `
+                <div class="list-item"><span><strong>${f.name}</strong> (Sahip: ${f.owner})</span></div>
+            `).join('');
+        }
+
+        function sellWeaponToMarket() {
+            const count = parseInt(document.getElementById("market-sell-count").value);
+            const price = parseInt(document.getElementById("market-sell-price").value);
+            if (!count || !price || myData.weapons < count) return showToast("Eksik silah veya hatalı fiyat!", true);
+            myData.weapons -= count;
+            market.push({ id: Date.now(), sellerId: myData.id, seller: myData.name, count: count, price: price });
+            renderMarket(); updateUI(); saveData();
+        }
+
+        function buyWeaponFromMarket(id) {
+            const item = market.find(m => m.id === id);
+            const totalCost = item.count * item.price;
+            if (myData.money < totalCost) return showToast("Paran yetersiz!", true);
+            myData.money -= totalCost;
+            myData.weapons += item.count;
+            market = market.filter(m => m.id !== id);
+            renderMarket(); updateUI(); saveData();
+        }
+
+        function renderMarket() {
+            document.getElementById("market-items-list").innerHTML = market.map(m => `
+                <div class="list-item">
+                    <span>🔫 <strong>${m.count} Silah</strong> - Birim: ₺${m.price}</span>
+                    <button class="secondary" onclick="buyWeaponFromMarket(${m.id})">Satın Al (₺${m.count * m.price})</button>
+                </div>
+            `).join('') || "<p style='color:#777;'>Pazar boş.</p>";
+        }
+
+        // --- YÖNETİM & ADAYLIK KONTROLÜ ---
+        function becomeCandidate() {
+            if (!candidates.some(c => c.id === myData.id)) {
+                candidates.push({ id: myData.id, name: myData.name });
+                showToast("Başkanlığa aday oldunuz!");
+                renderElection(); saveData();
+            }
+        }
+
+        function withdrawCandidate() {
+            candidates = candidates.filter(c => c.id !== myData.id);
+            showToast("Adaylıktan çekildiniz.");
+            renderElection(); saveData();
+        }
+
+        function voteCandidate(id, name) {
+            presidentId = id;
+            showToast(`${name} yeni Başkan seçildi!`);
+            renderElection(); updateUI(); saveData();
+        }
+
+        function updateTaxRate() {
+            const val = parseInt(document.getElementById("tax-rate-input").value);
+            if (val >= 0 && val <= 25) { cityState.taxRate = val; updateUI(); saveData(); showToast("Vergi oranı değiştirildi."); }
+        }
+
+        function buyGuard() {
+            if (cityState.treasury >= 2000) {
+                cityState.treasury -= 2000;
+                cityState.guards += 1;
+                renderElection(); updateUI(); saveData();
+                showToast("1 Yeni Muhafız kiralandı.");
+            } else showToast("Hazine yetersiz!", true);
+        }
+
+        function joinRebellion() {
+            if (myData.weapons <= 0) return showToast("Silahın yok!", true);
+            cityState.rebelWeapons += myData.weapons;
+            myData.weapons = 0;
+            renderElection(); updateUI(); saveData();
+            showToast("Silahların isyan gücüne aktarıldı.");
+        }
+
+        function executeCoup() {
+            if (cityState.rebelWeapons > cityState.guards) {
+                presidentId = myData.id;
+                cityState.rebelWeapons = 0;
+                cityState.guards = 0;
+                showToast("💥 DARBE BAŞARILI! Muhafızlar Yıkıldı, Yeni Başkan Sensin!");
+            } else {
+                showToast("❌ DARBE BASTIRILDI! Muhafızlar Güçlü Geldi.", true);
+                cityState.rebelWeapons = 0;
+            }
+            renderElection(); updateUI(); saveData();
+        }
+
+        function renderElection() {
+            const isPresident = (presidentId === myData.id);
+            document.getElementById("president-only-panel").style.display = isPresident ? "block" : "none";
+            
+            let presidentName = "Yok";
+            if (presidentId === myData.id) {
+                presidentName = myData.name;
+            } else if (presidentId) {
+                let cand = candidates.find(c => c.id === presidentId);
+                presidentName = cand ? cand.name : "Başkan (" + presidentId + ")";
+            }
+
+            document.getElementById("current-president").innerText = presidentName;
+            document.getElementById("citizen-tax-view").innerText = cityState.taxRate;
+            document.getElementById("citizen-treasury-view").innerText = cityState.treasury.toLocaleString();
+            document.getElementById("president-treasury-val").innerText = cityState.treasury.toLocaleString();
+            document.getElementById("city-guards").innerText = cityState.guards;
+            document.getElementById("rebellion-power").innerText = cityState.rebelWeapons;
+
+            const isCandidate = candidates.some(c => c.id === myData.id);
+            document.getElementById("btn-become-candidate").style.display = isCandidate ? "none" : "inline-block";
+
+            document.getElementById("election-candidates-list").innerHTML = candidates.map(c => `
+                <div class="list-item">
+                    <span>👤 ${c.name} <small class="id-badge">${c.id}</small></span>
+                    <div>
+                        ${c.id === myData.id ? `<button class="danger" onclick="withdrawCandidate()">Adaylıktan Çekil</button>` : `<button class="secondary" onclick="voteCandidate('${c.id}', '${c.name}')">Oy Ver</button>`}
+                    </div>
+                </div>
+            `).join('') || "<p style='color:#777;'>Aday yok.</p>";
+        }
+
+        function renderNotifications() {
+            document.getElementById("notifications-box").innerHTML = notifications.map(n => `
+                <div class="log-item"><strong>[${n.time}]</strong> ${n.text}</div>
+            `).join('') || "<p style='color:#777;'>Henüz bildirim yok.</p>";
+        }
+
+        function updateUI() {
+            document.getElementById("top-bar-name").innerText = myData.name;
+            document.getElementById("top-bar-id").innerText = `ID: ${myData.id}`;
+            document.getElementById("profile-id-display").innerText = myData.id;
+            document.getElementById("profile-name-input").value = myData.name;
+            document.getElementById("top-bar-pp").src = myData.avatar;
+            document.getElementById("profile-pp-preview").src = myData.avatar;
+            document.getElementById("player-money").innerText = `₺${myData.money.toLocaleString()}`;
+            document.getElementById("player-weapons").innerText = myData.weapons;
+            document.getElementById("player-energy-val").innerText = myData.energy;
+            document.getElementById("player-energy-bar").style.width = `${myData.energy}%`;
+
+            const isPresident = (presidentId === myData.id);
+            document.getElementById("user-role-badge").innerText = isPresident ? "👑 Şehir Başkanı" : "👤 Vatandaş";
+            document.getElementById("user-role-badge").style.color = isPresident ? "#ff9800" : "#2196F3";
+            
+            renderElection();
+        }
+
+        // İLK YÜKLEME
+        renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderChat(); renderNotifications(); updateUI();
+    </script>
+</body>
+</html>
