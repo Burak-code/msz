@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimSiyaset v1.7</title>
+    <title>SimSiyaset v2.1</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sol Navbar */
         #navbar { width: 240px; background-color: #1e1e1e; border-right: 2px solid #333; display: flex; flex-direction: column; overflow-y: auto; }
         #navbar .brand { padding: 15px; font-size: 16px; font-weight: bold; color: #4caf50; border-bottom: 1px solid #333; text-align: center; }
         .nav-btn { background: none; border: none; color: #aaa; padding: 12px 15px; text-align: left; font-size: 13px; cursor: pointer; border-bottom: 1px solid #2a2a2a; }
         .nav-btn:hover, .nav-btn.active { background-color: #2c2c2c; color: #4caf50; border-left: 4px solid #4caf50; }
 
-        /* Ana İçerik */
         #main-container { flex: 1; display: flex; flex-direction: column; position: relative; }
         #top-bar { background-color: #1e1e1e; padding: 6px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; font-size: 12px; flex-wrap: wrap; gap: 8px; }
         .tab-content { display: none; flex: 1; padding: 20px; overflow-y: auto; }
@@ -75,7 +73,6 @@
         .mqtt-dot.connected { background: #4caf50; }
         .mqtt-dot.connecting { background: #ff9800; }
 
-        /* Takvim */
         #calendar-widget {
             display: flex; align-items: center; gap: 10px;
             background: #2a2a2a; padding: 4px 12px; border-radius: 8px;
@@ -87,7 +84,6 @@
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
         .day-name { color: #aaa; font-size: 11px; }
 
-        /* Banka */
         .loan-card { background: #2d2d2d; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #ff9800; }
         .loan-card.paid { border-left-color: #4caf50; opacity: 0.7; }
         .loan-stats { display: flex; gap: 15px; flex-wrap: wrap; font-size: 12px; margin-top: 6px; }
@@ -96,7 +92,6 @@
 
         .treasury-stat { display: inline-block; margin-right: 20px; }
 
-        /* Maaş */
         .salary-display {
             background: #1a3a1a; border: 1px solid #4caf50; border-radius: 6px;
             padding: 8px 12px; margin: 8px 0; font-size: 13px;
@@ -104,6 +99,43 @@
         .salary-display strong { color: #4caf50; }
         .salary-input-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
         .salary-input-row input { margin: 0; width: 150px; }
+
+        .stock-card {
+            background: #2d2d2d; padding: 14px; border-radius: 8px; margin-bottom: 10px;
+            border-left: 4px solid #4caf50;
+        }
+        .stock-card .stock-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 8px;
+        }
+        .stock-card .stock-name { font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+        .stock-card .stock-price { font-size: 15px; color: #ff9800; font-weight: bold; }
+        .stock-card .stock-change { font-size: 12px; margin-left: 6px; }
+        .stock-card .stock-meta { font-size: 11px; color: #aaa; margin-bottom: 8px; }
+        .stock-card .stock-meta span { margin-right: 12px; }
+        .stock-card .stock-owned { font-size: 12px; color: #4caf50; margin-bottom: 8px; }
+
+        .stock-trade-row {
+            display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+            background: #1e1e1e; padding: 10px; border-radius: 6px;
+        }
+        .stock-trade-row input { width: 90px; margin: 0; }
+        .stock-trade-row button { padding: 6px 12px; font-size: 12px; }
+
+        .stock-trend-up { color: #4caf50; }
+        .stock-trend-down { color: #f44336; }
+        .stock-trend-same { color: #ff9800; }
+
+        .portfolio-summary {
+            background: #1a2a1a; border: 1px solid #4caf50; border-radius: 8px;
+            padding: 12px; margin-bottom: 12px; font-size: 13px;
+        }
+        .portfolio-summary strong { color: #4caf50; }
+
+        .money-negative { color: #f44336 !important; font-weight: bold; }
+
+        .donate-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .donate-row input { width: 180px; margin: 0; }
     </style>
 </head>
 <body>
@@ -111,11 +143,11 @@
     <div id="custom-toast">Bildirim</div>
 
     <div id="navbar">
-        <div class="brand">🏙️ SimSiyaset v1.7</div>
+        <div class="brand">🏙️ SimSiyaset v2.1</div>
         <button class="nav-btn active" onclick="switchTab('profile-tab')">👤 Profilim</button>
         <button class="nav-btn" onclick="switchTab('work-tab')">🏭 Fabrikalar & Üretim</button>
-        <button class="nav-btn" onclick="switchTab('market-tab')">🛒 Borsa & Silah Pazarı</button>
-        <button class="nav-btn" onclick="switchTab('bank-tab')">🏦 Banka</button>
+        <button class="nav-btn" onclick="switchTab('market-tab')">🛒 Silah Pazarı</button>
+        <button class="nav-btn" onclick="switchTab('bank-tab')">🏦 Banka & Hisse</button>
         <button class="nav-btn" onclick="switchTab('press-tab')">📰 Basın & Medya</button>
         <button class="nav-btn" onclick="switchTab('party-tab')">🚩 Partiler & İttifak</button>
         <button class="nav-btn" onclick="switchTab('chat-tab')">💬 Chat & İletişim</button>
@@ -140,59 +172,47 @@
                 <strong>Enerji:</strong> 
                 <div class="energy-container"><div id="player-energy-bar" class="energy-bar"></div></div>
                 %<span id="player-energy-val">100</span>
-                <button class="battery-btn" id="battery-btn" onclick="useBattery()" title="Enerji Fuller">🔋<span class="battery-timer" id="battery-timer"></span></button>
+                <button class="battery-btn" id="battery-btn" onclick="useBattery()" title="Enerji Fuller (30 dk bekleme)">🔋<span class="battery-timer" id="battery-timer"></span></button>
             </div>
             <div><strong>Rol:</strong> <span id="user-role-badge" style="color:#2196F3;">Vatandaş</span></div>
             <div class="mqtt-status"><span class="mqtt-dot" id="mqtt-dot"></span> <span id="mqtt-label">MQTT: Bağlanıyor...</span></div>
         </div>
 
-        <!-- TAB: PROFİLİM -->
         <div id="profile-tab" class="tab-content active">
             <div class="card">
                 <h3>👤 Profil & Vatandaşlık Kartı</h3>
                 <p style="margin-bottom: 10px;">Vatandaş Kimlik Numarası (ID): <strong id="profile-id-display" class="id-badge"></strong> <em>(Bu numara asla değişmez)</em></p>
-                
                 <label>Kullanıcı / Karakter Adı:</label>
                 <input type="text" id="profile-name-input">
-                
                 <label>Profil Resmi (PP):</label>
                 <input type="file" id="profile-pp-input" accept="image/*" onchange="updateProfilePP(event)">
                 <div style="margin: 10px 0;"><img id="profile-pp-preview" class="avatar" style="width:60px; height:60px;"></div>
-                
                 <button onclick="saveProfile()">Profil Bilgilerini Güncelle</button>
             </div>
         </div>
 
-        <!-- TAB: FABRİKALAR -->
         <div id="work-tab" class="tab-content">
             <div class="card">
                 <h3>🏛️ Devlet Fabrikası (NPC)</h3>
                 <p>Başlangıç sermayesi için çalışabilirsiniz. (Vergi kesilir) - <strong>İşçi limiti yok</strong></p>
                 <button class="secondary" onclick="workAtNPC()" style="margin-top:10px;">⚙️ Tüm Enerji İle Çalış</button>
             </div>
-
             <div class="card" id="create-factory-card">
                 <h3>🏭 Özel Fabrika Kur (₺10.000)</h3>
                 <input type="text" id="factory-name-input" placeholder="Fabrika Adı">
                 <button onclick="createFactory()">Fabrikayı Kur</button>
             </div>
-
-            <!-- Kendi fabrikamız -->
             <div class="card" id="my-factory-card" style="display:none;">
                 <h3>⚙️ Fabrikanız: <span id="my-factory-name"></span> <button class="danger" onclick="deleteFactory()">Kapat</button></h3>
                 <p>Kasa: ₺<span id="my-factory-balance">0</span> | Üretilen Silah: <span id="my-factory-weapons">0</span> Adet</p>
                 <p>Kapasite: <strong id="my-factory-capacity">2</strong> işçi | Çalışan: <strong id="my-factory-worker-count">0</strong></p>
                 <div class="worker-list" id="my-factory-workers"></div>
-                
-                <!-- KASA YATIRMA / ÇEKME -->
                 <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; background:#1e1e1e; padding:10px; border-radius:6px;">
                     <strong style="color:#4caf50;">💰 Kasa İşlemleri:</strong>
                     <input type="number" id="factory-cash-input" placeholder="Tutar (₺)" style="margin:0; width:140px;" min="1">
                     <button class="secondary" onclick="depositToFactory()">Fabrika Kasasına Yatır</button>
                     <button class="warning" onclick="withdrawFromFactory()">Kasadan Çek</button>
                 </div>
-
-                <!-- MAAŞ BELİRLEME -->
                 <div class="salary-display">
                     <strong>💵 Maaş Ayarı:</strong> %1 enerji başına işçiye ödenecek tutar: 
                     <strong id="my-factory-salary-display">₺50</strong>
@@ -200,49 +220,51 @@
                         <input type="number" id="salary-input" placeholder="Örn: 50" min="1" value="50">
                         <button class="secondary" onclick="updateSalary()">Maaşı Güncelle</button>
                     </div>
-                    <p class="upgrade-info">İşçi 100 enerji harcarsa = 100 × maaş kadar kazanır. 1 silah üretir ve silah fabrika sahibine gider.</p>
                 </div>
-
                 <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
                     <button class="warning" onclick="withdrawFactoryWeapons()">Silahları Envantere Çek</button>
                     <button class="secondary" onclick="workAtMyFactory()">⚙️ Kendi Fabrikanda Çalış (Maaşsız)</button>
                 </div>
                 <div style="margin-top:12px; border-top:1px solid #444; padding-top:10px;">
-                    <p class="upgrade-info">Kapasiteyi artır (2→4: ₺10.000, 4→8: ₺20.000, 8→16: ₺40.000 ... max 48)</p>
                     <button class="secondary" onclick="upgradeFactory()" id="upgrade-factory-btn">Kapasiteyi Geliştir</button>
                 </div>
             </div>
-
-            <!-- Başka fabrikalarda çalışma -->
             <div class="card">
                 <h3>🏭 Tüm Fabrikalar</h3>
                 <div id="all-factories-list"></div>
             </div>
         </div>
 
-        <!-- TAB: BORSA VE PAZAR -->
+        <!-- ==================== SİLAH PAZARI ==================== -->
         <div id="market-tab" class="tab-content">
             <div class="card">
                 <h3>🔫 Silah Pazarı</h3>
                 <p style="font-size:11px; color:#aaa; margin-bottom:8px;">NPC alıcı: Pazardaki silahları <strong>₺900 - ₺1.200</strong> arası rastgele fiyattan satın alır.</p>
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="market-sell-count" placeholder="Adet" style="margin:0;">
-                    <input type="number" id="market-sell-price" placeholder="Birim Fiyat (₺)" style="margin:0;">
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <input type="number" id="market-sell-count" placeholder="Adet" style="margin:0; width:100px;">
+                    <input type="number" id="market-sell-price" placeholder="Birim Fiyat (₺)" style="margin:0; width:140px;">
                     <button class="warning" onclick="sellWeaponToMarket()">Pazara Koy</button>
                 </div>
-                <button class="secondary" onclick="triggerNPCBuyer()" style="margin-top:10px;">🤖 NPC Alıcıyı Tetikle (Pazardan Alım Yap)</button>
+                <button class="secondary" onclick="triggerNPCBuyer()" style="margin-top:10px;">🤖 NPC Alıcıyı Tetikle</button>
+                <p class="upgrade-info" style="margin-top:8px;">Envanterinizde: <strong id="market-my-weapons">0</strong> silah var.</p>
             </div>
+
+            <div class="card" style="border: 2px solid #ff9800;">
+                <h3 style="color:#ff9800;">📌 Sizin İlanlarınız</h3>
+                <div id="my-market-items-list"></div>
+            </div>
+
             <div class="card">
-                <h3>🛒 Pazarki İlanlar</h3>
+                <h3>🛒 Diğer İlanlar</h3>
                 <div id="market-items-list"></div>
             </div>
         </div>
+        <!-- ===================================================== -->
 
-        <!-- TAB: BANKA -->
+        <!-- ==================== BANKA & HİSSE ==================== -->
         <div id="bank-tab" class="tab-content">
             <div class="card" id="bank-admin-panel" style="display:none; border: 2px solid #ff9800;">
                 <h3 style="color:#ff9800;">🏦 Banka Yönetimi (Başkan)</h3>
-                <p style="font-size:12px; color:#aaa;">Kredi parametrelerini buradan düzenleyin. Varsayılan: 100k₺ kredi, 10k₺/gün, 200k₺ toplam geri ödeme.</p>
                 <label>Kredi Miktarı (₺):</label>
                 <input type="number" id="loan-amount-input" value="100000" min="1000">
                 <label>Günlük Ödeme (₺):</label>
@@ -250,14 +272,13 @@
                 <label>Toplam Geri Ödeme (₺):</label>
                 <input type="number" id="loan-total-input" value="200000" min="1000">
                 <button class="secondary" onclick="updateLoanSettings()">Kredi Ayarlarını Kaydet</button>
-                <p class="upgrade-info">Aktif kredi parametreleri: <strong id="loan-settings-display">100k₺ / 10k₺ günlük / 200k₺ toplam</strong></p>
+                <p class="upgrade-info">Aktif: <strong id="loan-settings-display">100k₺ / 10k₺ günlük / 200k₺ toplam</strong></p>
             </div>
 
             <div class="card">
                 <h3>💰 Kredi Başvurusu</h3>
                 <p>Aktif kredi: <strong style="color:#ff9800;" id="active-loan-info">100.000₺ kredi, günlük 10.000₺, toplam 200.000₺ geri ödeme</strong></p>
-                <p style="font-size:11px; color:#aaa;">Her gün saat 18:00'de günlük ödeme otomatik çekilir. Borcunuzun tamamını ödeyerek krediyi erken kapatabilirsiniz.</p>
-                <button id="take-loan-btn" onclick="takeLoan()" style="margin-top:10px;">💵 Kredi Çek (100.000₺)</button>
+                <button id="take-loan-btn" onclick="takeLoan()" style="margin-top:10px;">💵 Kredi Çek</button>
             </div>
 
             <div class="card">
@@ -265,34 +286,49 @@
                 <div id="my-loans-list"></div>
             </div>
 
+            <div class="card" style="border: 2px solid #2196F3;">
+                <h3 style="color:#2196F3;">📈 Hisse Senetleri</h3>
+                <p style="font-size:11px; color:#aaa; margin-bottom:8px;">
+                    NPC şirket hisseleri. Her gün en az %1 artar; alım-satım dengesine göre değişir. Temettü yoktur.
+                    <br>🔰 = artış, 🔻 = düşüş, 🔸 = değişim yok
+                </p>
+
+                <div class="portfolio-summary" id="portfolio-summary">
+                    <strong>💼 Portföyünüz:</strong> <span id="portfolio-details">Hisseniz yok</span>
+                </div>
+
+                <div id="stocks-container"></div>
+
+                <div style="margin-top:12px; border-top:1px solid #444; padding-top:10px;">
+                    <p class="upgrade-info" id="stock-last-update">Son güncelleme: -</p>
+                </div>
+            </div>
+
             <div class="card" id="all-loans-card" style="display:none;">
                 <h3>🏦 Tüm Aktif Krediler</h3>
                 <div id="all-loans-list"></div>
             </div>
         </div>
+        <!-- ===================================================== -->
 
-        <!-- TAB: BASIN VE MEDYA -->
         <div id="press-tab" class="tab-content">
             <div class="card" id="create-newspaper-card">
                 <h3>📰 Gazete Kur</h3>
                 <input type="text" id="news-name-input" placeholder="Gazete Adı">
                 <button onclick="createNewspaper()">Gazeteyi Kur</button>
             </div>
-
             <div class="card" id="publish-news-card" style="display:none;">
                 <h3>✍️ Haber Paylaş <button class="danger" onclick="deleteNewspaper()">Gazeteyi Kapat</button></h3>
                 <input type="text" id="news-title" placeholder="Manşet">
                 <textarea id="news-content" placeholder="Haber Detayları..."></textarea>
                 <button onclick="publishNews()">Yayımla</button>
             </div>
-
             <div class="card">
                 <h3>🔥 Canlı Haber Akışı</h3>
                 <div id="news-feed"></div>
             </div>
         </div>
 
-        <!-- TAB: PARTİLER -->
         <div id="party-tab" class="tab-content">
             <div class="card" id="create-party-card">
                 <h3>🚩 Parti Kur</h3>
@@ -305,12 +341,11 @@
             </div>
         </div>
 
-        <!-- TAB: CHAT VE İLETİŞİM -->
         <div id="chat-tab" class="tab-content">
             <div class="card">
                 <h3>💬 Şehir Sohbeti</h3>
                 <p style="font-size:11px; color:#aaa; margin-bottom:8px;">
-                    Herkese açık mesaj için normal yazın. Özel mesaj için <span class="mention">@kullanıcıadı</span> ile başlayın.
+                    Özel mesaj için <span class="mention">@kullanıcıadı</span> ile başlayın.
                 </p>
                 <div id="chat-messages" class="chat-box" style="height:250px; overflow-y:auto;"></div>
                 <div style="display:flex; gap:5px;">
@@ -320,13 +355,10 @@
             </div>
         </div>
 
-        <!-- TAB: ŞEHİR YÖNETİMİ -->
         <div id="president-tab" class="tab-content">
-            
             <div class="card" id="president-only-panel" style="display:none; border: 2px solid #ff9800;">
                 <h3 style="color:#ff9800;">👑 Şehir Başkanı Yönetim Sarayı</h3>
                 <p>Mevcut Şehir Hazinesi: <strong style="color:#4caf50;">₺<span id="president-treasury-val">0</span></strong></p>
-                
                 <div style="margin-top:10px;">
                     <label>Şehir Vergi Oranını Belirle (%):</label>
                     <div style="display:flex; gap:10px;">
@@ -334,7 +366,6 @@
                         <button class="secondary" onclick="updateTaxRate()">Vergiyi Ayarla</button>
                     </div>
                 </div>
-
                 <div style="margin-top:10px;">
                     <label>Şehir Hazinesinden Muhafız Satın Al (1 Muhafız = ₺2.000):</label>
                     <button class="warning" onclick="buyGuard()">Muhafız Satın Al (+1)</button>
@@ -349,9 +380,22 @@
                 <p>Şehir Muhafızı Savunma Gücü: <strong style="color:#2196F3;"><span id="city-guards">0</span> Muhafız</strong></p>
             </div>
 
+            <div class="card" style="border: 2px solid #4caf50;">
+                <h3 style="color:#4caf50;">💝 Devlete Bağış Yap</h3>
+                <p style="font-size:12px; color:#aaa; margin-bottom:8px;">
+                    İstediğin kadar parayı şehir hazinesine bağışlayabilirsin. Bakiye eksiye düşebilir.
+                </p>
+                <div class="donate-row">
+                    <input type="number" id="donate-amount-input" placeholder="Bağış Tutarı (₺)" min="1">
+                    <button class="secondary" onclick="donateToTreasury()">💝 Bağış Yap</button>
+                    <button class="warning" onclick="donateAllToTreasury()">⚡ Tüm Paramı Bağışla</button>
+                </div>
+                <p class="upgrade-info" id="donate-info">Mevcut bakiyeniz: ₺<span id="donate-my-money">0</span></p>
+            </div>
+
             <div class="card">
                 <h3>🗳️ Başkanlık Seçimi</h3>
-                <p style="font-size:11px; color:#ff9800;">⏰ Seçim her Pazar günü saat 18:00'de yapılır. Seçim günü gelene kadar başkan değişmez.</p>
+                <p style="font-size:11px; color:#ff9800;">⏰ Seçim her Pazar günü saat 18:00'de yapılır.</p>
                 <div id="election-candidates-list"></div>
                 <button id="btn-become-candidate" class="secondary" onclick="becomeCandidate()" style="margin-top:10px;">Başkanlığa Aday Ol</button>
             </div>
@@ -364,7 +408,6 @@
             </div>
         </div>
 
-        <!-- TAB: BİLDİRİMLER -->
         <div id="notifications-tab" class="tab-content">
             <div class="card">
                 <h3>🔔 Şehir & Sistem Bildirimleri</h3>
@@ -397,226 +440,7 @@
             saveData();
         }
 
-        // --- TAKVİM ---
-        const DAY_NAMES = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
-        function getGameDate() { return new Date(); }
-        function formatDate(date) {
-            const d = String(date.getDate()).padStart(2, '0');
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const y = date.getFullYear();
-            return `${d}.${m}.${y}`;
-        }
-        function updateCalendar() {
-            const now = getGameDate();
-            document.getElementById("cal-day-name").innerText = DAY_NAMES[now.getDay()];
-            document.getElementById("cal-date").innerText = formatDate(now);
-            document.getElementById("cal-time").innerText = now.toLocaleTimeString('tr-TR');
-            
-            const warning = document.getElementById("cal-election-warning");
-            if (now.getDay() === 0) {
-                warning.style.display = "inline";
-                if (now.getHours() >= 18) {
-                    warning.innerText = "🗳️ SEÇİM YAPILDI!";
-                    warning.style.color = "#4caf50";
-                } else {
-                    warning.innerText = `🗳️ SEÇİM BUGÜN 18:00'DE! (${18 - now.getHours()} saat kaldı)`;
-                    warning.style.color = "#f44336";
-                }
-            } else {
-                let daysUntilSunday = (7 - now.getDay()) % 7;
-                if (daysUntilSunday === 0) daysUntilSunday = 7;
-                warning.style.display = "inline";
-                warning.innerText = `🗳️ Seçime ${daysUntilSunday} gün kaldı`;
-                warning.style.color = "#ff9800";
-            }
-            updateBatteryUI();
-        }
-        setInterval(updateCalendar, 1000);
-
-        // --- SEÇİM & KREDİ ÖDEME KONTROLÜ ---
-        let lastElectionDate = localStorage.getItem('sim_last_election') || "";
-        let lastLoanPaymentDate = localStorage.getItem('sim_last_loan_payment') || "";
-
-        function checkElection() {
-            const now = getGameDate();
-            const todayKey = formatDate(now);
-            
-            if (now.getHours() >= 18 && lastLoanPaymentDate !== todayKey) {
-                processDailyLoanPayments();
-                lastLoanPaymentDate = todayKey;
-                localStorage.setItem('sim_last_loan_payment', todayKey);
-            }
-
-            if (now.getDay() === 0 && now.getHours() >= 18 && lastElectionDate !== todayKey) {
-                runElection();
-                lastElectionDate = todayKey;
-                localStorage.setItem('sim_last_election', todayKey);
-            }
-        }
-        setInterval(checkElection, 5000);
-
-        function runElection() {
-            if (candidates.length === 0) {
-                showToast("🗳️ Seçim zamanı! Ancak hiç aday yok.");
-                return;
-            }
-            const winner = candidates[Math.floor(Math.random() * candidates.length)];
-            presidentId = winner.id;
-            const announcement = `🗳️ SEÇİM SONUCU: ${winner.name} (${winner.id}) yeni Şehir Başkanı seçildi!`;
-            showToast(announcement);
-            
-            const news = {
-                id: Date.now(),
-                newspaper: "Şehir Haber Ajansı",
-                title: "🗳️ YENİ BAŞKAN SEÇİLDİ!",
-                content: `Yapılan seçim sonucunda ${winner.name} (${winner.id}) yeni Şehir Başkanı olarak seçilmiştir.`,
-                ownerId: "SYSTEM",
-                author: "Sistem"
-            };
-            newsArticles.unshift(news);
-
-            candidates = [];
-            renderElection(); updateUI(); saveData();
-            if (mqttConnected) {
-                mqttClient.publish(MQTT_TOPIC_SYNC, JSON.stringify({
-                    senderId: "SYSTEM", presidentId: winner.id, candidates: [], newsArticles: newsArticles, timestamp: Date.now()
-                }));
-            }
-        }
-
-        // --- KREDİ ---
-        let loanSettings = JSON.parse(localStorage.getItem('sim_loan_settings')) || {
-            amount: 100000, dailyPayment: 10000, totalRepayment: 200000
-        };
-        let loans = JSON.parse(localStorage.getItem('sim_loans')) || [];
-
-        function updateLoanSettings() {
-            const amount = parseInt(document.getElementById("loan-amount-input").value);
-            const daily = parseInt(document.getElementById("loan-daily-input").value);
-            const total = parseInt(document.getElementById("loan-total-input").value);
-            if (!amount || !daily || !total) return showToast("Tüm alanları doldurun!", true);
-            if (daily > total) return showToast("Günlük ödeme toplamdan büyük olamaz!", true);
-            loanSettings = { amount, dailyPayment: daily, totalRepayment: total };
-            localStorage.setItem('sim_loan_settings', JSON.stringify(loanSettings));
-            renderBank();
-            showToast("Kredi ayarları güncellendi.");
-            saveData();
-        }
-
-        function takeLoan() {
-            if (loans.some(l => l.borrowerId === myData.id && l.status === 'active')) {
-                showToast("Zaten aktif bir krediniz var!", true);
-                return;
-            }
-            const loan = {
-                id: "loan_" + Date.now(),
-                borrowerId: myData.id,
-                borrowerName: myData.name,
-                amount: loanSettings.amount,
-                dailyPayment: loanSettings.dailyPayment,
-                totalRepayment: loanSettings.totalRepayment,
-                remaining: loanSettings.totalRepayment,
-                status: 'active',
-                startDate: formatDate(getGameDate())
-            };
-            loans.push(loan);
-            myData.money += loanSettings.amount;
-            showToast(`💵 ${loanSettings.amount.toLocaleString()}₺ kredi çekildi!`);
-            renderBank(); updateUI(); saveData();
-        }
-
-        function repayLoan(loanId) {
-            const loan = loans.find(l => l.id === loanId);
-            if (!loan || loan.borrowerId !== myData.id) return;
-            if (myData.money < loan.remaining) {
-                showToast(`Yetersiz bakiye! Gerekli: ₺${loan.remaining.toLocaleString()}`, true);
-                return;
-            }
-            myData.money -= loan.remaining;
-            loan.remaining = 0;
-            loan.status = 'paid';
-            loan.paidDate = formatDate(getGameDate());
-            showToast(`✅ Kredi tamamen kapatıldı!`);
-            renderBank(); updateUI(); saveData();
-        }
-
-        function processDailyLoanPayments() {
-            let changed = false;
-            loans.forEach(loan => {
-                if (loan.status !== 'active') return;
-                const payment = Math.min(loan.dailyPayment, loan.remaining);
-                
-                if (loan.borrowerId === myData.id) {
-                    if (myData.money >= payment) {
-                        myData.money -= payment;
-                        loan.remaining -= payment;
-                        if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; showToast(`✅ Krediniz tamamen ödendi!`); }
-                        else { showToast(`📅 Günlük kredi ödemesi: ₺${payment.toLocaleString()}. Kalan: ₺${loan.remaining.toLocaleString()}`); }
-                    } else {
-                        myData.money -= payment;
-                        loan.remaining -= payment;
-                        if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; }
-                        showToast(`⚠️ Kredi ödemesi yapılamadı! Zorla çekildi.`, true);
-                    }
-                    changed = true;
-                } else {
-                    loan.remaining -= payment;
-                    if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; }
-                    changed = true;
-                }
-            });
-            if (changed) { renderBank(); updateUI(); saveData(); }
-        }
-
-        function renderBank() {
-            const isPresident = (presidentId === myData.id);
-            document.getElementById("bank-admin-panel").style.display = isPresident ? "block" : "none";
-            document.getElementById("all-loans-card").style.display = isPresident ? "block" : "none";
-            
-            document.getElementById("loan-amount-input").value = loanSettings.amount;
-            document.getElementById("loan-daily-input").value = loanSettings.dailyPayment;
-            document.getElementById("loan-total-input").value = loanSettings.totalRepayment;
-            document.getElementById("loan-settings-display").innerText = 
-                `${(loanSettings.amount/1000).toFixed(0)}k₺ / ${(loanSettings.dailyPayment/1000).toFixed(0)}k₺ günlük / ${(loanSettings.totalRepayment/1000).toFixed(0)}k₺ toplam`;
-            document.getElementById("active-loan-info").innerText = 
-                `${loanSettings.amount.toLocaleString()}₺ kredi, günlük ${loanSettings.dailyPayment.toLocaleString()}₺, toplam ${loanSettings.totalRepayment.toLocaleString()}₺`;
-
-            const hasActiveLoan = loans.some(l => l.borrowerId === myData.id && l.status === 'active');
-            document.getElementById("take-loan-btn").disabled = hasActiveLoan;
-            document.getElementById("take-loan-btn").innerText = hasActiveLoan ? "Aktif Krediniz Var" : `💵 Kredi Çek (${loanSettings.amount.toLocaleString()}₺)`;
-
-            const myLoans = loans.filter(l => l.borrowerId === myData.id);
-            document.getElementById("my-loans-list").innerHTML = myLoans.map(l => `
-                <div class="loan-card ${l.status === 'paid' ? 'paid' : ''}">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong>${l.status === 'active' ? '🟡 Aktif Kredi' : '✅ Ödendi'}</strong>
-                        <small style="color:#888;">${l.startDate}</small>
-                    </div>
-                    <div class="loan-stats">
-                        <span>Kredi: <strong>₺${l.amount.toLocaleString()}</strong></span>
-                        <span>Kalan: <strong style="color:#ff9800;">₺${l.remaining.toLocaleString()}</strong></span>
-                        <span>Günlük: <strong>₺${l.dailyPayment.toLocaleString()}</strong></span>
-                    </div>
-                    ${l.status === 'active' && l.borrowerId === myData.id ? 
-                        `<button class="warning" style="margin-top:8px;" onclick="repayLoan('${l.id}')">💰 Borcun Tamamını Öde (₺${l.remaining.toLocaleString()})</button>` : ''}
-                </div>
-            `).join('') || "<p style='color:#777;'>Krediniz yok.</p>";
-
-            if (isPresident) {
-                const activeLoans = loans.filter(l => l.status === 'active');
-                document.getElementById("all-loans-list").innerHTML = activeLoans.map(l => `
-                    <div class="loan-card">
-                        <strong>👤 ${l.borrowerName} <small class="id-badge">${l.borrowerId}</small></strong>
-                        <div class="loan-stats">
-                            <span>Kalan: <strong style="color:#ff9800;">₺${l.remaining.toLocaleString()}</strong></span>
-                            <span>Günlük: <strong>₺${l.dailyPayment.toLocaleString()}</strong></span>
-                        </div>
-                    </div>
-                `).join('') || "<p style='color:#777;'>Aktif kredi yok.</p>";
-            }
-        }
-
-        // --- STATE ---
+        // ================= STATE =================
         let myData = JSON.parse(localStorage.getItem('sim_player')) || { 
             id: generateUniqueID(), name: "Vatandaş", avatar: DEFAULT_AVATAR,
             money: 1000, weapons: 0, energy: 100, newspaper: null, party: null, factory: null,
@@ -638,7 +462,37 @@
         let cityState = JSON.parse(localStorage.getItem('sim_city')) || { treasury: 100000, taxRate: 5, guards: 10, rebelWeapons: 0 };
         if (!cityState.treasury || cityState.treasury < 100000) cityState.treasury = 100000;
 
-        // --- MQTT ---
+        let loanSettings = JSON.parse(localStorage.getItem('sim_loan_settings')) || {
+            amount: 100000, dailyPayment: 10000, totalRepayment: 200000
+        };
+        let loans = JSON.parse(localStorage.getItem('sim_loans')) || [];
+
+        // ============== HİSSELER ==============
+        const DEFAULT_STOCKS = [
+            { id: 'ajake',  name: 'Ajake',  basePrice: 300,  price: 300,  prevPrice: 300,  trend: 'same', totalShares: 1000000, availableShares: 1000000 },
+            { id: 'kelons', name: 'Kelons', basePrice: 30,   price: 30,   prevPrice: 30,   trend: 'same', totalShares: 5000000, availableShares: 5000000 },
+            { id: 'mercio', name: 'Mercio', basePrice: 2000, price: 2000, prevPrice: 2000, trend: 'same', totalShares: 100000,  availableShares: 100000 }
+        ];
+
+        let stocks = [];
+        try {
+            const savedStocks = JSON.parse(localStorage.getItem('sim_stocks_v2'));
+            if (Array.isArray(savedStocks) && savedStocks.length >= 3) {
+                stocks = savedStocks;
+            } else {
+                stocks = JSON.parse(JSON.stringify(DEFAULT_STOCKS));
+            }
+        } catch (e) {
+            stocks = JSON.parse(JSON.stringify(DEFAULT_STOCKS));
+        }
+        DEFAULT_STOCKS.forEach(ds => {
+            if (!stocks.some(s => s.id === ds.id)) stocks.push(JSON.parse(JSON.stringify(ds)));
+        });
+
+        let myPortfolio = JSON.parse(localStorage.getItem('sim_portfolio_v2')) || {};
+        let lastStockUpdate = localStorage.getItem('sim_last_stock_update_v2') || "";
+
+        // ============== MQTT ==============
         let mqttClient = null;
         const MQTT_BROKER = 'wss://broker.emqx.io:8084/mqtt';
         const MQTT_TOPIC_CHAT = 'simsiyaset/chat';
@@ -653,12 +507,10 @@
                     clientId: 'simsiyaset_' + myData.id + '_' + Math.random().toString(16).substr(2, 8),
                     clean: true, reconnectPeriod: 3000, connectTimeout: 10000
                 });
-
                 mqttClient.on('connect', () => {
                     mqttConnected = true; updateMQTTStatus(true);
                     mqttClient.subscribe([MQTT_TOPIC_CHAT, MQTT_TOPIC_PLAYERS, MQTT_TOPIC_SYNC], () => publishPlayerPresence());
                 });
-
                 mqttClient.on('message', (topic, message) => {
                     try {
                         const data = JSON.parse(message.toString());
@@ -667,7 +519,6 @@
                         else if (topic === MQTT_TOPIC_SYNC) handleRemoteSync(data);
                     } catch (e) { console.error('MQTT mesaj hatası:', e); }
                 });
-
                 mqttClient.on('close', () => { mqttConnected = false; updateMQTTStatus(false); });
                 mqttClient.on('error', () => { mqttConnected = false; updateMQTTStatus(false); });
                 mqttClient.on('reconnect', () => updateMQTTStatus('connecting'));
@@ -709,7 +560,7 @@
                 senderId: myData.id, factories: factories, market: market,
                 newsArticles: newsArticles, parties: parties, candidates: candidates,
                 presidentId: presidentId, cityState: cityState, loans: loans,
-                loanSettings: loanSettings, timestamp: Date.now()
+                loanSettings: loanSettings, stocks: stocks, timestamp: Date.now()
             }));
         }
         function handleRemoteSync(data) {
@@ -729,7 +580,8 @@
                 if (data.cityState) cityState = data.cityState;
                 if (data.loans) loans = data.loans;
                 if (data.loanSettings) loanSettings = data.loanSettings;
-                renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderElection(); renderBank();
+                if (data.stocks) stocks = data.stocks;
+                renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderElection(); renderBank(); renderStocks();
                 saveData();
             }
         }
@@ -748,6 +600,9 @@
             localStorage.setItem('sim_city', JSON.stringify(cityState));
             localStorage.setItem('sim_loans', JSON.stringify(loans));
             localStorage.setItem('sim_loan_settings', JSON.stringify(loanSettings));
+            localStorage.setItem('sim_stocks_v2', JSON.stringify(stocks));
+            localStorage.setItem('sim_portfolio_v2', JSON.stringify(myPortfolio));
+            localStorage.setItem('sim_last_stock_update_v2', lastStockUpdate);
             publishSync();
         }
 
@@ -756,31 +611,471 @@
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
-            if (tabId === 'bank-tab') renderBank();
+            if (tabId === 'bank-tab') { renderBank(); renderStocks(); }
+            if (tabId === 'market-tab') { renderMarket(); }
         }
 
-        setInterval(() => {
-            if (myData.energy < 100) {
-                myData.energy = Math.min(100, myData.energy + 1);
-                updateUI(); saveData();
+        // ================= TAKVİM =================
+        const DAY_NAMES = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+        function getGameDate() { return new Date(); }
+        function formatDate(date) {
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}.${m}.${y}`;
+        }
+        function updateCalendar() {
+            const now = getGameDate();
+            document.getElementById("cal-day-name").innerText = DAY_NAMES[now.getDay()];
+            document.getElementById("cal-date").innerText = formatDate(now);
+            document.getElementById("cal-time").innerText = now.toLocaleTimeString('tr-TR');
+            const warning = document.getElementById("cal-election-warning");
+            if (now.getDay() === 0) {
+                warning.style.display = "inline";
+                if (now.getHours() >= 18) {
+                    warning.innerText = "🗳️ SEÇİM YAPILDI!";
+                    warning.style.color = "#4caf50";
+                } else {
+                    warning.innerText = `🗳️ SEÇİM BUGÜN 18:00'DE!`;
+                    warning.style.color = "#f44336";
+                }
+            } else {
+                let daysUntilSunday = (7 - now.getDay()) % 7;
+                if (daysUntilSunday === 0) daysUntilSunday = 7;
+                warning.style.display = "inline";
+                warning.innerText = `🗳️ Seçime ${daysUntilSunday} gün kaldı`;
+                warning.style.color = "#ff9800";
             }
-        }, 10000);
+            updateBatteryUI();
+        }
+        setInterval(updateCalendar, 1000);
 
-        function getBatteryCooldown() {
-            return Math.max(300, 600 - myData.batteryUpgradeLevel * 120);
+        // ================= SEÇİM / KREDİ =================
+        let lastElectionDate = localStorage.getItem('sim_last_election') || "";
+        let lastLoanPaymentDate = localStorage.getItem('sim_last_loan_payment') || "";
+
+        function checkElection() {
+            const now = getGameDate();
+            const todayKey = formatDate(now);
+            if (now.getHours() >= 18 && lastLoanPaymentDate !== todayKey) {
+                processDailyLoanPayments();
+                lastLoanPaymentDate = todayKey;
+                localStorage.setItem('sim_last_loan_payment', todayKey);
+            }
+            if (now.getDay() === 0 && now.getHours() >= 18 && lastElectionDate !== todayKey) {
+                runElection();
+                lastElectionDate = todayKey;
+                localStorage.setItem('sim_last_election', todayKey);
+            }
+        }
+        setInterval(checkElection, 5000);
+
+        function runElection() {
+            if (candidates.length === 0) {
+                showToast("🗳️ Seçim zamanı! Ancak hiç aday yok.");
+                return;
+            }
+            const winner = candidates[Math.floor(Math.random() * candidates.length)];
+            presidentId = winner.id;
+            showToast(`🗳️ SEÇİM SONUCU: ${winner.name} (${winner.id}) yeni Şehir Başkanı seçildi!`);
+            const news = {
+                id: Date.now(), newspaper: "Şehir Haber Ajansı",
+                title: "🗳️ YENİ BAŞKAN SEÇİLDİ!",
+                content: `Yapılan seçim sonucunda ${winner.name} (${winner.id}) yeni Şehir Başkanı olarak seçilmiştir.`,
+                ownerId: "SYSTEM", author: "Sistem"
+            };
+            newsArticles.unshift(news);
+            candidates = [];
+            renderElection(); updateUI(); saveData();
         }
 
+        function updateLoanSettings() {
+            const amount = parseInt(document.getElementById("loan-amount-input").value);
+            const daily = parseInt(document.getElementById("loan-daily-input").value);
+            const total = parseInt(document.getElementById("loan-total-input").value);
+            if (!amount || !daily || !total) return showToast("Tüm alanları doldurun!", true);
+            if (daily > total) return showToast("Günlük ödeme toplamdan büyük olamaz!", true);
+            loanSettings = { amount, dailyPayment: daily, totalRepayment: total };
+            localStorage.setItem('sim_loan_settings', JSON.stringify(loanSettings));
+            renderBank();
+            showToast("Kredi ayarları güncellendi.");
+            saveData();
+        }
+
+        function takeLoan() {
+            if (loans.some(l => l.borrowerId === myData.id && l.status === 'active')) {
+                showToast("Zaten aktif bir krediniz var!", true);
+                return;
+            }
+            const loan = {
+                id: "loan_" + Date.now(), borrowerId: myData.id, borrowerName: myData.name,
+                amount: loanSettings.amount, dailyPayment: loanSettings.dailyPayment,
+                totalRepayment: loanSettings.totalRepayment, remaining: loanSettings.totalRepayment,
+                status: 'active', startDate: formatDate(getGameDate())
+            };
+            loans.push(loan);
+            myData.money += loanSettings.amount;
+            showToast(`💵 ${loanSettings.amount.toLocaleString()}₺ kredi çekildi!`);
+            renderBank(); updateUI(); saveData();
+        }
+
+        function repayLoan(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (!loan || loan.borrowerId !== myData.id) return;
+            if (myData.money < loan.remaining) {
+                showToast(`Yetersiz bakiye! Gerekli: ₺${loan.remaining.toLocaleString()}`, true);
+                return;
+            }
+            myData.money -= loan.remaining;
+            loan.remaining = 0;
+            loan.status = 'paid';
+            loan.paidDate = formatDate(getGameDate());
+            showToast(`✅ Kredi tamamen kapatıldı!`);
+            renderBank(); updateUI(); saveData();
+        }
+
+        function processDailyLoanPayments() {
+            let changed = false;
+            loans.forEach(loan => {
+                if (loan.status !== 'active') return;
+                const payment = Math.min(loan.dailyPayment, loan.remaining);
+                if (loan.borrowerId === myData.id) {
+                    myData.money -= payment;
+                    loan.remaining -= payment;
+                    if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; showToast(`✅ Krediniz tamamen ödendi!`); }
+                    else { showToast(`📅 Günlük kredi ödemesi: ₺${payment.toLocaleString()}. Kalan: ₺${loan.remaining.toLocaleString()}`); }
+                    changed = true;
+                } else {
+                    loan.remaining -= payment;
+                    if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; }
+                    changed = true;
+                }
+            });
+            if (changed) { renderBank(); updateUI(); saveData(); }
+        }
+
+        // ================= HİSSE FONKSİYONLARI =================
+        function getStockTrendEmoji(trend) {
+            if (trend === 'down') return '🔻';
+            if (trend === 'up') return '🔰';
+            return '🔸';
+        }
+        function getStockTrendClass(trend) {
+            if (trend === 'down') return 'stock-trend-down';
+            if (trend === 'up') return 'stock-trend-up';
+            return 'stock-trend-same';
+        }
+
+        function updateStockPrices() {
+            const now = new Date();
+            const todayKey = formatDate(now);
+            if (lastStockUpdate === todayKey) return;
+
+            stocks.forEach(stock => {
+                stock.prevPrice = stock.price;
+                let changePercent = 1 + Math.random() * 2;
+                const soldRatio = 1 - (stock.availableShares / stock.totalShares);
+                changePercent += soldRatio * 15;
+                if (Math.random() < 0.20) {
+                    changePercent = -Math.abs(changePercent) * (0.5 + Math.random() * 0.8);
+                }
+                const newPrice = Math.max(1, Math.round(stock.price * (1 + changePercent / 100)));
+                stock.price = newPrice;
+                if (stock.price > stock.prevPrice) stock.trend = 'up';
+                else if (stock.price < stock.prevPrice) stock.trend = 'down';
+                else stock.trend = 'same';
+                if (Math.random() < 0.25) {
+                    const newShares = Math.floor(stock.totalShares * 0.01);
+                    stock.totalShares += newShares;
+                    stock.availableShares += newShares;
+                }
+            });
+
+            lastStockUpdate = todayKey;
+            localStorage.setItem('sim_last_stock_update_v2', todayKey);
+            showToast("📈 Borsa fiyatları güncellendi!");
+            renderStocks();
+            saveData();
+        }
+
+        function buyStock(stockId) {
+            const stock = stocks.find(s => s.id === stockId);
+            if (!stock) return showToast("Hisse bulunamadı!", true);
+            const amountInput = document.getElementById(`stock-buy-${stockId}`);
+            const amount = parseInt(amountInput.value);
+            if (!amount || amount <= 0) return showToast("Geçerli bir adet girin!", true);
+            const cost = stock.price * amount;
+            myData.money -= cost;
+            stock.availableShares -= amount;
+            stock.price = Math.max(1, Math.round(stock.price * (1 + (amount / stock.totalShares) * 0.5)));
+            if (!myPortfolio[stockId]) myPortfolio[stockId] = { shares: 0, avgCost: 0 };
+            const p = myPortfolio[stockId];
+            const totalCost = p.avgCost * p.shares + cost;
+            p.shares += amount;
+            p.avgCost = totalCost / p.shares;
+            amountInput.value = "";
+            showToast(`✅ ${amount} adet ${stock.name} hissesi alındı (₺${cost.toLocaleString()})`);
+            renderStocks(); updateUI(); saveData();
+        }
+
+        function sellStock(stockId) {
+            const stock = stocks.find(s => s.id === stockId);
+            if (!stock) return showToast("Hisse bulunamadı!", true);
+            const amountInput = document.getElementById(`stock-sell-${stockId}`);
+            const amount = parseInt(amountInput.value);
+            if (!amount || amount <= 0) return showToast("Geçerli bir adet girin!", true);
+            const p = myPortfolio[stockId];
+            if (!p || p.shares < amount) return showToast("Yeterli hisseniz yok!", true);
+            const revenue = stock.price * amount;
+            myData.money += revenue;
+            stock.availableShares += amount;
+            stock.price = Math.max(1, Math.round(stock.price * (1 - (amount / stock.totalShares) * 0.5)));
+            p.shares -= amount;
+            if (p.shares <= 0) delete myPortfolio[stockId];
+            amountInput.value = "";
+            showToast(`💵 ${amount} adet ${stock.name} hissesi satıldı (₺${revenue.toLocaleString()})`);
+            renderStocks(); updateUI(); saveData();
+        }
+
+        function buyAllStock(stockId) {
+            const stock = stocks.find(s => s.id === stockId);
+            if (!stock) return;
+            const maxByShares = stock.availableShares;
+            const amount = maxByShares > 0 ? maxByShares : 0;
+            if (amount <= 0) return showToast("Alınacak hisse yok!", true);
+            document.getElementById(`stock-buy-${stockId}`).value = amount;
+            buyStock(stockId);
+        }
+
+        function sellAllStock(stockId) {
+            const p = myPortfolio[stockId];
+            if (!p || p.shares <= 0) return showToast("Satacak hisseniz yok!", true);
+            document.getElementById(`stock-sell-${stockId}`).value = p.shares;
+            sellStock(stockId);
+        }
+
+        function renderStocks() {
+            const container = document.getElementById("stocks-container");
+            if (!container) return;
+
+            if (!Array.isArray(stocks) || stocks.length === 0) {
+                stocks = JSON.parse(JSON.stringify(DEFAULT_STOCKS));
+            }
+
+            let totalPortfolioValue = 0;
+            let portfolioDetails = [];
+            stocks.forEach(stock => {
+                const p = myPortfolio[stock.id];
+                if (p && p.shares > 0) {
+                    const value = p.shares * stock.price;
+                    totalPortfolioValue += value;
+                    const profit = (stock.price - p.avgCost) * p.shares;
+                    const profitColor = profit >= 0 ? '#4caf50' : '#f44336';
+                    portfolioDetails.push(
+                        `<div style="margin-bottom:4px;">${getStockTrendEmoji(stock.trend)} <strong>${stock.name}</strong>: ` +
+                        `${p.shares} adet | Değer: ₺${value.toLocaleString()} | ` +
+                        `<span style="color:${profitColor};">Kâr/Zarar: ${profit >= 0 ? '+' : ''}₺${profit.toLocaleString()}</span></div>`
+                    );
+                }
+            });
+
+            const summaryEl = document.getElementById("portfolio-details");
+            if (summaryEl) {
+                summaryEl.innerHTML = portfolioDetails.length > 0
+                    ? portfolioDetails.join('') + `<div style="margin-top:6px; color:#4caf50;"><strong>Toplam Portföy Değeri: ₺${totalPortfolioValue.toLocaleString()}</strong></div>`
+                    : 'Hisseniz yok';
+            }
+
+            container.innerHTML = stocks.map(stock => {
+                const emoji = getStockTrendEmoji(stock.trend);
+                const trendClass = getStockTrendClass(stock.trend);
+                const change = stock.price - stock.prevPrice;
+                const changePercent = stock.prevPrice > 0 ? ((change / stock.prevPrice) * 100).toFixed(2) : 0;
+                const changeStr = change >= 0
+                    ? `+₺${change.toLocaleString()} (+${changePercent}%)`
+                    : `-₺${Math.abs(change).toLocaleString()} (${changePercent}%)`;
+                const p = myPortfolio[stock.id];
+                const owned = p ? p.shares : 0;
+                const avgCost = p ? p.avgCost : 0;
+
+                return `
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <div class="stock-name">${emoji} ${stock.name}</div>
+                            <div>
+                                <span class="stock-price">₺${stock.price.toLocaleString()}</span>
+                                <span class="stock-change ${trendClass}">${changeStr}</span>
+                            </div>
+                        </div>
+                        <div class="stock-meta">
+                            <span>📊 Arz: ${stock.availableShares.toLocaleString()} / ${stock.totalShares.toLocaleString()} pay</span>
+                            <span>💰 Baz Fiyat: ₺${stock.basePrice.toLocaleString()}</span>
+                        </div>
+                        ${owned > 0 ? `<div class="stock-owned">📦 Elinizde: <strong>${owned}</strong> adet | Ort. Maliyet: ₺${avgCost.toFixed(2)} | Güncel Değer: ₺${(owned * stock.price).toLocaleString()}</div>` : ''}
+
+                        <div class="stock-trade-row">
+                            <input type="number" id="stock-buy-${stock.id}" placeholder="Adet" min="1">
+                            <button class="secondary" onclick="buyStock('${stock.id}')">🟢 Al</button>
+                            <button class="secondary" onclick="buyAllStock('${stock.id}')">⚡ Tümünü Al</button>
+
+                            <span style="color:#555; margin:0 4px;">|</span>
+
+                            <input type="number" id="stock-sell-${stock.id}" placeholder="Adet" min="1">
+                            <button class="warning" onclick="sellStock('${stock.id}')" ${owned <= 0 ? 'disabled' : ''}>🔴 Sat</button>
+                            <button class="warning" onclick="sellAllStock('${stock.id}')" ${owned <= 0 ? 'disabled' : ''}>⚡ Tümünü Sat</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const lastUpdateEl = document.getElementById("stock-last-update");
+            if (lastUpdateEl) {
+                lastUpdateEl.innerText = `Son güncelleme: ${lastStockUpdate || 'Henüz güncellenmedi'}`;
+            }
+        }
+
+        // ================= SİLAH PAZARI =================
+        function sellWeaponToMarket() {
+            const count = parseInt(document.getElementById("market-sell-count").value);
+            const price = parseInt(document.getElementById("market-sell-price").value);
+            if (!count || count <= 0) return showToast("Geçerli bir adet girin!", true);
+            if (!price || price <= 0) return showToast("Geçerli bir fiyat girin!", true);
+            if (myData.weapons < count) return showToast(`Yetersiz silah! Envanterinizde ${myData.weapons} silah var.`, true);
+            
+            myData.weapons -= count;
+            market.push({ 
+                id: Date.now(), 
+                sellerId: myData.id, 
+                seller: myData.name, 
+                count: count, 
+                price: price 
+            });
+            document.getElementById("market-sell-count").value = "";
+            document.getElementById("market-sell-price").value = "";
+            showToast(`✅ ${count} silah ₺${price} birim fiyattan pazara konuldu.`);
+            renderMarket(); updateUI(); saveData();
+        }
+
+        function withdrawMarketItem(itemId) {
+            const item = market.find(m => m.id === itemId);
+            if (!item) return showToast("İlan bulunamadı!", true);
+            if (item.sellerId !== myData.id) return showToast("Bu ilan size ait değil!", true);
+            
+            myData.weapons += item.count;
+            market = market.filter(m => m.id !== itemId);
+            showToast(`↩️ ${item.count} silah envanterinize geri alındı.`);
+            renderMarket(); updateUI(); saveData();
+        }
+
+        function withdrawAllMyMarketItems() {
+            const myItems = market.filter(m => m.sellerId === myData.id);
+            if (myItems.length === 0) return showToast("Geri çekilecek ilanınız yok!", true);
+            let totalWeapons = 0;
+            myItems.forEach(item => { totalWeapons += item.count; });
+            market = market.filter(m => m.sellerId !== myData.id);
+            myData.weapons += totalWeapons;
+            showToast(`↩️ ${myItems.length} ilan geri çekildi, toplam ${totalWeapons} silah envanterinize döndü.`);
+            renderMarket(); updateUI(); saveData();
+        }
+
+        function buyWeaponFromMarket(id) {
+            const item = market.find(m => m.id === id);
+            const totalCost = item.count * item.price;
+            myData.money -= totalCost;
+            myData.weapons += item.count;
+            market = market.filter(m => m.id !== id);
+            showToast(`✅ ${item.count} silah satın alındı (₺${totalCost.toLocaleString()})`);
+            renderMarket(); updateUI(); saveData();
+        }
+
+        function triggerNPCBuyer() {
+            if (market.length === 0) { showToast("Pazarda satılık silah yok!", true); return; }
+            let bought = 0, earnings = 0;
+            market = market.filter(item => {
+                const npcPrice = 900 + Math.floor(Math.random() * 301);
+                if (item.price <= npcPrice) {
+                    if (item.sellerId === myData.id) earnings += item.count * item.price;
+                    bought += item.count;
+                    return false;
+                }
+                return true;
+            });
+            if (bought > 0) {
+                if (earnings > 0) myData.money += earnings;
+                showToast(`🤖 NPC ${bought} silah satın aldı! ${earnings > 0 ? `Kazancınız: ₺${earnings.toLocaleString()}` : ''}`);
+                renderMarket(); updateUI(); saveData();
+            } else {
+                showToast("NPC hiçbir silahı satın almadı.", true);
+            }
+        }
+
+        function renderMarket() {
+            const myItems = market.filter(m => m.sellerId === myData.id);
+            const otherItems = market.filter(m => m.sellerId !== myData.id);
+
+            const myWeaponsEl = document.getElementById("market-my-weapons");
+            if (myWeaponsEl) myWeaponsEl.innerText = myData.weapons;
+
+            const myListEl = document.getElementById("my-market-items-list");
+            if (myListEl) {
+                myListEl.innerHTML = myItems.map(m => `
+                    <div class="list-item" style="border-left:3px solid #ff9800;">
+                        <span>🔫 <strong>${m.count} Silah</strong> - Birim: ₺${m.price.toLocaleString()} (Sizin ilanınız)</span>
+                        <button class="danger" onclick="withdrawMarketItem(${m.id})">↩️ İlanı Geri Çek</button>
+                    </div>
+                `).join('') || "<p style='color:#777;'>Henüz ilanınız yok.</p>";
+
+                if (myItems.length > 0) {
+                    myListEl.innerHTML += `<button class="warning" style="margin-top:8px;" onclick="withdrawAllMyMarketItems()">↩️ Tüm İlanlarımı Geri Çek</button>`;
+                }
+            }
+
+            const listEl = document.getElementById("market-items-list");
+            if (listEl) {
+                listEl.innerHTML = otherItems.map(m => `
+                    <div class="list-item">
+                        <span>🔫 <strong>${m.count} Silah</strong> - Birim: ₺${m.price.toLocaleString()} (Satıcı: ${m.seller})</span>
+                        <button class="secondary" onclick="buyWeaponFromMarket(${m.id})">Satın Al (₺${(m.count * m.price).toLocaleString()})</button>
+                    </div>
+                `).join('') || "<p style='color:#777;'>Pazarda başka ilan yok.</p>";
+            }
+        }
+
+        // ================= BAĞIŞ =================
+        function donateToTreasury() {
+            const input = document.getElementById("donate-amount-input");
+            const amount = parseInt(input.value);
+            if (!amount || amount <= 0) return showToast("Geçerli bir tutar girin!", true);
+            myData.money -= amount;
+            cityState.treasury += amount;
+            input.value = "";
+            showToast(`💝 ₺${amount.toLocaleString()} şehir hazinesine bağışlandı!`);
+            renderElection(); updateUI(); saveData();
+        }
+
+        function donateAllToTreasury() {
+            if (myData.money <= 0) return showToast("Bağışlayacak paranız yok!", true);
+            const amount = myData.money;
+            myData.money = 0;
+            cityState.treasury += amount;
+            showToast(`💝 Tüm paranız (₺${amount.toLocaleString()}) şehir hazinesine bağışlandı!`);
+            renderElection(); updateUI(); saveData();
+        }
+
+        // ================= DİĞER FONKSİYONLAR =================
         function useBattery() {
             if (myData.energy >= 100) { showToast("Enerjin zaten dolu!", true); return; }
             const now = Date.now();
             if (myData.batteryCooldown > now) {
                 const remaining = Math.ceil((myData.batteryCooldown - now) / 1000);
-                showToast(`Pil henüz hazır değil! ${remaining} saniye kaldı.`, true);
+                const min = Math.floor(remaining / 60);
+                const sec = remaining % 60;
+                showToast(`Pil henüz hazır değil! ${min} dk ${sec} sn kaldı.`, true);
                 return;
             }
             myData.energy = 100;
-            myData.batteryCooldown = now + getBatteryCooldown() * 1000;
-            showToast("🔋 Enerji fullendi!");
+            myData.batteryCooldown = now + 1800 * 1000;
+            showToast("🔋 Enerji fullendi! (30 dk sonra tekrar kullanılabilir)");
             updateUI(); saveData();
         }
 
@@ -830,9 +1125,7 @@
             const input = document.getElementById("chat-input");
             let text = input.value.trim();
             if (!text) return;
-
             let isPrivate = false, targetName = null, targetId = null;
-
             if (text.startsWith('@')) {
                 const parts = text.split(' ');
                 const mention = parts[0].substring(1);
@@ -840,27 +1133,23 @@
                 factories.forEach(f => { if (f.owner && f.ownerId !== myData.id) allKnownPlayers[f.ownerId] = { name: f.owner }; });
                 parties.forEach(p => { if (p.leader && p.leaderId !== myData.id) allKnownPlayers[p.leaderId] = { name: p.leader }; });
                 candidates.forEach(c => { if (c.name && c.id !== myData.id) allKnownPlayers[c.id] = { name: c.name }; });
-
                 let found = null;
                 for (const [id, p] of Object.entries(allKnownPlayers)) {
                     if (p.name.toLowerCase() === mention.toLowerCase() || id === mention) {
                         found = { id, name: p.name }; break;
                     }
                 }
-
                 if (found) {
                     isPrivate = true; targetName = found.name; targetId = found.id;
                     text = parts.slice(1).join(' ');
                     if (!text) { showToast("Özel mesaj için bir içerik yazın!", true); return; }
                 } else { showToast(`@${mention} adlı kullanıcı bulunamadı!`, true); return; }
             }
-
             const msg = {
                 id: Date.now() + Math.random(), senderId: myData.id, sender: myData.name,
                 senderAvatar: myData.avatar, text: text, isPrivate: isPrivate,
                 targetId: targetId, targetName: targetName, timestamp: Date.now()
             };
-
             chatMessages.push(msg);
             input.value = "";
             renderChat(); saveData(); publishChatMessage(msg);
@@ -1030,7 +1319,6 @@
             renderFactories(); updateUI(); saveData();
         }
 
-        // MAAŞ GÜNCELLEME
         function updateSalary() {
             const fac = factories.find(f => f.ownerId === myData.id);
             if (!fac) return showToast("Fabrikanız yok!", true);
@@ -1065,7 +1353,6 @@
             }
         }
 
-        // Fabrika sahibi kendi fabrikasında çalışır (maaşsız, sadece silah üretir)
         function workAtMyFactory() {
             const fac = factories.find(f => f.ownerId === myData.id);
             if (!fac) return showToast("Fabrikanız yok!", true);
@@ -1074,8 +1361,6 @@
                 showToast("Fabrika kasasında yeterli para yok! (Min ₺1.000)", true);
                 return;
             }
-
-            // Sahip çalışınca: 1 silah üretir, kasadan maliyet düşer
             fac.weapons += 1;
             fac.balance -= 100;
             myData.energy = 0;
@@ -1087,7 +1372,6 @@
             const myFac = factories.find(f => f.ownerId === myData.id);
             document.getElementById("create-factory-card").style.display = myFac ? "none" : "block";
             document.getElementById("my-factory-card").style.display = myFac ? "block" : "none";
-            
             if (myFac) {
                 document.getElementById("my-factory-name").innerText = myFac.name;
                 document.getElementById("my-factory-balance").innerText = myFac.balance;
@@ -1096,12 +1380,10 @@
                 document.getElementById("my-factory-worker-count").innerText = myFac.workers.length;
                 document.getElementById("my-factory-salary-display").innerText = `₺${myFac.salaryPerEnergy || 50}`;
                 document.getElementById("salary-input").value = myFac.salaryPerEnergy || 50;
-                
                 document.getElementById("my-factory-workers").innerHTML = myFac.workers.map(wId => {
                     const isMe = wId === myData.id;
                     return `<span class="worker-tag ${isMe ? 'me' : ''}">${isMe ? 'Siz' : wId}</span>`;
                 }).join('') || '<span style="color:#777;">Henüz işçi yok</span>';
-
                 const upgradeBtn = document.getElementById("upgrade-factory-btn");
                 if (myFac.capacity >= 48) {
                     upgradeBtn.disabled = true;
@@ -1113,7 +1395,6 @@
                     upgradeBtn.disabled = myData.money < (cost || 0);
                 }
             }
-            
             document.getElementById("all-factories-list").innerHTML = factories.map(f => {
                 const isMine = f.ownerId === myData.id;
                 const canWork = !isMine && f.workers.length < f.capacity;
@@ -1129,7 +1410,7 @@
                         ${!isMine ? (
                             isWorking ? 
                             `<span style="color:#4caf50;">✓ Çalışıyorsunuz</span>` :
-                            (canWork ? `<button class="secondary" onclick="workAtFactory('${f.id}')">Çalış (1 Silah Üret)</button>` : 
+                            (canWork ? `<button class="secondary" onclick="workAtFactory('${f.id}')">Çalış</button>` : 
                             `<span style="color:#777;">Dolu</span>`)
                         ) : `<span style="color:#ff9800;">Sizin</span>`}
                     </div>
@@ -1137,81 +1418,25 @@
             `}).join('') || "<p style='color:#777;'>Henüz fabrika yok.</p>";
         }
 
-        // Başka fabrikada çalışma: 1 silah üretir, silah fabrika sahibine gider, işçi maaşını alır
         function workAtFactory(factoryId) {
             const fac = factories.find(f => f.id === factoryId);
             if (!fac) return;
             if (fac.workers.includes(myData.id)) { showToast("Zaten bu fabrikada çalışıyorsunuz!", true); return; }
             if (fac.workers.length >= fac.capacity) { showToast("Fabrika kapasitesi dolu!", true); return; }
             if (myData.energy <= 0) return showToast("Enerjin bitti!", true);
-            
             const salary = fac.salaryPerEnergy || 50;
             const earned = myData.energy * salary;
-            
-            // Kasa kontrolü
             if (fac.balance < earned) {
-                showToast(`Fabrika kasasında yeterli para yok! Gerekli: ₺${earned.toLocaleString()}, Kasa: ₺${fac.balance.toLocaleString()}`, true);
+                showToast(`Fabrika kasasında yeterli para yok! Gerekli: ₺${earned.toLocaleString()}`, true);
                 return;
             }
-            
-            // İşlem: işçi maaşını alır, 1 silah üretilir ve fabrika sahibine gider
             fac.balance -= earned;
             myData.money += earned;
-            fac.weapons += 1; // Silah direkt fabrika envanterine (sahibinin)
+            fac.weapons += 1;
             fac.workers.push(myData.id);
             myData.energy = 0;
-            
-            showToast(`"${fac.name}" fabrikasında çalıştınız: ₺${earned.toLocaleString()} kazandınız. 1 silah fabrika envanterine eklendi.`);
+            showToast(`"${fac.name}" fabrikasında çalıştınız: ₺${earned.toLocaleString()} kazandınız.`);
             renderFactories(); updateUI(); saveData();
-        }
-
-        function sellWeaponToMarket() {
-            const count = parseInt(document.getElementById("market-sell-count").value);
-            const price = parseInt(document.getElementById("market-sell-price").value);
-            if (!count || !price || myData.weapons < count) return showToast("Eksik silah veya hatalı fiyat!", true);
-            myData.weapons -= count;
-            market.push({ id: Date.now(), sellerId: myData.id, seller: myData.name, count: count, price: price });
-            renderMarket(); updateUI(); saveData();
-        }
-
-        function buyWeaponFromMarket(id) {
-            const item = market.find(m => m.id === id);
-            const totalCost = item.count * item.price;
-            if (myData.money < totalCost) return showToast("Paran yetersiz!", true);
-            myData.money -= totalCost;
-            myData.weapons += item.count;
-            market = market.filter(m => m.id !== id);
-            renderMarket(); updateUI(); saveData();
-        }
-
-        function triggerNPCBuyer() {
-            if (market.length === 0) { showToast("Pazarda satılık silah yok!", true); return; }
-            let bought = 0, earnings = 0;
-            market = market.filter(item => {
-                const npcPrice = 900 + Math.floor(Math.random() * 301);
-                if (item.price <= npcPrice) {
-                    if (item.sellerId === myData.id) earnings += item.count * item.price;
-                    bought += item.count;
-                    return false;
-                }
-                return true;
-            });
-            if (bought > 0) {
-                if (earnings > 0) myData.money += earnings;
-                showToast(`🤖 NPC ${bought} silah satın aldı! ${earnings > 0 ? `Kazancınız: ₺${earnings.toLocaleString()}` : ''}`);
-                renderMarket(); updateUI(); saveData();
-            } else {
-                showToast("NPC hiçbir silahı satın almadı (fiyatlar yüksek).", true);
-            }
-        }
-
-        function renderMarket() {
-            document.getElementById("market-items-list").innerHTML = market.map(m => `
-                <div class="list-item">
-                    <span>🔫 <strong>${m.count} Silah</strong> - Birim: ₺${m.price} (Satıcı: ${m.seller})</span>
-                    <button class="secondary" onclick="buyWeaponFromMarket(${m.id})">Satın Al (₺${m.count * m.price})</button>
-                </div>
-            `).join('') || "<p style='color:#777;'>Pazar boş.</p>";
         }
 
         function becomeCandidate() {
@@ -1266,7 +1491,6 @@
         function renderElection() {
             const isPresident = (presidentId === myData.id);
             document.getElementById("president-only-panel").style.display = isPresident ? "block" : "none";
-            
             let presidentName = "Yok";
             if (presidentId === myData.id) presidentName = myData.name;
             else if (presidentId) {
@@ -1276,17 +1500,16 @@
                     presidentName = known ? known.name : "Başkan (" + presidentId + ")";
                 } else presidentName = cand.name;
             }
-
             document.getElementById("current-president").innerText = presidentName;
             document.getElementById("citizen-tax-view").innerText = cityState.taxRate;
             document.getElementById("citizen-treasury-view").innerText = cityState.treasury.toLocaleString();
             document.getElementById("president-treasury-val").innerText = cityState.treasury.toLocaleString();
             document.getElementById("city-guards").innerText = cityState.guards;
             document.getElementById("rebellion-power").innerText = cityState.rebelWeapons;
-
+            const donateInfo = document.getElementById("donate-my-money");
+            if (donateInfo) donateInfo.innerText = myData.money.toLocaleString();
             const isCandidate = candidates.some(c => c.id === myData.id);
             document.getElementById("btn-become-candidate").style.display = isCandidate ? "none" : "inline-block";
-
             document.getElementById("election-candidates-list").innerHTML = candidates.map(c => `
                 <div class="list-item">
                     <span>👤 ${c.name} <small class="id-badge">${c.id}</small></span>
@@ -1294,7 +1517,7 @@
                         ${c.id === myData.id ? `<button class="danger" onclick="withdrawCandidate()">Adaylıktan Çekil</button>` : ''}
                     </div>
                 </div>
-            `).join('') || "<p style='color:#777;'>Aday yok. Pazar 18:00'e kadar aday olabilirsiniz.</p>";
+            `).join('') || "<p style='color:#777;'>Aday yok.</p>";
         }
 
         function renderNotifications() {
@@ -1310,35 +1533,36 @@
             document.getElementById("profile-name-input").value = myData.name;
             document.getElementById("top-bar-pp").src = myData.avatar;
             document.getElementById("profile-pp-preview").src = myData.avatar;
-            document.getElementById("player-money").innerText = `₺${myData.money.toLocaleString()}`;
+            const moneyEl = document.getElementById("player-money");
+            if (myData.money < 0) {
+                moneyEl.innerHTML = `<span class="money-negative">-₺${Math.abs(myData.money).toLocaleString()}</span>`;
+            } else {
+                moneyEl.innerHTML = `₺${myData.money.toLocaleString()}`;
+                moneyEl.style.color = "#4caf50";
+            }
             document.getElementById("player-weapons").innerText = myData.weapons;
             document.getElementById("player-energy-val").innerText = myData.energy;
             document.getElementById("player-energy-bar").style.width = `${myData.energy}%`;
-
             const isPresident = (presidentId === myData.id);
             document.getElementById("user-role-badge").innerText = isPresident ? "👑 Şehir Başkanı" : "👤 Vatandaş";
             document.getElementById("user-role-badge").style.color = isPresident ? "#ff9800" : "#2196F3";
-            
-            renderElection(); renderFactories(); renderBank(); updateBatteryUI();
+            renderElection(); renderFactories(); renderBank(); renderStocks(); renderMarket(); updateBatteryUI();
         }
 
         window.addEventListener('load', () => {
             initMQTT();
+            renderStocks();
             renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderChat(); renderNotifications(); renderBank(); updateUI();
             updateCalendar();
+            updateStockPrices();
             setInterval(publishPlayerPresence, 30000);
-
-            // Fabrika otomatik üretim döngüsü (işçi varsa)
+            setInterval(updateStockPrices, 60000);
             setInterval(() => {
-                let changed = false;
-                factories.forEach(fac => {
-                    if (fac.workers.length > 0) {
-                        const salary = fac.salaryPerEnergy || 50;
-                        // Her işçi 100 enerji harcamış gibi varsayalım (periyodik)
-                        // Ama işçiler zaten manuel çalışıyor, bu döngü sadece bilgi amaçlı
-                    }
-                });
-            }, 30000);
+                if (myData.energy < 100) {
+                    myData.energy = Math.min(100, myData.energy + 1);
+                    updateUI(); saveData();
+                }
+            }, 10000);
         });
     </script>
 </body>
