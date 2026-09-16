@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimSiyaset v1.4</title>
+    <title>SimSiyaset v1.5</title>
+    <!-- Font Awesome İkon CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
@@ -11,7 +13,7 @@
         /* Sol Navbar */
         #navbar { width: 240px; background-color: #1e1e1e; border-right: 2px solid #333; display: flex; flex-direction: column; overflow-y: auto; }
         #navbar .brand { padding: 15px; font-size: 16px; font-weight: bold; color: #4caf50; border-bottom: 1px solid #333; text-align: center; }
-        .nav-btn { background: none; border: none; color: #aaa; padding: 12px 15px; text-align: left; font-size: 13px; cursor: pointer; border-bottom: 1px solid #2a2a2a; }
+        .nav-btn { background: none; border: none; color: #aaa; padding: 12px 15px; text-align: left; font-size: 13px; cursor: pointer; border-bottom: 1px solid #2a2a2a; display: flex; align-items: center; gap: 10px; }
         .nav-btn:hover, .nav-btn.active { background-color: #2c2c2c; color: #4caf50; border-left: 4px solid #4caf50; }
 
         /* Ana İçerik */
@@ -56,15 +58,15 @@
     <div id="custom-toast">Bildirim</div>
 
     <div id="navbar">
-        <div class="brand">🏙️ SimSiyaset v1.4</div>
-        <button class="nav-btn active" onclick="switchTab('profile-tab')">👤 Profilim</button>
-        <button class="nav-btn" onclick="switchTab('work-tab')">🏭 Fabrikalar & Üretim</button>
-        <button class="nav-btn" onclick="switchTab('market-tab')">🛒 Borsa & Silah Pazarı</button>
-        <button class="nav-btn" onclick="switchTab('press-tab')">📰 Basın & Medya</button>
-        <button class="nav-btn" onclick="switchTab('party-tab')">🚩 Partiler & İttifak</button>
-        <button class="nav-btn" onclick="switchTab('chat-tab')">💬 Chat & İletişim</button>
-        <button class="nav-btn" onclick="switchTab('president-tab')">🏛️ Şehir Yönetimi</button>
-        <button class="nav-btn" onclick="switchTab('notifications-tab')">🔔 Bildirimler</button>
+        <div class="brand"><i class="fa-solid fa-city"></i> Derin Şehir</div>
+        <button class="nav-btn active" onclick="switchTab('profile-tab')"><i class="fa-solid fa-id-card"></i> Profilim</button>
+        <button class="nav-btn" onclick="switchTab('work-tab')"><i class="fa-solid fa-building-wheat"></i> Fabrikalar</button>
+        <button class="nav-btn" onclick="switchTab('market-tab')"><i class="fa-solid fa-store"></i> Borsa & Silah</button>
+        <button class="nav-btn" onclick="switchTab('press-tab')"><i class="fa-solid fa-newspaper"></i> Basın & Medya</button>
+        <button class="nav-btn" onclick="switchTab('party-tab')"><i class="fa-solid fa-flag"></i> Partiler</button>
+        <button class="nav-btn" onclick="switchTab('chat-tab')"><i class="fa-solid fa-comments"></i> Şehir Sohbeti</button>
+        <button class="nav-btn" onclick="switchTab('president-tab')"><i class="fa-solid fa-landmark"></i> Şehir Yönetimi</button>
+        <button class="nav-btn" onclick="switchTab('notifications-tab')"><i class="fa-solid fa-bell"></i> Bildirimler</button>
     </div>
 
     <div id="main-container">
@@ -83,8 +85,8 @@
         <!-- TAB: PROFİLİM -->
         <div id="profile-tab" class="tab-content active">
             <div class="card">
-                <h3>👤 Profil & Vatandaşlık Kartı</h3>
-                <p style="margin-bottom: 10px;">Vatandaş Kimlik Numarası (ID): <strong id="profile-id-display" class="id-badge"></strong> <em>(Bu numara asla değişmez)</em></p>
+                <h3><span><i class="fa-solid fa-id-card"></i> Profil & Vatandaşlık Kartı</span></h3>
+                <p style="margin-bottom: 10px;">Vatandaş Kimlik Numarası (ID): <strong id="profile-id-display" class="id-badge"></strong> <em>(Asla değişmez)</em></p>
                 
                 <label>Kullanıcı / Karakter Adı:</label>
                 <input type="text" id="profile-name-input">
@@ -100,25 +102,25 @@
         <!-- TAB: FABRİKALAR -->
         <div id="work-tab" class="tab-content">
             <div class="card">
-                <h3>🏛️ Devlet Fabrikası (NPC)</h3>
+                <h3><span><i class="fa-solid fa-building-wheat"></i> Devlet Fabrikası (NPC)</span></h3>
                 <p>Başlangıç sermayesi için çalışabilirsiniz. (Vergi kesilir)</p>
-                <button class="secondary" onclick="workAtNPC()" style="margin-top:10px;">⚙️ Tüm Enerji İle Çalış</button>
+                <button class="secondary" onclick="workAtNPC()" style="margin-top:10px;"><i class="fa-solid fa-bolt"></i> Tüm Enerji İle Çalış</button>
             </div>
 
             <div class="card" id="create-factory-card">
-                <h3>🏭 Özel Fabrika Kur (₺10.000)</h3>
+                <h3><span><i class="fa-solid fa-industry"></i> Özel Fabrika Kur (₺10.000)</span></h3>
                 <input type="text" id="factory-name-input" placeholder="Fabrika Adı">
                 <button onclick="createFactory()">Fabrikayı Kur</button>
             </div>
 
             <div class="card" id="my-factory-card" style="display:none;">
-                <h3>⚙️ Fabrikanız: <span id="my-factory-name"></span> <button class="danger" onclick="deleteFactory()">Kapat</button></h3>
+                <h3><span><i class="fa-solid fa-gears"></i> Fabrikanız: <span id="my-factory-name"></span></span> <button class="danger" onclick="deleteFactory()">Kapat</button></h3>
                 <p>Kasa: ₺<span id="my-factory-balance">0</span> | Üretilen Silah: <span id="my-factory-weapons">0</span> Adet</p>
                 <button class="warning" onclick="withdrawFactoryWeapons()" style="margin-top:8px;">Silahları Envantere Çek</button>
             </div>
 
             <div class="card">
-                <h3>🏭 Tüm Fabrikalar</h3>
+                <h3><span><i class="fa-solid fa-industry"></i> Tüm Fabrikalar</span></h3>
                 <div id="all-factories-list"></div>
             </div>
         </div>
@@ -126,7 +128,7 @@
         <!-- TAB: BORSA VE PAZAR -->
         <div id="market-tab" class="tab-content">
             <div class="card">
-                <h3>🔫 Silah Pazarı</h3>
+                <h3><span><i class="fa-solid fa-gun"></i> Silah Pazarı</span></h3>
                 <div style="display:flex; gap:10px;">
                     <input type="number" id="market-sell-count" placeholder="Adet" style="margin:0;">
                     <input type="number" id="market-sell-price" placeholder="Birim Fiyat (₺)" style="margin:0;">
@@ -134,7 +136,7 @@
                 </div>
             </div>
             <div class="card">
-                <h3>🛒 Pazarki İlanlar</h3>
+                <h3><span><i class="fa-solid fa-store"></i> Aktif Pazar İlanları</span></h3>
                 <div id="market-items-list"></div>
             </div>
         </div>
@@ -142,20 +144,20 @@
         <!-- TAB: BASIN VE MEDYA -->
         <div id="press-tab" class="tab-content">
             <div class="card" id="create-newspaper-card">
-                <h3>📰 Gazete Kur</h3>
+                <h3><span><i class="fa-solid fa-newspaper"></i> Gazete Kur</span></h3>
                 <input type="text" id="news-name-input" placeholder="Gazete Adı">
                 <button onclick="createNewspaper()">Gazeteyi Kur</button>
             </div>
 
             <div class="card" id="publish-news-card" style="display:none;">
-                <h3>✍️ Haber Paylaş <button class="danger" onclick="deleteNewspaper()">Gazeteyi Kapat</button></h3>
+                <h3><span><i class="fa-solid fa-bullhorn"></i> Haber Paylaş</span> <button class="danger" onclick="deleteNewspaper()">Gazeteyi Kapat</button></h3>
                 <input type="text" id="news-title" placeholder="Manşet">
                 <textarea id="news-content" placeholder="Haber Detayları..."></textarea>
                 <button onclick="publishNews()">Yayımla</button>
             </div>
 
             <div class="card">
-                <h3>🔥 Canlı Haber Akışı</h3>
+                <h3><span><i class="fa-solid fa-newspaper"></i> Canlı Haber Akışı</span></h3>
                 <div id="news-feed"></div>
             </div>
         </div>
@@ -163,12 +165,12 @@
         <!-- TAB: PARTİLER -->
         <div id="party-tab" class="tab-content">
             <div class="card" id="create-party-card">
-                <h3>🚩 Parti Kur</h3>
+                <h3><span><i class="fa-solid fa-flag"></i> Parti Kur</span></h3>
                 <input type="text" id="party-name-input" placeholder="Parti Adı">
                 <button onclick="createParty()">Parti Kur</button>
             </div>
             <div class="card">
-                <h3>🏛️ Aktif Partiler</h3>
+                <h3><span><i class="fa-solid fa-flag"></i> Aktif Partiler</span></h3>
                 <div id="all-parties-list"></div>
             </div>
         </div>
@@ -176,7 +178,7 @@
         <!-- TAB: CHAT VE İLETİŞİM -->
         <div id="chat-tab" class="tab-content">
             <div class="card">
-                <h3>💬 Şehir Sohbeti</h3>
+                <h3><span><i class="fa-solid fa-comments"></i> Şehir Sohbeti</span></h3>
                 <div id="chat-messages" class="chat-box" style="height:250px; overflow-y:auto;"></div>
                 <div style="display:flex; gap:5px;">
                     <input type="text" id="chat-input" placeholder="Mesajınızı yazıp Enter'a basın..." onkeypress="handleChatKeyPress(event)" style="margin:0;">
@@ -190,7 +192,7 @@
             
             <!-- BAŞKAN PANELİ -->
             <div class="card" id="president-only-panel" style="display:none; border: 2px solid #ff9800;">
-                <h3 style="color:#ff9800;">👑 Şehir Başkanı Yönetim Sarayı</h3>
+                <h3 style="color:#ff9800;"><span><i class="fa-solid fa-crown"></i> Şehir Başkanı Yönetim Sarayı</span></h3>
                 <p>Mevcut Şehir Hazinesi: <strong style="color:#4caf50;">₺<span id="president-treasury-val">0</span></strong></p>
                 
                 <div style="margin-top:10px;">
@@ -202,39 +204,39 @@
                 </div>
 
                 <div style="margin-top:10px;">
-                    <label>Şehir Hazinesinden Muhafız Satın Al (1 Muhafız = ₺2.000):</label>
+                    <label>Şehre Muhafız Satın Al (1 Muhafız = ₺2.000):</label>
                     <button class="warning" onclick="buyGuard()">Muhafız Satın Al (+1)</button>
                 </div>
             </div>
 
             <!-- VATANDAŞ PANELİ -->
             <div class="card">
-                <h3>🏛️ Şehir Durumu</h3>
+                <h3><span><i class="fa-solid fa-landmark"></i> Şehir Durumu</span></h3>
                 <p>Mevcut Başkan: <strong id="current-president" style="color:#4caf50;">Yok</strong></p>
                 <p>Şehir Hazinesi: <strong style="color:#4caf50;">₺<span id="citizen-treasury-view">100.000</span></strong></p>
                 <p>Uygulanan Vergi Oranı: <strong>%<span id="citizen-tax-view">5</span></strong></p>
-                <p>Şehir Muhafızı Savunma Gücü: <strong style="color:#2196F3;"><span id="city-guards">0</span> Muhafız</strong></p>
+                <p>Şehir Muhafız Gücü: <strong style="color:#2196F3;"><span id="city-guards">0</span> Muhafız</strong></p>
             </div>
 
             <div class="card">
-                <h3>🗳️ Başkanlık Seçimi</h3>
+                <h3><span><i class="fa-solid fa-check-to-slot"></i> Başkanlık Seçimi</span></h3>
                 <div id="election-candidates-list"></div>
                 <button id="btn-become-candidate" class="secondary" onclick="becomeCandidate()" style="margin-top:10px;">Başkanlığa Aday Ol</button>
             </div>
 
             <!-- DARBE PANELİ -->
             <div class="card" id="rebellion-card" style="border-color:#f44336;">
-                <h3 style="color:#f44336;">⚔️ Silahlı Darbe Girişimi</h3>
+                <h3 style="color:#f44336;"><span><i class="fa-solid fa-gun"></i> Silahlı Darbe Girişimi</span></h3>
                 <p>Toplam İsyan Gücü: <strong style="color:#f44336;"><span id="rebellion-power">0</span> Silah</strong></p>
-                <button class="danger" onclick="joinRebellion()" style="margin-top:10px;">💥 İsyana Silah Bağışla</button>
-                <button class="danger" onclick="executeCoup()" style="margin-top:10px; background:#b71c1c;">💣 Darbeyi Başlat</button>
+                <button class="danger" onclick="joinRebellion()" style="margin-top:10px;">İsyana Silah Bağışla</button>
+                <button class="danger" onclick="executeCoup()" style="margin-top:10px; background:#b71c1c;">Darbeyi Başlat</button>
             </div>
         </div>
 
-        <!-- TAB: BİLDİRİMLER VE SİSTEM GÜNLÜĞÜ -->
+        <!-- TAB: BİLDİRİMLER -->
         <div id="notifications-tab" class="tab-content">
             <div class="card">
-                <h3>🔔 Şehir & Sistem Bildirimleri</h3>
+                <h3><span><i class="fa-solid fa-bell"></i> Şehir & Sistem Bildirimleri</span></h3>
                 <div id="notifications-box" class="logs-box" style="height:350px; overflow-y:auto;"></div>
             </div>
         </div>
@@ -270,15 +272,27 @@
             money: 1000, 
             weapons: 0, 
             energy: 100, 
+            lastOnline: Date.now(),
             newspaper: null, 
             party: null, 
             factory: null
         };
 
-        // Eğer önceden ID oluşmamışsa atama yap
-        if (!myData.id) {
-            myData.id = generateUniqueID();
+        if (!myData.id) myData.id = generateUniqueID();
+
+        // --- ARKADA GEÇEN SÜREDE ENERJİ YENİLEME ---
+        function calculateOfflineEnergy() {
+            if (!myData.lastOnline) return;
+            const now = Date.now();
+            const elapsedSeconds = Math.floor((now - myData.lastOnline) / 1000);
+            const energyToAdd = Math.floor(elapsedSeconds / 10); // Her 10 saniyede +1 enerji
+            
+            if (energyToAdd > 0 && myData.energy < 100) {
+                myData.energy = Math.min(100, myData.energy + energyToAdd);
+                showToast(`Yokluğunda ${energyToAdd} enerji yenilendi!`);
+            }
         }
+        calculateOfflineEnergy();
 
         let factories = JSON.parse(localStorage.getItem('sim_factories')) || [];
         let market = JSON.parse(localStorage.getItem('sim_market')) || [];
@@ -288,10 +302,11 @@
         let chatMessages = JSON.parse(localStorage.getItem('sim_chats')) || [];
         let notifications = JSON.parse(localStorage.getItem('sim_notifications')) || [];
         let presidentId = localStorage.getItem('sim_president_id') || null;
-        let candidates = JSON.parse(localStorage.getItem('sim_candidates')) || []; // {id, name} nesneleri saklar
+        let candidates = JSON.parse(localStorage.getItem('sim_candidates')) || [];
         let cityState = JSON.parse(localStorage.getItem('sim_city')) || { treasury: 100000, taxRate: 5, guards: 10, rebelWeapons: 0 };
 
         function saveData() {
+            myData.lastOnline = Date.now();
             localStorage.setItem('sim_player', JSON.stringify(myData));
             localStorage.setItem('sim_factories', JSON.stringify(factories));
             localStorage.setItem('sim_market', JSON.stringify(market));
@@ -312,7 +327,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- ENERJİ YENİLEME SİSTEMİ (10 SANİYEDE +%1) ---
+        // --- ENERJİ SİSTEMİ (AÇIKKEN) ---
         setInterval(() => {
             if (myData.energy < 100) {
                 myData.energy = Math.min(100, myData.energy + 1);
@@ -321,7 +336,7 @@
             }
         }, 10000);
 
-        // --- PROFİL & KİMLİK SİSTEMİ ---
+        // --- PROFİL & KİMLİK ---
         function updateProfilePP(e) {
             const file = e.target.files[0];
             if (file) {
@@ -335,15 +350,11 @@
             const newName = document.getElementById("profile-name-input").value.trim();
             if (newName) {
                 myData.name = newName;
-                
-                // Sabit ID ile eşleşen tüm sahiplik adlarını güncelle
                 factories.forEach(f => { if(f.ownerId === myData.id) f.owner = newName; });
                 parties.forEach(p => { if(p.leaderId === myData.id) p.leader = newName; });
-                
                 let cand = candidates.find(c => c.id === myData.id);
                 if (cand) cand.name = newName;
-
-                showToast(`Profil isminiz '${newName}' olarak güncellendi. Kimliğiniz korundu.`);
+                showToast(`Profil isminiz '${newName}' olarak güncellendi.`);
             }
             updateUI();
             renderFactories();
@@ -533,7 +544,7 @@
             `).join('') || "<p style='color:#777;'>Pazar boş.</p>";
         }
 
-        // --- YÖNETİM & ADAYLIK KONTROLÜ ---
+        // --- YÖNETİM & ADAYLIK ---
         function becomeCandidate() {
             if (!candidates.some(c => c.id === myData.id)) {
                 candidates.push({ id: myData.id, name: myData.name });
