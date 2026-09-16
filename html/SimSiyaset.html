@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimSiyaset v1.4</title>
+    <title>SimSiyaset v1.7</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
@@ -16,12 +16,21 @@
 
         /* Ana İçerik */
         #main-container { flex: 1; display: flex; flex-direction: column; position: relative; }
-        #top-bar { background-color: #1e1e1e; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; font-size: 12px; }
+        #top-bar { background-color: #1e1e1e; padding: 6px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; font-size: 12px; flex-wrap: wrap; gap: 8px; }
         .tab-content { display: none; flex: 1; padding: 20px; overflow-y: auto; }
         .tab-content.active { display: flex; flex-direction: column; gap: 15px; }
 
         .energy-container { width: 100px; background-color: #333; border-radius: 10px; height: 12px; overflow: hidden; display: inline-block; vertical-align: middle; }
         .energy-bar { height: 100%; background-color: #4caf50; width: 100%; transition: width 0.3s ease; }
+
+        .battery-btn {
+            background: none; border: 2px solid #4caf50; color: #4caf50; border-radius: 6px;
+            padding: 2px 6px; cursor: pointer; font-size: 16px; vertical-align: middle;
+            transition: all 0.2s; position: relative;
+        }
+        .battery-btn:hover { background: #4caf50; color: #fff; }
+        .battery-btn:disabled { border-color: #555; color: #555; cursor: not-allowed; background: none; }
+        .battery-btn .battery-timer { font-size: 9px; position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: #ff9800; }
 
         .card { background-color: #242424; padding: 15px; border-radius: 8px; border: 1px solid #383838; }
         .card h3 { border-bottom: 1px solid #444; padding-bottom: 8px; margin-bottom: 12px; color: #4caf50; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
@@ -38,7 +47,8 @@
         
         .news-item, .chat-box, .logs-box { background-color: #2d2d2d; border: 1px solid #444; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .msg-item { padding: 6px; border-bottom: 1px solid #333; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .list-item { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; font-size: 13px; }
+        .msg-item.private { background: #1a2a3a; border-left: 3px solid #2196F3; border-radius: 4px; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; font-size: 13px; flex-wrap: wrap; gap: 6px; }
         .log-item { padding: 4px 0; border-bottom: 1px solid #3d3d3d; font-size: 11px; color: #bbb; }
 
         .id-badge { background: #333; color: #4caf50; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px; }
@@ -48,7 +58,52 @@
             background-color: #2e7d32; color: #fff; padding: 12px 20px;
             border-radius: 6px; border-left: 5px solid #81c784;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 9999; display: none; font-size: 13px; font-weight: bold;
+            max-width: 350px;
         }
+
+        .worker-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+        .worker-tag { background: #333; padding: 2px 8px; border-radius: 10px; font-size: 10px; color: #ccc; }
+        .worker-tag.me { background: #1b5e20; color: #fff; }
+
+        .upgrade-info { font-size: 11px; color: #888; margin-top: 4px; }
+
+        .private-badge { background: #2196F3; color: #fff; padding: 1px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px; }
+        .mention { color: #4caf50; font-weight: bold; }
+
+        .mqtt-status { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
+        .mqtt-dot { width: 8px; height: 8px; border-radius: 50%; background: #f44336; display: inline-block; }
+        .mqtt-dot.connected { background: #4caf50; }
+        .mqtt-dot.connecting { background: #ff9800; }
+
+        /* Takvim */
+        #calendar-widget {
+            display: flex; align-items: center; gap: 10px;
+            background: #2a2a2a; padding: 4px 12px; border-radius: 8px;
+            border: 1px solid #444; font-size: 12px;
+        }
+        #calendar-widget .date-part { color: #4caf50; font-weight: bold; }
+        #calendar-widget .time-part { color: #ff9800; font-weight: bold; font-family: monospace; }
+        #calendar-widget .election-warning { color: #f44336; font-weight: bold; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .day-name { color: #aaa; font-size: 11px; }
+
+        /* Banka */
+        .loan-card { background: #2d2d2d; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #ff9800; }
+        .loan-card.paid { border-left-color: #4caf50; opacity: 0.7; }
+        .loan-stats { display: flex; gap: 15px; flex-wrap: wrap; font-size: 12px; margin-top: 6px; }
+        .loan-stats span { color: #bbb; }
+        .loan-stats strong { color: #fff; }
+
+        .treasury-stat { display: inline-block; margin-right: 20px; }
+
+        /* Maaş */
+        .salary-display {
+            background: #1a3a1a; border: 1px solid #4caf50; border-radius: 6px;
+            padding: 8px 12px; margin: 8px 0; font-size: 13px;
+        }
+        .salary-display strong { color: #4caf50; }
+        .salary-input-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+        .salary-input-row input { margin: 0; width: 150px; }
     </style>
 </head>
 <body>
@@ -56,10 +111,11 @@
     <div id="custom-toast">Bildirim</div>
 
     <div id="navbar">
-        <div class="brand">🏙️ SimSiyaset v1.4</div>
+        <div class="brand">🏙️ SimSiyaset v1.7</div>
         <button class="nav-btn active" onclick="switchTab('profile-tab')">👤 Profilim</button>
         <button class="nav-btn" onclick="switchTab('work-tab')">🏭 Fabrikalar & Üretim</button>
         <button class="nav-btn" onclick="switchTab('market-tab')">🛒 Borsa & Silah Pazarı</button>
+        <button class="nav-btn" onclick="switchTab('bank-tab')">🏦 Banka</button>
         <button class="nav-btn" onclick="switchTab('press-tab')">📰 Basın & Medya</button>
         <button class="nav-btn" onclick="switchTab('party-tab')">🚩 Partiler & İttifak</button>
         <button class="nav-btn" onclick="switchTab('chat-tab')">💬 Chat & İletişim</button>
@@ -70,14 +126,24 @@
     <div id="main-container">
         <div id="top-bar">
             <div><img id="top-bar-pp" src="" class="avatar"> <strong id="top-bar-name">Oyuncu</strong> <span id="top-bar-id" class="id-badge">ID: -</span></div>
+            <div id="calendar-widget">
+                <span>📅</span>
+                <span class="day-name" id="cal-day-name">Pazartesi</span>
+                <span class="date-part" id="cal-date">01.01.2026</span>
+                <span>🕐</span>
+                <span class="time-part" id="cal-time">00:00:00</span>
+                <span id="cal-election-warning" style="display:none;" class="election-warning">🗳️ SEÇİM GÜNÜ!</span>
+            </div>
             <div><strong>Cüzdan:</strong> <span id="player-money" style="color:#4caf50;">₺1.000</span></div>
             <div><strong>Silah:</strong> <span id="player-weapons" style="color:#ff9800;">0</span> Adet</div>
-            <div>
+            <div style="position:relative;">
                 <strong>Enerji:</strong> 
                 <div class="energy-container"><div id="player-energy-bar" class="energy-bar"></div></div>
                 %<span id="player-energy-val">100</span>
+                <button class="battery-btn" id="battery-btn" onclick="useBattery()" title="Enerji Fuller">🔋<span class="battery-timer" id="battery-timer"></span></button>
             </div>
             <div><strong>Rol:</strong> <span id="user-role-badge" style="color:#2196F3;">Vatandaş</span></div>
+            <div class="mqtt-status"><span class="mqtt-dot" id="mqtt-dot"></span> <span id="mqtt-label">MQTT: Bağlanıyor...</span></div>
         </div>
 
         <!-- TAB: PROFİLİM -->
@@ -101,7 +167,7 @@
         <div id="work-tab" class="tab-content">
             <div class="card">
                 <h3>🏛️ Devlet Fabrikası (NPC)</h3>
-                <p>Başlangıç sermayesi için çalışabilirsiniz. (Vergi kesilir)</p>
+                <p>Başlangıç sermayesi için çalışabilirsiniz. (Vergi kesilir) - <strong>İşçi limiti yok</strong></p>
                 <button class="secondary" onclick="workAtNPC()" style="margin-top:10px;">⚙️ Tüm Enerji İle Çalış</button>
             </div>
 
@@ -111,12 +177,43 @@
                 <button onclick="createFactory()">Fabrikayı Kur</button>
             </div>
 
+            <!-- Kendi fabrikamız -->
             <div class="card" id="my-factory-card" style="display:none;">
                 <h3>⚙️ Fabrikanız: <span id="my-factory-name"></span> <button class="danger" onclick="deleteFactory()">Kapat</button></h3>
                 <p>Kasa: ₺<span id="my-factory-balance">0</span> | Üretilen Silah: <span id="my-factory-weapons">0</span> Adet</p>
-                <button class="warning" onclick="withdrawFactoryWeapons()" style="margin-top:8px;">Silahları Envantere Çek</button>
+                <p>Kapasite: <strong id="my-factory-capacity">2</strong> işçi | Çalışan: <strong id="my-factory-worker-count">0</strong></p>
+                <div class="worker-list" id="my-factory-workers"></div>
+                
+                <!-- KASA YATIRMA / ÇEKME -->
+                <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; background:#1e1e1e; padding:10px; border-radius:6px;">
+                    <strong style="color:#4caf50;">💰 Kasa İşlemleri:</strong>
+                    <input type="number" id="factory-cash-input" placeholder="Tutar (₺)" style="margin:0; width:140px;" min="1">
+                    <button class="secondary" onclick="depositToFactory()">Fabrika Kasasına Yatır</button>
+                    <button class="warning" onclick="withdrawFromFactory()">Kasadan Çek</button>
+                </div>
+
+                <!-- MAAŞ BELİRLEME -->
+                <div class="salary-display">
+                    <strong>💵 Maaş Ayarı:</strong> %1 enerji başına işçiye ödenecek tutar: 
+                    <strong id="my-factory-salary-display">₺50</strong>
+                    <div class="salary-input-row">
+                        <input type="number" id="salary-input" placeholder="Örn: 50" min="1" value="50">
+                        <button class="secondary" onclick="updateSalary()">Maaşı Güncelle</button>
+                    </div>
+                    <p class="upgrade-info">İşçi 100 enerji harcarsa = 100 × maaş kadar kazanır. 1 silah üretir ve silah fabrika sahibine gider.</p>
+                </div>
+
+                <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                    <button class="warning" onclick="withdrawFactoryWeapons()">Silahları Envantere Çek</button>
+                    <button class="secondary" onclick="workAtMyFactory()">⚙️ Kendi Fabrikanda Çalış (Maaşsız)</button>
+                </div>
+                <div style="margin-top:12px; border-top:1px solid #444; padding-top:10px;">
+                    <p class="upgrade-info">Kapasiteyi artır (2→4: ₺10.000, 4→8: ₺20.000, 8→16: ₺40.000 ... max 48)</p>
+                    <button class="secondary" onclick="upgradeFactory()" id="upgrade-factory-btn">Kapasiteyi Geliştir</button>
+                </div>
             </div>
 
+            <!-- Başka fabrikalarda çalışma -->
             <div class="card">
                 <h3>🏭 Tüm Fabrikalar</h3>
                 <div id="all-factories-list"></div>
@@ -127,15 +224,50 @@
         <div id="market-tab" class="tab-content">
             <div class="card">
                 <h3>🔫 Silah Pazarı</h3>
+                <p style="font-size:11px; color:#aaa; margin-bottom:8px;">NPC alıcı: Pazardaki silahları <strong>₺900 - ₺1.200</strong> arası rastgele fiyattan satın alır.</p>
                 <div style="display:flex; gap:10px;">
                     <input type="number" id="market-sell-count" placeholder="Adet" style="margin:0;">
                     <input type="number" id="market-sell-price" placeholder="Birim Fiyat (₺)" style="margin:0;">
                     <button class="warning" onclick="sellWeaponToMarket()">Pazara Koy</button>
                 </div>
+                <button class="secondary" onclick="triggerNPCBuyer()" style="margin-top:10px;">🤖 NPC Alıcıyı Tetikle (Pazardan Alım Yap)</button>
             </div>
             <div class="card">
                 <h3>🛒 Pazarki İlanlar</h3>
                 <div id="market-items-list"></div>
+            </div>
+        </div>
+
+        <!-- TAB: BANKA -->
+        <div id="bank-tab" class="tab-content">
+            <div class="card" id="bank-admin-panel" style="display:none; border: 2px solid #ff9800;">
+                <h3 style="color:#ff9800;">🏦 Banka Yönetimi (Başkan)</h3>
+                <p style="font-size:12px; color:#aaa;">Kredi parametrelerini buradan düzenleyin. Varsayılan: 100k₺ kredi, 10k₺/gün, 200k₺ toplam geri ödeme.</p>
+                <label>Kredi Miktarı (₺):</label>
+                <input type="number" id="loan-amount-input" value="100000" min="1000">
+                <label>Günlük Ödeme (₺):</label>
+                <input type="number" id="loan-daily-input" value="10000" min="100">
+                <label>Toplam Geri Ödeme (₺):</label>
+                <input type="number" id="loan-total-input" value="200000" min="1000">
+                <button class="secondary" onclick="updateLoanSettings()">Kredi Ayarlarını Kaydet</button>
+                <p class="upgrade-info">Aktif kredi parametreleri: <strong id="loan-settings-display">100k₺ / 10k₺ günlük / 200k₺ toplam</strong></p>
+            </div>
+
+            <div class="card">
+                <h3>💰 Kredi Başvurusu</h3>
+                <p>Aktif kredi: <strong style="color:#ff9800;" id="active-loan-info">100.000₺ kredi, günlük 10.000₺, toplam 200.000₺ geri ödeme</strong></p>
+                <p style="font-size:11px; color:#aaa;">Her gün saat 18:00'de günlük ödeme otomatik çekilir. Borcunuzun tamamını ödeyerek krediyi erken kapatabilirsiniz.</p>
+                <button id="take-loan-btn" onclick="takeLoan()" style="margin-top:10px;">💵 Kredi Çek (100.000₺)</button>
+            </div>
+
+            <div class="card">
+                <h3>📋 Kredi Durumunuz</h3>
+                <div id="my-loans-list"></div>
+            </div>
+
+            <div class="card" id="all-loans-card" style="display:none;">
+                <h3>🏦 Tüm Aktif Krediler</h3>
+                <div id="all-loans-list"></div>
             </div>
         </div>
 
@@ -177,6 +309,9 @@
         <div id="chat-tab" class="tab-content">
             <div class="card">
                 <h3>💬 Şehir Sohbeti</h3>
+                <p style="font-size:11px; color:#aaa; margin-bottom:8px;">
+                    Herkese açık mesaj için normal yazın. Özel mesaj için <span class="mention">@kullanıcıadı</span> ile başlayın.
+                </p>
                 <div id="chat-messages" class="chat-box" style="height:250px; overflow-y:auto;"></div>
                 <div style="display:flex; gap:5px;">
                     <input type="text" id="chat-input" placeholder="Mesajınızı yazıp Enter'a basın..." onkeypress="handleChatKeyPress(event)" style="margin:0;">
@@ -188,7 +323,6 @@
         <!-- TAB: ŞEHİR YÖNETİMİ -->
         <div id="president-tab" class="tab-content">
             
-            <!-- BAŞKAN PANELİ -->
             <div class="card" id="president-only-panel" style="display:none; border: 2px solid #ff9800;">
                 <h3 style="color:#ff9800;">👑 Şehir Başkanı Yönetim Sarayı</h3>
                 <p>Mevcut Şehir Hazinesi: <strong style="color:#4caf50;">₺<span id="president-treasury-val">0</span></strong></p>
@@ -207,7 +341,6 @@
                 </div>
             </div>
 
-            <!-- VATANDAŞ PANELİ -->
             <div class="card">
                 <h3>🏛️ Şehir Durumu</h3>
                 <p>Mevcut Başkan: <strong id="current-president" style="color:#4caf50;">Yok</strong></p>
@@ -218,11 +351,11 @@
 
             <div class="card">
                 <h3>🗳️ Başkanlık Seçimi</h3>
+                <p style="font-size:11px; color:#ff9800;">⏰ Seçim her Pazar günü saat 18:00'de yapılır. Seçim günü gelene kadar başkan değişmez.</p>
                 <div id="election-candidates-list"></div>
                 <button id="btn-become-candidate" class="secondary" onclick="becomeCandidate()" style="margin-top:10px;">Başkanlığa Aday Ol</button>
             </div>
 
-            <!-- DARBE PANELİ -->
             <div class="card" id="rebellion-card" style="border-color:#f44336;">
                 <h3 style="color:#f44336;">⚔️ Silahlı Darbe Girişimi</h3>
                 <p>Toplam İsyan Gücü: <strong style="color:#f44336;"><span id="rebellion-power">0</span> Silah</strong></p>
@@ -231,7 +364,7 @@
             </div>
         </div>
 
-        <!-- TAB: BİLDİRİMLER VE SİSTEM GÜNLÜĞÜ -->
+        <!-- TAB: BİLDİRİMLER -->
         <div id="notifications-tab" class="tab-content">
             <div class="card">
                 <h3>🔔 Şehir & Sistem Bildirimleri</h3>
@@ -240,6 +373,7 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script>
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%234caf50'><circle cx='12' cy='8' r='4'/><path d='M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z'/></svg>";
 
@@ -258,27 +392,239 @@
 
         function addNotification(text) {
             notifications.unshift({ time: new Date().toLocaleTimeString(), text: text });
+            if (notifications.length > 200) notifications = notifications.slice(0, 200);
             renderNotifications();
             saveData();
         }
 
-        // --- STATE & İLK AYARLAR ---
-        let myData = JSON.parse(localStorage.getItem('sim_player')) || { 
-            id: generateUniqueID(), 
-            name: "Vatandaş", 
-            avatar: DEFAULT_AVATAR,
-            money: 1000, 
-            weapons: 0, 
-            energy: 100, 
-            newspaper: null, 
-            party: null, 
-            factory: null
-        };
-
-        // Eğer önceden ID oluşmamışsa atama yap
-        if (!myData.id) {
-            myData.id = generateUniqueID();
+        // --- TAKVİM ---
+        const DAY_NAMES = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+        function getGameDate() { return new Date(); }
+        function formatDate(date) {
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}.${m}.${y}`;
         }
+        function updateCalendar() {
+            const now = getGameDate();
+            document.getElementById("cal-day-name").innerText = DAY_NAMES[now.getDay()];
+            document.getElementById("cal-date").innerText = formatDate(now);
+            document.getElementById("cal-time").innerText = now.toLocaleTimeString('tr-TR');
+            
+            const warning = document.getElementById("cal-election-warning");
+            if (now.getDay() === 0) {
+                warning.style.display = "inline";
+                if (now.getHours() >= 18) {
+                    warning.innerText = "🗳️ SEÇİM YAPILDI!";
+                    warning.style.color = "#4caf50";
+                } else {
+                    warning.innerText = `🗳️ SEÇİM BUGÜN 18:00'DE! (${18 - now.getHours()} saat kaldı)`;
+                    warning.style.color = "#f44336";
+                }
+            } else {
+                let daysUntilSunday = (7 - now.getDay()) % 7;
+                if (daysUntilSunday === 0) daysUntilSunday = 7;
+                warning.style.display = "inline";
+                warning.innerText = `🗳️ Seçime ${daysUntilSunday} gün kaldı`;
+                warning.style.color = "#ff9800";
+            }
+            updateBatteryUI();
+        }
+        setInterval(updateCalendar, 1000);
+
+        // --- SEÇİM & KREDİ ÖDEME KONTROLÜ ---
+        let lastElectionDate = localStorage.getItem('sim_last_election') || "";
+        let lastLoanPaymentDate = localStorage.getItem('sim_last_loan_payment') || "";
+
+        function checkElection() {
+            const now = getGameDate();
+            const todayKey = formatDate(now);
+            
+            if (now.getHours() >= 18 && lastLoanPaymentDate !== todayKey) {
+                processDailyLoanPayments();
+                lastLoanPaymentDate = todayKey;
+                localStorage.setItem('sim_last_loan_payment', todayKey);
+            }
+
+            if (now.getDay() === 0 && now.getHours() >= 18 && lastElectionDate !== todayKey) {
+                runElection();
+                lastElectionDate = todayKey;
+                localStorage.setItem('sim_last_election', todayKey);
+            }
+        }
+        setInterval(checkElection, 5000);
+
+        function runElection() {
+            if (candidates.length === 0) {
+                showToast("🗳️ Seçim zamanı! Ancak hiç aday yok.");
+                return;
+            }
+            const winner = candidates[Math.floor(Math.random() * candidates.length)];
+            presidentId = winner.id;
+            const announcement = `🗳️ SEÇİM SONUCU: ${winner.name} (${winner.id}) yeni Şehir Başkanı seçildi!`;
+            showToast(announcement);
+            
+            const news = {
+                id: Date.now(),
+                newspaper: "Şehir Haber Ajansı",
+                title: "🗳️ YENİ BAŞKAN SEÇİLDİ!",
+                content: `Yapılan seçim sonucunda ${winner.name} (${winner.id}) yeni Şehir Başkanı olarak seçilmiştir.`,
+                ownerId: "SYSTEM",
+                author: "Sistem"
+            };
+            newsArticles.unshift(news);
+
+            candidates = [];
+            renderElection(); updateUI(); saveData();
+            if (mqttConnected) {
+                mqttClient.publish(MQTT_TOPIC_SYNC, JSON.stringify({
+                    senderId: "SYSTEM", presidentId: winner.id, candidates: [], newsArticles: newsArticles, timestamp: Date.now()
+                }));
+            }
+        }
+
+        // --- KREDİ ---
+        let loanSettings = JSON.parse(localStorage.getItem('sim_loan_settings')) || {
+            amount: 100000, dailyPayment: 10000, totalRepayment: 200000
+        };
+        let loans = JSON.parse(localStorage.getItem('sim_loans')) || [];
+
+        function updateLoanSettings() {
+            const amount = parseInt(document.getElementById("loan-amount-input").value);
+            const daily = parseInt(document.getElementById("loan-daily-input").value);
+            const total = parseInt(document.getElementById("loan-total-input").value);
+            if (!amount || !daily || !total) return showToast("Tüm alanları doldurun!", true);
+            if (daily > total) return showToast("Günlük ödeme toplamdan büyük olamaz!", true);
+            loanSettings = { amount, dailyPayment: daily, totalRepayment: total };
+            localStorage.setItem('sim_loan_settings', JSON.stringify(loanSettings));
+            renderBank();
+            showToast("Kredi ayarları güncellendi.");
+            saveData();
+        }
+
+        function takeLoan() {
+            if (loans.some(l => l.borrowerId === myData.id && l.status === 'active')) {
+                showToast("Zaten aktif bir krediniz var!", true);
+                return;
+            }
+            const loan = {
+                id: "loan_" + Date.now(),
+                borrowerId: myData.id,
+                borrowerName: myData.name,
+                amount: loanSettings.amount,
+                dailyPayment: loanSettings.dailyPayment,
+                totalRepayment: loanSettings.totalRepayment,
+                remaining: loanSettings.totalRepayment,
+                status: 'active',
+                startDate: formatDate(getGameDate())
+            };
+            loans.push(loan);
+            myData.money += loanSettings.amount;
+            showToast(`💵 ${loanSettings.amount.toLocaleString()}₺ kredi çekildi!`);
+            renderBank(); updateUI(); saveData();
+        }
+
+        function repayLoan(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (!loan || loan.borrowerId !== myData.id) return;
+            if (myData.money < loan.remaining) {
+                showToast(`Yetersiz bakiye! Gerekli: ₺${loan.remaining.toLocaleString()}`, true);
+                return;
+            }
+            myData.money -= loan.remaining;
+            loan.remaining = 0;
+            loan.status = 'paid';
+            loan.paidDate = formatDate(getGameDate());
+            showToast(`✅ Kredi tamamen kapatıldı!`);
+            renderBank(); updateUI(); saveData();
+        }
+
+        function processDailyLoanPayments() {
+            let changed = false;
+            loans.forEach(loan => {
+                if (loan.status !== 'active') return;
+                const payment = Math.min(loan.dailyPayment, loan.remaining);
+                
+                if (loan.borrowerId === myData.id) {
+                    if (myData.money >= payment) {
+                        myData.money -= payment;
+                        loan.remaining -= payment;
+                        if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; showToast(`✅ Krediniz tamamen ödendi!`); }
+                        else { showToast(`📅 Günlük kredi ödemesi: ₺${payment.toLocaleString()}. Kalan: ₺${loan.remaining.toLocaleString()}`); }
+                    } else {
+                        myData.money -= payment;
+                        loan.remaining -= payment;
+                        if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; }
+                        showToast(`⚠️ Kredi ödemesi yapılamadı! Zorla çekildi.`, true);
+                    }
+                    changed = true;
+                } else {
+                    loan.remaining -= payment;
+                    if (loan.remaining <= 0) { loan.remaining = 0; loan.status = 'paid'; }
+                    changed = true;
+                }
+            });
+            if (changed) { renderBank(); updateUI(); saveData(); }
+        }
+
+        function renderBank() {
+            const isPresident = (presidentId === myData.id);
+            document.getElementById("bank-admin-panel").style.display = isPresident ? "block" : "none";
+            document.getElementById("all-loans-card").style.display = isPresident ? "block" : "none";
+            
+            document.getElementById("loan-amount-input").value = loanSettings.amount;
+            document.getElementById("loan-daily-input").value = loanSettings.dailyPayment;
+            document.getElementById("loan-total-input").value = loanSettings.totalRepayment;
+            document.getElementById("loan-settings-display").innerText = 
+                `${(loanSettings.amount/1000).toFixed(0)}k₺ / ${(loanSettings.dailyPayment/1000).toFixed(0)}k₺ günlük / ${(loanSettings.totalRepayment/1000).toFixed(0)}k₺ toplam`;
+            document.getElementById("active-loan-info").innerText = 
+                `${loanSettings.amount.toLocaleString()}₺ kredi, günlük ${loanSettings.dailyPayment.toLocaleString()}₺, toplam ${loanSettings.totalRepayment.toLocaleString()}₺`;
+
+            const hasActiveLoan = loans.some(l => l.borrowerId === myData.id && l.status === 'active');
+            document.getElementById("take-loan-btn").disabled = hasActiveLoan;
+            document.getElementById("take-loan-btn").innerText = hasActiveLoan ? "Aktif Krediniz Var" : `💵 Kredi Çek (${loanSettings.amount.toLocaleString()}₺)`;
+
+            const myLoans = loans.filter(l => l.borrowerId === myData.id);
+            document.getElementById("my-loans-list").innerHTML = myLoans.map(l => `
+                <div class="loan-card ${l.status === 'paid' ? 'paid' : ''}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>${l.status === 'active' ? '🟡 Aktif Kredi' : '✅ Ödendi'}</strong>
+                        <small style="color:#888;">${l.startDate}</small>
+                    </div>
+                    <div class="loan-stats">
+                        <span>Kredi: <strong>₺${l.amount.toLocaleString()}</strong></span>
+                        <span>Kalan: <strong style="color:#ff9800;">₺${l.remaining.toLocaleString()}</strong></span>
+                        <span>Günlük: <strong>₺${l.dailyPayment.toLocaleString()}</strong></span>
+                    </div>
+                    ${l.status === 'active' && l.borrowerId === myData.id ? 
+                        `<button class="warning" style="margin-top:8px;" onclick="repayLoan('${l.id}')">💰 Borcun Tamamını Öde (₺${l.remaining.toLocaleString()})</button>` : ''}
+                </div>
+            `).join('') || "<p style='color:#777;'>Krediniz yok.</p>";
+
+            if (isPresident) {
+                const activeLoans = loans.filter(l => l.status === 'active');
+                document.getElementById("all-loans-list").innerHTML = activeLoans.map(l => `
+                    <div class="loan-card">
+                        <strong>👤 ${l.borrowerName} <small class="id-badge">${l.borrowerId}</small></strong>
+                        <div class="loan-stats">
+                            <span>Kalan: <strong style="color:#ff9800;">₺${l.remaining.toLocaleString()}</strong></span>
+                            <span>Günlük: <strong>₺${l.dailyPayment.toLocaleString()}</strong></span>
+                        </div>
+                    </div>
+                `).join('') || "<p style='color:#777;'>Aktif kredi yok.</p>";
+            }
+        }
+
+        // --- STATE ---
+        let myData = JSON.parse(localStorage.getItem('sim_player')) || { 
+            id: generateUniqueID(), name: "Vatandaş", avatar: DEFAULT_AVATAR,
+            money: 1000, weapons: 0, energy: 100, newspaper: null, party: null, factory: null,
+            batteryCooldown: 0, batteryUpgradeLevel: 0
+        };
+        if (!myData.id) myData.id = generateUniqueID();
+        if (!myData.batteryCooldown) myData.batteryCooldown = 0;
+        if (!myData.batteryUpgradeLevel) myData.batteryUpgradeLevel = 0;
 
         let factories = JSON.parse(localStorage.getItem('sim_factories')) || [];
         let market = JSON.parse(localStorage.getItem('sim_market')) || [];
@@ -288,8 +634,105 @@
         let chatMessages = JSON.parse(localStorage.getItem('sim_chats')) || [];
         let notifications = JSON.parse(localStorage.getItem('sim_notifications')) || [];
         let presidentId = localStorage.getItem('sim_president_id') || null;
-        let candidates = JSON.parse(localStorage.getItem('sim_candidates')) || []; // {id, name} nesneleri saklar
+        let candidates = JSON.parse(localStorage.getItem('sim_candidates')) || [];
         let cityState = JSON.parse(localStorage.getItem('sim_city')) || { treasury: 100000, taxRate: 5, guards: 10, rebelWeapons: 0 };
+        if (!cityState.treasury || cityState.treasury < 100000) cityState.treasury = 100000;
+
+        // --- MQTT ---
+        let mqttClient = null;
+        const MQTT_BROKER = 'wss://broker.emqx.io:8084/mqtt';
+        const MQTT_TOPIC_CHAT = 'simsiyaset/chat';
+        const MQTT_TOPIC_PLAYERS = 'simsiyaset/players';
+        const MQTT_TOPIC_SYNC = 'simsiyaset/sync';
+        let mqttConnected = false;
+        let onlinePlayers = {};
+
+        function initMQTT() {
+            try {
+                mqttClient = mqtt.connect(MQTT_BROKER, {
+                    clientId: 'simsiyaset_' + myData.id + '_' + Math.random().toString(16).substr(2, 8),
+                    clean: true, reconnectPeriod: 3000, connectTimeout: 10000
+                });
+
+                mqttClient.on('connect', () => {
+                    mqttConnected = true; updateMQTTStatus(true);
+                    mqttClient.subscribe([MQTT_TOPIC_CHAT, MQTT_TOPIC_PLAYERS, MQTT_TOPIC_SYNC], () => publishPlayerPresence());
+                });
+
+                mqttClient.on('message', (topic, message) => {
+                    try {
+                        const data = JSON.parse(message.toString());
+                        if (topic === MQTT_TOPIC_CHAT) handleRemoteChat(data);
+                        else if (topic === MQTT_TOPIC_PLAYERS) handlePlayerPresence(data);
+                        else if (topic === MQTT_TOPIC_SYNC) handleRemoteSync(data);
+                    } catch (e) { console.error('MQTT mesaj hatası:', e); }
+                });
+
+                mqttClient.on('close', () => { mqttConnected = false; updateMQTTStatus(false); });
+                mqttClient.on('error', () => { mqttConnected = false; updateMQTTStatus(false); });
+                mqttClient.on('reconnect', () => updateMQTTStatus('connecting'));
+            } catch (e) { console.error('MQTT bağlantı hatası:', e); updateMQTTStatus(false); }
+        }
+
+        function updateMQTTStatus(status) {
+            const dot = document.getElementById('mqtt-dot');
+            const label = document.getElementById('mqtt-label');
+            if (status === true) { dot.className = 'mqtt-dot connected'; label.innerText = 'MQTT: Bağlı'; }
+            else if (status === 'connecting') { dot.className = 'mqtt-dot connecting'; label.innerText = 'MQTT: Bağlanıyor...'; }
+            else { dot.className = 'mqtt-dot'; label.innerText = 'MQTT: Bağlantı Yok'; }
+        }
+
+        function publishPlayerPresence() {
+            if (!mqttClient || !mqttConnected) return;
+            mqttClient.publish(MQTT_TOPIC_PLAYERS, JSON.stringify({
+                id: myData.id, name: myData.name, avatar: myData.avatar, timestamp: Date.now()
+            }));
+        }
+        function handlePlayerPresence(data) {
+            if (data.id === myData.id) return;
+            onlinePlayers[data.id] = { name: data.name, avatar: data.avatar, lastSeen: Date.now() };
+        }
+        function publishChatMessage(msg) {
+            if (!mqttClient || !mqttConnected) return;
+            mqttClient.publish(MQTT_TOPIC_CHAT, JSON.stringify(msg));
+        }
+        function handleRemoteChat(data) {
+            if (data.senderId === myData.id) return;
+            if (data.isPrivate && data.targetId !== myData.id) return;
+            if (!chatMessages.some(m => m.id === data.id)) {
+                chatMessages.push(data); renderChat(); saveData();
+            }
+        }
+        function publishSync() {
+            if (!mqttClient || !mqttConnected) return;
+            mqttClient.publish(MQTT_TOPIC_SYNC, JSON.stringify({
+                senderId: myData.id, factories: factories, market: market,
+                newsArticles: newsArticles, parties: parties, candidates: candidates,
+                presidentId: presidentId, cityState: cityState, loans: loans,
+                loanSettings: loanSettings, timestamp: Date.now()
+            }));
+        }
+        function handleRemoteSync(data) {
+            if (data.senderId === myData.id) return;
+            if (data.timestamp > (window._lastSyncTimestamp || 0)) {
+                window._lastSyncTimestamp = data.timestamp;
+                if (data.factories && data.factories.length > 0) {
+                    const myFactory = factories.find(f => f.ownerId === myData.id);
+                    factories = data.factories;
+                    if (myFactory && !factories.some(f => f.ownerId === myData.id)) factories.push(myFactory);
+                }
+                if (data.market) market = data.market;
+                if (data.newsArticles) newsArticles = data.newsArticles;
+                if (data.parties) parties = data.parties;
+                if (data.candidates) candidates = data.candidates;
+                if (data.presidentId) presidentId = data.presidentId;
+                if (data.cityState) cityState = data.cityState;
+                if (data.loans) loans = data.loans;
+                if (data.loanSettings) loanSettings = data.loanSettings;
+                renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderElection(); renderBank();
+                saveData();
+            }
+        }
 
         function saveData() {
             localStorage.setItem('sim_player', JSON.stringify(myData));
@@ -303,6 +746,9 @@
             localStorage.setItem('sim_president_id', presidentId || "");
             localStorage.setItem('sim_candidates', JSON.stringify(candidates));
             localStorage.setItem('sim_city', JSON.stringify(cityState));
+            localStorage.setItem('sim_loans', JSON.stringify(loans));
+            localStorage.setItem('sim_loan_settings', JSON.stringify(loanSettings));
+            publishSync();
         }
 
         function switchTab(tabId) {
@@ -310,18 +756,51 @@
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
+            if (tabId === 'bank-tab') renderBank();
         }
 
-        // --- ENERJİ YENİLEME SİSTEMİ (10 SANİYEDE +%1) ---
         setInterval(() => {
             if (myData.energy < 100) {
                 myData.energy = Math.min(100, myData.energy + 1);
-                updateUI();
-                saveData();
+                updateUI(); saveData();
             }
         }, 10000);
 
-        // --- PROFİL & KİMLİK SİSTEMİ ---
+        function getBatteryCooldown() {
+            return Math.max(300, 600 - myData.batteryUpgradeLevel * 120);
+        }
+
+        function useBattery() {
+            if (myData.energy >= 100) { showToast("Enerjin zaten dolu!", true); return; }
+            const now = Date.now();
+            if (myData.batteryCooldown > now) {
+                const remaining = Math.ceil((myData.batteryCooldown - now) / 1000);
+                showToast(`Pil henüz hazır değil! ${remaining} saniye kaldı.`, true);
+                return;
+            }
+            myData.energy = 100;
+            myData.batteryCooldown = now + getBatteryCooldown() * 1000;
+            showToast("🔋 Enerji fullendi!");
+            updateUI(); saveData();
+        }
+
+        function updateBatteryUI() {
+            const btn = document.getElementById('battery-btn');
+            const timer = document.getElementById('battery-timer');
+            if (!btn) return;
+            const now = Date.now();
+            if (myData.batteryCooldown > now) {
+                const remaining = Math.ceil((myData.batteryCooldown - now) / 1000);
+                const min = Math.floor(remaining / 60);
+                const sec = remaining % 60;
+                timer.innerText = `${min}:${sec.toString().padStart(2, '0')}`;
+                btn.disabled = true;
+            } else {
+                timer.innerText = '';
+                btn.disabled = false;
+            }
+        }
+
         function updateProfilePP(e) {
             const file = e.target.files[0];
             if (file) {
@@ -335,55 +814,98 @@
             const newName = document.getElementById("profile-name-input").value.trim();
             if (newName) {
                 myData.name = newName;
-                
-                // Sabit ID ile eşleşen tüm sahiplik adlarını güncelle
                 factories.forEach(f => { if(f.ownerId === myData.id) f.owner = newName; });
                 parties.forEach(p => { if(p.leaderId === myData.id) p.leader = newName; });
-                
+                loans.forEach(l => { if(l.borrowerId === myData.id) l.borrowerName = newName; });
                 let cand = candidates.find(c => c.id === myData.id);
                 if (cand) cand.name = newName;
-
-                showToast(`Profil isminiz '${newName}' olarak güncellendi. Kimliğiniz korundu.`);
+                showToast(`Profil isminiz '${newName}' olarak güncellendi.`);
+                publishPlayerPresence();
             }
-            updateUI();
-            renderFactories();
-            renderParties();
-            renderElection();
-            saveData();
+            updateUI(); renderFactories(); renderParties(); renderElection(); renderBank(); saveData();
         }
 
-        // --- CHAT ---
         function handleChatKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
         function sendMessage() {
             const input = document.getElementById("chat-input");
-            const text = input.value.trim();
+            let text = input.value.trim();
             if (!text) return;
-            chatMessages.push({ id: Date.now(), senderId: myData.id, sender: myData.name, text: text });
+
+            let isPrivate = false, targetName = null, targetId = null;
+
+            if (text.startsWith('@')) {
+                const parts = text.split(' ');
+                const mention = parts[0].substring(1);
+                const allKnownPlayers = { ...onlinePlayers };
+                factories.forEach(f => { if (f.owner && f.ownerId !== myData.id) allKnownPlayers[f.ownerId] = { name: f.owner }; });
+                parties.forEach(p => { if (p.leader && p.leaderId !== myData.id) allKnownPlayers[p.leaderId] = { name: p.leader }; });
+                candidates.forEach(c => { if (c.name && c.id !== myData.id) allKnownPlayers[c.id] = { name: c.name }; });
+
+                let found = null;
+                for (const [id, p] of Object.entries(allKnownPlayers)) {
+                    if (p.name.toLowerCase() === mention.toLowerCase() || id === mention) {
+                        found = { id, name: p.name }; break;
+                    }
+                }
+
+                if (found) {
+                    isPrivate = true; targetName = found.name; targetId = found.id;
+                    text = parts.slice(1).join(' ');
+                    if (!text) { showToast("Özel mesaj için bir içerik yazın!", true); return; }
+                } else { showToast(`@${mention} adlı kullanıcı bulunamadı!`, true); return; }
+            }
+
+            const msg = {
+                id: Date.now() + Math.random(), senderId: myData.id, sender: myData.name,
+                senderAvatar: myData.avatar, text: text, isPrivate: isPrivate,
+                targetId: targetId, targetName: targetName, timestamp: Date.now()
+            };
+
+            chatMessages.push(msg);
             input.value = "";
-            renderChat(); saveData();
+            renderChat(); saveData(); publishChatMessage(msg);
         }
+
         function deleteMessage(msgId) {
             chatMessages = chatMessages.filter(m => m.id !== msgId);
             renderChat(); saveData();
         }
+
         function renderChat() {
-            document.getElementById("chat-messages").innerHTML = chatMessages.map(m => `
-                <div class="msg-item">
-                    <span><strong>${m.sender} <small class="id-badge">${m.senderId}</small>:</strong> ${m.text}</span>
-                    ${m.senderId === myData.id ? `<button class="danger" style="font-size:10px; padding:2px 5px;" onclick="deleteMessage(${m.id})">Sil</button>` : ''}
-                </div>
-            `).join('');
             const box = document.getElementById("chat-messages");
+            if (!box) return;
+            box.innerHTML = chatMessages.map(m => {
+                const isPrivateToMe = m.isPrivate && m.targetId === myData.id;
+                const isMyPrivate = m.isPrivate && m.senderId === myData.id;
+                if (!m.isPrivate || isPrivateToMe || isMyPrivate) {
+                    let text = m.text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+                    let privateLabel = '';
+                    if (m.isPrivate) {
+                        if (isMyPrivate) privateLabel = `<span class="private-badge">ÖZEL → ${m.targetName || m.targetId}</span>`;
+                        else privateLabel = `<span class="private-badge">ÖZEL</span>`;
+                    }
+                    return `
+                        <div class="msg-item ${m.isPrivate ? 'private' : ''}">
+                            <span>
+                                ${privateLabel}
+                                <img src="${m.senderAvatar || DEFAULT_AVATAR}" class="avatar" style="width:20px;height:20px;">
+                                <strong>${m.sender}</strong> <small class="id-badge">${m.senderId}</small>:
+                                ${text}
+                            </span>
+                            ${m.senderId === myData.id ? `<button class="danger" style="font-size:10px; padding:2px 5px;" onclick="deleteMessage(${m.id})">Sil</button>` : ''}
+                        </div>
+                    `;
+                }
+                return '';
+            }).join('');
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- PARTİ ---
         function createParty() {
             const name = document.getElementById("party-name-input").value.trim();
             if (!name) return;
-            const p = { id: "p_" + Date.now(), name: name, leader: myData.name, leaderId: myData.id };
-            parties.push(p);
-            myData.party = p.id;
+            const p = { id: "p_" + Date.now(), name: name, leader: myData.name, leaderId: myData.id, members: [myData.id] };
+            parties.push(p); myData.party = p.id;
             showToast(`${name} partisi kuruldu!`);
             renderParties(); updateUI(); saveData();
         }
@@ -398,7 +920,6 @@
         function renderParties() {
             const myP = parties.find(p => p.leaderId === myData.id);
             document.getElementById("create-party-card").style.display = myP ? "none" : "block";
-
             document.getElementById("all-parties-list").innerHTML = parties.map(p => `
                 <div class="list-item">
                     <span>🚩 <strong>${p.name}</strong> (Lider: ${p.leader})</span>
@@ -407,7 +928,6 @@
             `).join('') || "<p style='color:#777;'>Aktif parti bulunmuyor.</p>";
         }
 
-        // --- BASIN & GAZETE ---
         function createNewspaper() {
             const name = document.getElementById("news-name-input").value.trim();
             if (!name) return;
@@ -427,7 +947,7 @@
             const title = document.getElementById("news-title").value;
             const content = document.getElementById("news-content").value;
             if (!title || !content) return;
-            newsArticles.unshift({ id: Date.now(), newspaper: myData.newspaper.name, title: title, content: content, ownerId: myData.id });
+            newsArticles.unshift({ id: Date.now(), newspaper: myData.newspaper.name, title: title, content: content, ownerId: myData.id, author: myData.name });
             document.getElementById("news-title").value = "";
             document.getElementById("news-content").value = "";
             renderNewsFeed(); saveData();
@@ -441,20 +961,18 @@
         function renderNewsFeed() {
             document.getElementById("create-newspaper-card").style.display = myData.newspaper ? "none" : "block";
             document.getElementById("publish-news-card").style.display = myData.newspaper ? "block" : "none";
-
             document.getElementById("news-feed").innerHTML = newsArticles.map(a => `
                 <div class="news-item">
                     <div style="display:flex; justify-content:space-between;">
                         <h4>${a.title}</h4>
                         ${a.ownerId === myData.id ? `<button class="danger" style="font-size:10px;" onclick="deleteArticle(${a.id})">Haberi Sil</button>` : ''}
                     </div>
-                    <small style="color:#aaa;">${a.newspaper}</small>
+                    <small style="color:#aaa;">${a.newspaper} ${a.author ? '- ' + a.author : ''}</small>
                     <p style="margin-top:5px;">${a.content}</p>
                 </div>
             `).join('');
         }
 
-        // --- FABRİKA & PAZAR ---
         function workAtNPC() {
             if (myData.energy <= 0) return showToast("Enerjin bitti!", true);
             const gross = myData.energy * 50;
@@ -471,14 +989,70 @@
             const name = document.getElementById("factory-name-input").value.trim();
             if (!name || myData.money < 10000) return showToast("Yetersiz bakiye veya eksik isim!", true);
             myData.money -= 10000;
-            const f = { id: "fac_" + Date.now(), name: name, owner: myData.name, ownerId: myData.id, balance: 0, weapons: 0 };
+            const f = { 
+                id: "fac_" + Date.now(), name: name, owner: myData.name, ownerId: myData.id,
+                balance: 0, weapons: 0, capacity: 2, workers: [], salaryPerEnergy: 50
+            };
             factories.push(f); myData.factory = f.id;
             renderFactories(); updateUI(); saveData();
+            showToast(`${name} fabrikası kuruldu!`);
         }
 
         function deleteFactory() {
             factories = factories.filter(f => f.ownerId !== myData.id);
             myData.factory = null;
+            renderFactories(); updateUI(); saveData();
+        }
+
+        function depositToFactory() {
+            const fac = factories.find(f => f.ownerId === myData.id);
+            if (!fac) return showToast("Fabrikanız yok!", true);
+            const amount = parseInt(document.getElementById("factory-cash-input").value);
+            if (!amount || amount <= 0) return showToast("Geçerli bir tutar girin!", true);
+            if (myData.money < amount) return showToast("Yetersiz bakiye!", true);
+            myData.money -= amount;
+            fac.balance += amount;
+            document.getElementById("factory-cash-input").value = "";
+            showToast(`₺${amount.toLocaleString()} fabrika kasasına yatırıldı.`);
+            renderFactories(); updateUI(); saveData();
+        }
+
+        function withdrawFromFactory() {
+            const fac = factories.find(f => f.ownerId === myData.id);
+            if (!fac) return showToast("Fabrikanız yok!", true);
+            const amount = parseInt(document.getElementById("factory-cash-input").value);
+            if (!amount || amount <= 0) return showToast("Geçerli bir tutar girin!", true);
+            if (fac.balance < amount) return showToast("Fabrika kasasında yeterli para yok!", true);
+            fac.balance -= amount;
+            myData.money += amount;
+            document.getElementById("factory-cash-input").value = "";
+            showToast(`₺${amount.toLocaleString()} fabrika kasasından çekildi.`);
+            renderFactories(); updateUI(); saveData();
+        }
+
+        // MAAŞ GÜNCELLEME
+        function updateSalary() {
+            const fac = factories.find(f => f.ownerId === myData.id);
+            if (!fac) return showToast("Fabrikanız yok!", true);
+            const salary = parseInt(document.getElementById("salary-input").value);
+            if (!salary || salary < 1) return showToast("Geçerli bir maaş girin!", true);
+            fac.salaryPerEnergy = salary;
+            showToast(`Maaş güncellendi: %1 enerji = ₺${salary}`);
+            renderFactories(); saveData();
+        }
+
+        function upgradeFactory() {
+            const fac = factories.find(f => f.ownerId === myData.id);
+            if (!fac) return;
+            const currentCap = fac.capacity;
+            if (currentCap >= 48) { showToast("Fabrika maksimum kapasitede!", true); return; }
+            const costs = { 2: 10000, 4: 20000, 8: 40000, 16: 80000, 32: 160000 };
+            const cost = costs[currentCap];
+            if (!cost) { showToast("Kapasite zaten maksimumda!", true); return; }
+            if (myData.money < cost) { showToast(`Yetersiz bakiye! Gerekli: ₺${cost.toLocaleString()}`, true); return; }
+            myData.money -= cost;
+            fac.capacity = Math.min(48, currentCap * 2);
+            showToast(`Fabrika kapasitesi ${fac.capacity} işçiye yükseltildi!`);
             renderFactories(); updateUI(); saveData();
         }
 
@@ -491,18 +1065,104 @@
             }
         }
 
+        // Fabrika sahibi kendi fabrikasında çalışır (maaşsız, sadece silah üretir)
+        function workAtMyFactory() {
+            const fac = factories.find(f => f.ownerId === myData.id);
+            if (!fac) return showToast("Fabrikanız yok!", true);
+            if (myData.energy <= 0) return showToast("Enerjin bitti!", true);
+            if (fac.balance < 1000) {
+                showToast("Fabrika kasasında yeterli para yok! (Min ₺1.000)", true);
+                return;
+            }
+
+            // Sahip çalışınca: 1 silah üretir, kasadan maliyet düşer
+            fac.weapons += 1;
+            fac.balance -= 100;
+            myData.energy = 0;
+            showToast(`Fabrikanızda çalıştınız: 1 silah üretildi.`);
+            renderFactories(); updateUI(); saveData();
+        }
+
         function renderFactories() {
             const myFac = factories.find(f => f.ownerId === myData.id);
             document.getElementById("create-factory-card").style.display = myFac ? "none" : "block";
             document.getElementById("my-factory-card").style.display = myFac ? "block" : "none";
+            
             if (myFac) {
                 document.getElementById("my-factory-name").innerText = myFac.name;
                 document.getElementById("my-factory-balance").innerText = myFac.balance;
                 document.getElementById("my-factory-weapons").innerText = myFac.weapons;
+                document.getElementById("my-factory-capacity").innerText = myFac.capacity;
+                document.getElementById("my-factory-worker-count").innerText = myFac.workers.length;
+                document.getElementById("my-factory-salary-display").innerText = `₺${myFac.salaryPerEnergy || 50}`;
+                document.getElementById("salary-input").value = myFac.salaryPerEnergy || 50;
+                
+                document.getElementById("my-factory-workers").innerHTML = myFac.workers.map(wId => {
+                    const isMe = wId === myData.id;
+                    return `<span class="worker-tag ${isMe ? 'me' : ''}">${isMe ? 'Siz' : wId}</span>`;
+                }).join('') || '<span style="color:#777;">Henüz işçi yok</span>';
+
+                const upgradeBtn = document.getElementById("upgrade-factory-btn");
+                if (myFac.capacity >= 48) {
+                    upgradeBtn.disabled = true;
+                    upgradeBtn.innerText = "Maksimum Kapasite (48)";
+                } else {
+                    const costs = { 2: 10000, 4: 20000, 8: 40000, 16: 80000, 32: 160000 };
+                    const cost = costs[myFac.capacity];
+                    upgradeBtn.innerText = `Kapasiteyi Geliştir (₺${(cost||0).toLocaleString()})`;
+                    upgradeBtn.disabled = myData.money < (cost || 0);
+                }
             }
-            document.getElementById("all-factories-list").innerHTML = factories.map(f => `
-                <div class="list-item"><span><strong>${f.name}</strong> (Sahip: ${f.owner})</span></div>
-            `).join('');
+            
+            document.getElementById("all-factories-list").innerHTML = factories.map(f => {
+                const isMine = f.ownerId === myData.id;
+                const canWork = !isMine && f.workers.length < f.capacity;
+                const isWorking = f.workers.includes(myData.id);
+                return `
+                <div class="list-item">
+                    <span>
+                        <strong>${f.name}</strong> (Sahip: ${f.owner}) 
+                        <small style="color:#aaa;">[${f.workers.length}/${f.capacity} işçi] Kasa: ₺${f.balance}</small>
+                        <br><small style="color:#4caf50;">💵 Maaş: %1 enerji = ₺${f.salaryPerEnergy || 50}</small>
+                    </span>
+                    <div>
+                        ${!isMine ? (
+                            isWorking ? 
+                            `<span style="color:#4caf50;">✓ Çalışıyorsunuz</span>` :
+                            (canWork ? `<button class="secondary" onclick="workAtFactory('${f.id}')">Çalış (1 Silah Üret)</button>` : 
+                            `<span style="color:#777;">Dolu</span>`)
+                        ) : `<span style="color:#ff9800;">Sizin</span>`}
+                    </div>
+                </div>
+            `}).join('') || "<p style='color:#777;'>Henüz fabrika yok.</p>";
+        }
+
+        // Başka fabrikada çalışma: 1 silah üretir, silah fabrika sahibine gider, işçi maaşını alır
+        function workAtFactory(factoryId) {
+            const fac = factories.find(f => f.id === factoryId);
+            if (!fac) return;
+            if (fac.workers.includes(myData.id)) { showToast("Zaten bu fabrikada çalışıyorsunuz!", true); return; }
+            if (fac.workers.length >= fac.capacity) { showToast("Fabrika kapasitesi dolu!", true); return; }
+            if (myData.energy <= 0) return showToast("Enerjin bitti!", true);
+            
+            const salary = fac.salaryPerEnergy || 50;
+            const earned = myData.energy * salary;
+            
+            // Kasa kontrolü
+            if (fac.balance < earned) {
+                showToast(`Fabrika kasasında yeterli para yok! Gerekli: ₺${earned.toLocaleString()}, Kasa: ₺${fac.balance.toLocaleString()}`, true);
+                return;
+            }
+            
+            // İşlem: işçi maaşını alır, 1 silah üretilir ve fabrika sahibine gider
+            fac.balance -= earned;
+            myData.money += earned;
+            fac.weapons += 1; // Silah direkt fabrika envanterine (sahibinin)
+            fac.workers.push(myData.id);
+            myData.energy = 0;
+            
+            showToast(`"${fac.name}" fabrikasında çalıştınız: ₺${earned.toLocaleString()} kazandınız. 1 silah fabrika envanterine eklendi.`);
+            renderFactories(); updateUI(); saveData();
         }
 
         function sellWeaponToMarket() {
@@ -524,20 +1184,40 @@
             renderMarket(); updateUI(); saveData();
         }
 
+        function triggerNPCBuyer() {
+            if (market.length === 0) { showToast("Pazarda satılık silah yok!", true); return; }
+            let bought = 0, earnings = 0;
+            market = market.filter(item => {
+                const npcPrice = 900 + Math.floor(Math.random() * 301);
+                if (item.price <= npcPrice) {
+                    if (item.sellerId === myData.id) earnings += item.count * item.price;
+                    bought += item.count;
+                    return false;
+                }
+                return true;
+            });
+            if (bought > 0) {
+                if (earnings > 0) myData.money += earnings;
+                showToast(`🤖 NPC ${bought} silah satın aldı! ${earnings > 0 ? `Kazancınız: ₺${earnings.toLocaleString()}` : ''}`);
+                renderMarket(); updateUI(); saveData();
+            } else {
+                showToast("NPC hiçbir silahı satın almadı (fiyatlar yüksek).", true);
+            }
+        }
+
         function renderMarket() {
             document.getElementById("market-items-list").innerHTML = market.map(m => `
                 <div class="list-item">
-                    <span>🔫 <strong>${m.count} Silah</strong> - Birim: ₺${m.price}</span>
+                    <span>🔫 <strong>${m.count} Silah</strong> - Birim: ₺${m.price} (Satıcı: ${m.seller})</span>
                     <button class="secondary" onclick="buyWeaponFromMarket(${m.id})">Satın Al (₺${m.count * m.price})</button>
                 </div>
             `).join('') || "<p style='color:#777;'>Pazar boş.</p>";
         }
 
-        // --- YÖNETİM & ADAYLIK KONTROLÜ ---
         function becomeCandidate() {
             if (!candidates.some(c => c.id === myData.id)) {
                 candidates.push({ id: myData.id, name: myData.name });
-                showToast("Başkanlığa aday oldunuz!");
+                showToast("Başkanlığa aday oldunuz! Seçim Pazar 18:00'de.");
                 renderElection(); saveData();
             }
         }
@@ -546,12 +1226,6 @@
             candidates = candidates.filter(c => c.id !== myData.id);
             showToast("Adaylıktan çekildiniz.");
             renderElection(); saveData();
-        }
-
-        function voteCandidate(id, name) {
-            presidentId = id;
-            showToast(`${name} yeni Başkan seçildi!`);
-            renderElection(); updateUI(); saveData();
         }
 
         function updateTaxRate() {
@@ -581,9 +1255,9 @@
                 presidentId = myData.id;
                 cityState.rebelWeapons = 0;
                 cityState.guards = 0;
-                showToast("💥 DARBE BAŞARILI! Muhafızlar Yıkıldı, Yeni Başkan Sensin!");
+                showToast("💥 DARBE BAŞARILI! Yeni Başkan Sensin!");
             } else {
-                showToast("❌ DARBE BASTIRILDI! Muhafızlar Güçlü Geldi.", true);
+                showToast("❌ DARBE BASTIRILDI!", true);
                 cityState.rebelWeapons = 0;
             }
             renderElection(); updateUI(); saveData();
@@ -594,11 +1268,13 @@
             document.getElementById("president-only-panel").style.display = isPresident ? "block" : "none";
             
             let presidentName = "Yok";
-            if (presidentId === myData.id) {
-                presidentName = myData.name;
-            } else if (presidentId) {
+            if (presidentId === myData.id) presidentName = myData.name;
+            else if (presidentId) {
                 let cand = candidates.find(c => c.id === presidentId);
-                presidentName = cand ? cand.name : "Başkan (" + presidentId + ")";
+                if (!cand) {
+                    const known = onlinePlayers[presidentId];
+                    presidentName = known ? known.name : "Başkan (" + presidentId + ")";
+                } else presidentName = cand.name;
             }
 
             document.getElementById("current-president").innerText = presidentName;
@@ -615,10 +1291,10 @@
                 <div class="list-item">
                     <span>👤 ${c.name} <small class="id-badge">${c.id}</small></span>
                     <div>
-                        ${c.id === myData.id ? `<button class="danger" onclick="withdrawCandidate()">Adaylıktan Çekil</button>` : `<button class="secondary" onclick="voteCandidate('${c.id}', '${c.name}')">Oy Ver</button>`}
+                        ${c.id === myData.id ? `<button class="danger" onclick="withdrawCandidate()">Adaylıktan Çekil</button>` : ''}
                     </div>
                 </div>
-            `).join('') || "<p style='color:#777;'>Aday yok.</p>";
+            `).join('') || "<p style='color:#777;'>Aday yok. Pazar 18:00'e kadar aday olabilirsiniz.</p>";
         }
 
         function renderNotifications() {
@@ -643,11 +1319,27 @@
             document.getElementById("user-role-badge").innerText = isPresident ? "👑 Şehir Başkanı" : "👤 Vatandaş";
             document.getElementById("user-role-badge").style.color = isPresident ? "#ff9800" : "#2196F3";
             
-            renderElection();
+            renderElection(); renderFactories(); renderBank(); updateBatteryUI();
         }
 
-        // İLK YÜKLEME
-        renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderChat(); renderNotifications(); updateUI();
+        window.addEventListener('load', () => {
+            initMQTT();
+            renderFactories(); renderMarket(); renderNewsFeed(); renderParties(); renderChat(); renderNotifications(); renderBank(); updateUI();
+            updateCalendar();
+            setInterval(publishPlayerPresence, 30000);
+
+            // Fabrika otomatik üretim döngüsü (işçi varsa)
+            setInterval(() => {
+                let changed = false;
+                factories.forEach(fac => {
+                    if (fac.workers.length > 0) {
+                        const salary = fac.salaryPerEnergy || 50;
+                        // Her işçi 100 enerji harcamış gibi varsayalım (periyodik)
+                        // Ama işçiler zaten manuel çalışıyor, bu döngü sadece bilgi amaçlı
+                    }
+                });
+            }, 30000);
+        });
     </script>
 </body>
 </html>
