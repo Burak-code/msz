@@ -160,10 +160,182 @@
         }
         .insta-float:hover { transform: scale(1.05); }
 
+        /* ================= AI ASSISTANT ================= */
+        .ai-trigger {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1001;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: white; font-size: 22px;
+            transition: transform 0.3s ease;
+        }
+        .ai-trigger:hover { transform: scale(1.08); }
+        .ai-trigger.hidden { display: none; }
+
+        .ai-panel {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            width: 380px;
+            height: 560px;
+            max-height: calc(100vh - 120px);
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+            touch-action: none;
+        }
+        .dark .ai-panel {
+            background: rgba(20,20,20,0.98);
+            border-color: rgba(255,255,255,0.05);
+        }
+        .ai-panel.active { display: flex; }
+
+        .ai-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        .ai-header:active { cursor: grabbing; }
+        .ai-header .title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .ai-header .controls { display: flex; gap: 8px; }
+        .ai-header button {
+            background: rgba(255,255,255,0.15);
+            border: none; color: white;
+            width: 26px; height: 26px; border-radius: 50%;
+            cursor: pointer; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .ai-header button:hover { background: rgba(255,255,255,0.3); }
+
+        .ai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .ai-msg {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            animation: aiFadeIn 0.25s ease;
+        }
+        @keyframes aiFadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ai-msg.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-msg.bot {
+            align-self: flex-start;
+            background: rgba(16, 185, 129, 0.12);
+            color: #065f46;
+            border-bottom-left-radius: 4px;
+        }
+        .dark .ai-msg.bot {
+            background: rgba(16, 185, 129, 0.18);
+            color: #a7f3d0;
+        }
+        .ai-msg.typing {
+            display: flex; gap: 4px; align-items: center;
+            padding: 12px 16px;
+        }
+        .ai-msg.typing span {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #10b981; opacity: 0.5;
+            animation: aiBounce 1.2s infinite;
+        }
+        .ai-msg.typing span:nth-child(2) { animation-delay: 0.15s; }
+        .ai-msg.typing span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes aiBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        .ai-input-area {
+            border-top: 1px solid rgba(0,0,0,0.08);
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.5);
+            flex-shrink: 0;
+        }
+        .dark .ai-input-area {
+            border-top-color: rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.2);
+        }
+        .ai-input-area textarea {
+            flex: 1;
+            resize: none;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-family: inherit;
+            background: white;
+            color: inherit;
+            outline: none;
+            max-height: 90px;
+            min-height: 38px;
+        }
+        .dark .ai-input-area textarea {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .ai-input-area textarea:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+        }
+        .ai-input-area button {
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            color: white; border: none;
+            width: 40px; height: 40px; border-radius: 12px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.15s ease;
+            flex-shrink: 0;
+            align-self: flex-end;
+        }
+        .ai-input-area button:hover { transform: scale(1.05); }
+        .ai-input-area button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
         @media (max-width: 640px) {
             .news-panel { width: calc(100% - 40px); left: 20px; bottom: 90px; }
             .news-popup { bottom: 20px; left: 20px; }
             .insta-float { bottom: 20px; right: 20px; padding: 8px 14px; }
+            .ai-trigger { bottom: 90px; right: 20px; }
+            .ai-panel {
+                width: calc(100% - 24px);
+                height: 70vh;
+                right: 12px;
+                top: auto;
+                bottom: 90px;
+            }
         }
     </style>
 </head>
@@ -255,6 +427,28 @@
         </div>
     </div>
 
+    <!-- ================= AI ASSISTANT ================= -->
+    <div class="ai-trigger" id="aiTrigger" title="MSZ AI Asistan">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <div class="ai-panel" id="aiPanel">
+        <div class="ai-header" id="aiHeader">
+            <div class="title">
+                <i class="fas fa-robot"></i> MSZ AI Asistan
+            </div>
+            <div class="controls">
+                <button id="aiClear" title="Sohbeti temizle"><i class="fas fa-trash"></i></button>
+                <button id="aiClose" title="Kapat"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="ai-messages" id="aiMessages"></div>
+        <div class="ai-input-area">
+            <textarea id="aiInput" rows="1" placeholder="Bir şey sor... (Enter = gönder)"></textarea>
+            <button id="aiSend" title="Gönder"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
     <script>
         // ========== HABER DATA ==========
         const haberler = [
@@ -310,22 +504,17 @@
                 <h2 class="text-3xl font-bold mb-8 text-center">Digital Experience</h2>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     ${[
-                        // 1. En Güçlü ve Amiral Gemisi Projeler
                         {title: "SimSiyaset", desc: "Multiplayer strategy game.", link: "html/SimSiyaset.html", icon: "fa-vault"},
                         {title: "Pixel craft", desc: "2d open world multiplayer game. Have an economy.", link: "https://burak-code.github.io/pixel-craft/", icon: "fa-pickup"},
                         {title: "MSZ MEDYA", desc: "A social media. Designed by me. %100 Turkish...", link: "https://burak-code.github.io/msz-medya/", icon: "fa-phone"},
                         {title: "⭐⭐cengO⭐⭐", desc: "Free, chat rooms. <br> BEST PROJECT!", link: "https://burak-code.github.io/cengo/", icon: "fa-envelope"},
                         {title: "MSZ Trade", desc: "Economy-focused strategy simulation.", link: "html/oyun2.html", icon: "fa-chart-line"},
                         {title: "Team-Manager", desc: "Manage the national football team on a World Cup journey.", link: "html/team-menager.html", icon: "fa-football"},
-                        
-                        // 2. Ortalama / Geliştirilebilir Projeler
                         {title: "MSZ PİXEL", desc: "Pixel world. Paint.", link: "html/msz_pixel.html", icon: "fa-color"},
                         {title: "University Planner", desc: "Digital assistant for students.", link: "html/oyun3.html", icon: "fa-university"},
                         {title: "FİNALLY TOURNAMENT", desc: "İt is the finally tournament. You can play dream teams.", link: "html/tournament.html", icon: "fa-football"},
                         {title: "Stumble Boys", desc: "HTML-based, smooth platform game.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
                         {title: "Game Studio", desc: "The foundations of the game studio of the future.", link: "#", disabled: true, icon: "fa-rocket"},
-
-                        // 3. Basit / Alıştırma Düzeyinde Kalan Projeler
                         {title: "Online Chess", desc: "This is have rooms...", link: "html/satranç.html", icon: "fa-chess"},
                         {title: "MSZ AI", desc: "Free and up-to-date artificial intelligence bot.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
                         {title: "Flag Quiz", desc: "Geography game with ranking system.", link: "html/oyun1.html", icon: "fa-flag"},
@@ -473,10 +662,223 @@
 
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modalKapat(); });
 
-        // Initial Initialization
+        // ============================================================
+        // ====================== MSZ AI ASISTAN ======================
+        // ============================================================
+        const aiTrigger = document.getElementById('aiTrigger');
+        const aiPanel = document.getElementById('aiPanel');
+        const aiHeader = document.getElementById('aiHeader');
+        const aiClose = document.getElementById('aiClose');
+        const aiClear = document.getElementById('aiClear');
+        const aiMessages = document.getElementById('aiMessages');
+        const aiInput = document.getElementById('aiInput');
+        const aiSend = document.getElementById('aiSend');
+
+        // Sistem talimatı — AI'ya MSZ sitesi hakkında bağlam verir
+        const SYSTEM_PROMPT = `Sen "MSZ AI Asistan"sın. Burak'ın kişisel web sitesinde (MSZ) ziyaretçilere yardımcı olan samimi, kısa ve net cevap veren bir Türkçe yapay zeka asistanısın.
+Sitede şu bölümler var: Home, About Me, Experience (projeler), Portfolio, Contact, HTML demoları ve Jobs.
+Burak; web geliştirme, oyun tasarımı ve dijital projelerle uğraşan bir geliştirici.
+MSZ projeleri: SimSiyaset, Pixel Craft, MSZ Medya, cengO (chat), MSZ Trade, Team-Manager, MSZ Pixel, University Planner, Stumble Boys, Online Chess, MSZ AI, Flag Quiz, Score Game gibi projeler.
+İletişim: Instagram @burak_msz, YouTube @msz-burak, Gmail burakbilec123@gmail.com.
+Cevaplarını kısa tut (max 3-4 cümle), samimi ol, gereksiz uzun yazma. Bilmediğin şeyi uydurma.`;
+
+        // Sohbet geçmişi (sadece oturum boyunca)
+        let chatHistory = [
+            { role: "system", content: SYSTEM_PROMPT }
+        ];
+
+        // ---------- Panel aç/kapat ----------
+        function openAI() {
+            aiPanel.classList.add('active');
+            aiTrigger.classList.add('hidden');
+            setTimeout(() => aiInput.focus(), 100);
+        }
+        function closeAI() {
+            aiPanel.classList.remove('active');
+            aiTrigger.classList.remove('hidden');
+        }
+
+        aiTrigger.addEventListener('click', openAI);
+        aiClose.addEventListener('click', closeAI);
+
+        // ---------- Mesaj ekleme ----------
+        function addMessage(text, role) {
+            const msg = document.createElement('div');
+            msg.className = `ai-msg ${role}`;
+            msg.textContent = text;
+            aiMessages.appendChild(msg);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+            return msg;
+        }
+
+        function addTyping() {
+            const typing = document.createElement('div');
+            typing.className = 'ai-msg bot typing';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            aiMessages.appendChild(typing);
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+            return typing;
+        }
+
+        // ---------- Pollinations API çağrısı ----------
+        async function askPollinations(userText) {
+            // Konuşma geçmişine ekle
+            chatHistory.push({ role: "user", content: userText });
+
+            const res = await fetch("https://text.pollinations.ai/openai", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "openai",
+                    messages: chatHistory,
+                    temperature: 0.7
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error(`API hatası: ${res.status}`);
+            }
+
+            const data = await res.json();
+            const reply = data.choices?.[0]?.message?.content || "Cevap alınamadı.";
+
+            chatHistory.push({ role: "assistant", content: reply });
+            return reply;
+        }
+
+        // ---------- Gönderme ----------
+        let isSending = false;
+        async function sendMessage() {
+            const text = aiInput.value.trim();
+            if (!text || isSending) return;
+
+            isSending = true;
+            aiSend.disabled = true;
+            aiInput.value = '';
+            aiInput.style.height = 'auto';
+
+            addMessage(text, 'user');
+            const typing = addTyping();
+
+            try {
+                const reply = await askPollinations(text);
+                typing.remove();
+                addMessage(reply, 'bot');
+            } catch (err) {
+                typing.remove();
+                addMessage("Bağlantı hatası: " + err.message + "\nİnternetini kontrol et veya biraz sonra tekrar dene.", 'bot');
+                console.error(err);
+            } finally {
+                isSending = false;
+                aiSend.disabled = false;
+                aiInput.focus();
+            }
+        }
+
+        aiSend.addEventListener('click', sendMessage);
+
+        aiInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Textarea otomatik büyüme
+        aiInput.addEventListener('input', () => {
+            aiInput.style.height = 'auto';
+            aiInput.style.height = Math.min(aiInput.scrollHeight, 90) + 'px';
+        });
+
+        // ---------- Sohbeti temizle ----------
+        aiClear.addEventListener('click', () => {
+            if (confirm("Sohbeti temizlemek istediğine emin misin?")) {
+                chatHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+                aiMessages.innerHTML = '';
+                greetUser();
+            }
+        });
+
+        // ---------- Karşılama mesajı ----------
+        function greetUser() {
+            addMessage("Merhaba! 👋 Ben MSZ AI Asistan. Sana projeler, site veya Burak hakkında yardımcı olabilirim. Ne sormak istersin?", 'bot');
+        }
+
+        // ============================================================
+        // ================== SÜRÜKLEME (DRAG) ========================
+        // ============================================================
+        (function makeDraggable() {
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let startLeft = 0, startTop = 0;
+
+            // Panel konumunu getBoundingClientRect ile takip et
+            function getCurrentPos() {
+                const rect = aiPanel.getBoundingClientRect();
+                return { left: rect.left, top: rect.top };
+            }
+
+            aiHeader.addEventListener('pointerdown', (e) => {
+                // Kapat / temizle butonlarına basıldıysa sürükleme başlatma
+                if (e.target.closest('button')) return;
+
+                isDragging = true;
+                aiHeader.setPointerCapture(e.pointerId);
+
+                const pos = getCurrentPos();
+                startLeft = pos.left;
+                startTop = pos.top;
+                startX = e.clientX;
+                startY = e.clientY;
+
+                // position: fixed olduğu için left/top ile konumlandır
+                aiPanel.style.left = startLeft + 'px';
+                aiPanel.style.top = startTop + 'px';
+                aiPanel.style.right = 'auto';
+                aiPanel.style.bottom = 'auto';
+                aiPanel.style.transition = 'none';
+            });
+
+            aiHeader.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                let newLeft = startLeft + dx;
+                let newTop = startTop + dy;
+
+                // Ekran sınırları (viewport) içinde tut
+                const maxLeft = window.innerWidth - aiPanel.offsetWidth;
+                const maxTop = window.innerHeight - aiPanel.offsetHeight;
+
+                newLeft = Math.max(0, Math.min(maxLeft, newLeft));
+                newTop = Math.max(0, Math.min(maxTop, newTop));
+
+                aiPanel.style.left = newLeft + 'px';
+                aiPanel.style.top = newTop + 'px';
+            });
+
+            aiHeader.addEventListener('pointerup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                try { aiHeader.releasePointerCapture(e.pointerId); } catch (_) {}
+                aiPanel.style.transition = '';
+            });
+
+            aiHeader.addEventListener('pointercancel', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                try { aiHeader.releasePointerCapture(e.pointerId); } catch (_) {}
+                aiPanel.style.transition = '';
+            });
+        })();
+
+        // ========== Initial Initialization ==========
         window.onload = () => {
             updateUI('home');
             haberleriGoster();
+            greetUser();
         };
     </script>
 </body>
