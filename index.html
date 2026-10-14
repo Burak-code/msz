@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" class="dark scroll-smooth">
 <head>
+    <link rel="icon" href="favicon.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSZ</title>
-    <link rel="icon" href="favicon.png" type="image/png">
 
-    <!-- Tailwind CSS & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +18,7 @@
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
                         primary: { light: '#3b82f6', dark: '#60a5fa' },
+                        glass: 'rgba(255, 255, 255, 0.1)',
                         darkbg: '#050505'
                     }
                 }
@@ -31,311 +31,989 @@
         body {
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'sans-serif';
+            will-change: background-color;
         }
         .bg-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
-            background: url('bgopaks.png') center/cover no-repeat;
+            background-image: url('bgopaks.png');
+            background-size: cover;
+            background-position: center;
             opacity: 0.12;
             pointer-events: none;
         }
+
+        /* ============================================
+           ANIMATION SYSTEM
+           Body'ye "no-anim" class'ı gelince tüm animasyonlar kapanır
+           ============================================ */
+        body.no-anim *,
+        body.no-anim *::before,
+        body.no-anim *::after {
+            animation: none !important;
+            transition: none !important;
+            animation-duration: 0s !important;
+            animation-delay: 0s !important;
+            transition-duration: 0s !important;
+            transition-delay: 0s !important;
+        }
+        body.no-anim {
+            scroll-behavior: auto !important;
+        }
+        html.no-anim {
+            scroll-behavior: auto !important;
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ============================================
+           SCROLL REVEAL ANIMATIONS
+           ============================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        body.no-anim .reveal {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal-left.revealed { opacity: 1; transform: translateX(0); }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal-right.revealed { opacity: 1; transform: translateX(0); }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.85);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .reveal-scale.revealed { opacity: 1; transform: scale(1); }
+
+        /* ============================================
+           FLOATING / AMBIENT ANIMATIONS
+           ============================================ */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-18px) rotate(3deg); }
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 45px rgba(59, 130, 246, 0.8), 0 0 80px rgba(139, 92, 246, 0.4); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            60% { opacity: 1; transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideUpIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-4deg); }
+            75% { transform: rotate(4deg); }
+        }
+
+        /* Animated background gradient when animations ON */
+        body:not(.no-anim) {
+            background-image: linear-gradient(135deg, transparent, rgba(59,130,246,0.04), transparent, rgba(139,92,246,0.04), transparent);
+            background-size: 400% 400%;
+            animation: gradientShift 18s ease infinite;
+        }
+
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+            will-change: transform;
         }
         .dark .glass-card {
             background: rgba(20, 20, 20, 0.6);
-            border-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .neon-logo { text-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6; }
-        
-        .nav-link { position: relative; cursor: pointer; }
+        .neon-logo {
+            text-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+            animation: pulse 3s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .nav-link {
+            position: relative;
+            cursor: pointer;
+        }
         .nav-link::after {
-            content: ''; position: absolute; bottom: -2px; left: 0;
-            width: 0; height: 2px; background: #3b82f6; transition: width 0.3s ease;
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
         }
         .nav-link:hover::after { width: 100%; }
-
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
         ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
 
         .btn-primary {
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            color: white; padding: 12px 28px; border-radius: 100px;
-            font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6, #3b82f6);
+            background-size: 300% 300%;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
             box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-            display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            will-change: transform;
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5); }
+        body:not(.no-anim) .btn-primary {
+            animation: gradientShift 6s ease infinite;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+        }
         .btn-primary:active { transform: scale(0.96); }
 
+        /* Gold Button */
         .btn-gold {
-            background: linear-gradient(135deg, #facc15, #f59e0b);
-            color: white; padding: 12px 28px; border-radius: 100px;
-            font-weight: 700; transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #facc15, #f59e0b, #fbbf24, #f59e0b);
+            background-size: 300% 300%;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-weight: 700;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
             box-shadow: 0 8px 30px rgba(250, 204, 21, 0.4);
-            display: inline-flex; align-items: center; gap: 10px; text-decoration: none; border: none;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            will-change: transform;
         }
-        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 14px 45px rgba(250, 204, 21, 0.6); }
+        body:not(.no-anim) .btn-gold {
+            animation: gradientShift 5s ease infinite;
+        }
+        .btn-gold:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 14px 45px rgba(250, 204, 21, 0.6);
+        }
+        .btn-gold:active { transform: scale(0.95); }
 
+        /* MSZ Team Card */
         .msz-team-card {
-            position: relative; overflow: hidden; border-radius: 24px;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(250, 204, 21, 0.3);
             box-shadow: 0 8px 40px rgba(250, 204, 21, 0.15);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            will-change: transform;
         }
-        .dark .msz-team-card { background: rgba(20, 20, 20, 0.7); border-color: rgba(250, 204, 21, 0.2); }
-        .msz-team-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(250, 204, 21, 0.3); }
-
+        .dark .msz-team-card {
+            background: rgba(20, 20, 20, 0.7);
+            border-color: rgba(250, 204, 21, 0.2);
+        }
+        .msz-team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(250, 204, 21, 0.3);
+        }
+        .msz-team-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.1), transparent);
+            transition: left 0.7s ease;
+            pointer-events: none;
+        }
+        .msz-team-card:hover::before { left: 100%; }
+        .msz-team-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 6px; height: 100%;
+            background: linear-gradient(180deg, #facc15, #f59e0b, #facc15);
+            background-size: 100% 200%;
+            animation: goldShine 3s ease infinite;
+        }
+        @keyframes goldShine {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 0% 100%; }
+        }
         .gold-gradient-text {
-            background: linear-gradient(135deg, #facc15, #f59e0b, #fbbf24);
-            -webkit-background-clip: text; background-clip: text;
+            background: linear-gradient(135deg, #facc15, #f59e0b, #fbbf24, #f59e0b);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: goldTextFlow 4s ease infinite;
+        }
+        @keyframes goldTextFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         .gold-icon-circle {
             background: linear-gradient(135deg, #facc15, #f59e0b);
-            box-shadow: 0 8px 30px rgba(250, 204, 21, 0.5);
+            box-shadow: 0 8px 30px rgba(250, 204, 21, 0.5), inset 0 -2px 10px rgba(180, 83, 9, 0.3);
+        }
+        .gold-sparkle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #facc15, 0 0 16px #f59e0b;
+            animation: sparkle 2.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.3); }
         }
 
-        /* News Widget */
-        .news-popup { position: fixed; bottom: 30px; left: 30px; z-index: 999; }
+        .news-popup {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 999;
+        }
         .news-trigger {
-            width: 60px; height: 60px; border-radius: 50%;
+            width: 65px; height: 65px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.3s ease; position: relative; color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
+            position: relative;
+            will-change: transform;
         }
-        .news-trigger:hover { transform: scale(1.08); }
+        body:not(.no-anim) .news-trigger {
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        .news-trigger:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.6);
+        }
+        .news-trigger:active { transform: scale(0.92); }
+        .news-trigger i {
+            font-size: 26px;
+            color: white;
+        }
         .news-badge {
-            position: absolute; top: -2px; right: -2px; background: #ef4444;
-            color: white; font-size: 10px; font-weight: bold; width: 20px; height: 20px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;
+            position: absolute;
+            top: -5px; right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        body:not(.no-anim) .news-badge {
+            animation: pulse 1.8s ease-in-out infinite;
         }
         .news-panel {
-            position: fixed; bottom: 100px; left: 30px; width: 360px; max-height: 460px;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
-            border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2); overflow: hidden; z-index: 998;
-            opacity: 0; pointer-events: none; transform: translateY(15px); transition: all 0.3s ease;
-        }
-        .dark .news-panel { background: rgba(20,20,20,0.95); border-color: rgba(255,255,255,0.05); }
-        .news-panel.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-
-        .news-item {
-            padding: 10px; border-radius: 12px; margin-bottom: 8px;
-            background: rgba(0,0,0,0.03); transition: background 0.2s ease;
-            cursor: pointer; display: flex; gap: 10px; align-items: flex-start;
-        }
-        .dark .news-item { background: rgba(255,255,255,0.03); }
-        .news-item:hover { background: rgba(59, 130, 246, 0.08); }
-
-        /* Modal */
-        .news-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-            z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .news-modal.active { display: flex; }
-        .news-modal-content {
-            max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
-            background: rgba(255,255,255,0.98); backdrop-filter: blur(16px);
-            border-radius: 24px; padding: 24px; position: relative;
-        }
-        .dark .news-modal-content { background: rgba(20,20,20,0.98); border-color: rgba(255,255,255,0.05); }
-
-        /* Floating Instagram */
-        .insta-float {
-            position: fixed; bottom: 30px; right: 30px; z-index: 999;
-            display: flex; align-items: center; gap: 10px;
-            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            color: white; padding: 10px 20px; border-radius: 100px; font-weight: 700;
-            text-decoration: none; box-shadow: 0 8px 32px rgba(220, 39, 67, 0.4);
-            transition: transform 0.3s ease;
-        }
-        .insta-float:hover { transform: scale(1.05); }
-
-        /* ================= AI ASSISTANT ================= */
-        .ai-trigger {
-            position: fixed; bottom: 30px; right: 30px; z-index: 1001;
-            width: 60px; height: 60px; border-radius: 50%;
-            background: linear-gradient(135deg, #10b981, #06b6d4);
-            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: white; font-size: 22px;
-            transition: transform 0.3s ease;
-        }
-        .ai-trigger:hover { transform: scale(1.08); }
-        .ai-trigger.hidden { display: none; }
-
-        .ai-panel {
             position: fixed;
-            top: 100px;
-            right: 30px;
+            bottom: 110px;
+            left: 30px;
             width: 380px;
-            height: 560px;
-            max-height: calc(100vh - 120px);
-            background: rgba(255,255,255,0.98);
+            max-height: 480px;
+            background: rgba(255,255,255,0.95);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.2);
-            display: none;
-            flex-direction: column;
             overflow: hidden;
-            z-index: 1000;
-            touch-action: none;
+            z-index: 998;
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform, opacity;
         }
-        .dark .ai-panel {
-            background: rgba(20,20,20,0.98);
+        .dark .news-panel {
+            background: rgba(20,20,20,0.95);
             border-color: rgba(255,255,255,0.05);
         }
-        .ai-panel.active { display: flex; }
-
-        .ai-header {
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #10b981, #06b6d4);
+        .news-panel.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        .news-panel-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: grab;
-            user-select: none;
+            font-weight: bold;
             flex-shrink: 0;
         }
-        .ai-header:active { cursor: grabbing; }
-        .ai-header .title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .ai-header .controls { display: flex; gap: 8px; }
-        .ai-header button {
-            background: rgba(255,255,255,0.15);
-            border: none; color: white;
-            width: 26px; height: 26px; border-radius: 50%;
-            cursor: pointer; font-size: 12px;
-            display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s;
+        .news-close {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
         }
-        .ai-header button:hover { background: rgba(255,255,255,0.3); }
-
-        .ai-messages {
-            flex: 1;
+        .news-close:hover { opacity: 1; }
+        .news-list {
+            padding: 10px 14px 14px 14px;
+            max-height: 360px;
             overflow-y: auto;
-            padding: 14px;
+        }
+        .news-item {
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: rgba(0,0,0,0.03);
+            transition: background 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            will-change: transform;
+        }
+        .dark .news-item { background: rgba(255,255,255,0.03); }
+        .news-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            transform: translateX(4px);
+        }
+        .news-item-img {
+            width: 52px; height: 52px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #e5e7eb;
+        }
+        .dark .news-item-img { background: #374151; }
+        .news-item-content { flex: 1; min-width: 0; }
+        .news-item-title {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+        .news-item-desc {
+            font-size: 12px;
+            opacity: 0.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+        }
+        .news-item-date {
+            font-size: 10px;
+            opacity: 0.4;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .news-item-tag {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-bottom: 4px;
+        }
+        .news-item-tag.hot { background: #ef4444; color: white; }
+        .news-item-tag.new { background: #22c55e; color: white; }
+        .news-item-tag.update { background: #3b82f6; color: white; }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 12px;
+        }
+        .loading-spinner i {
+            font-size: 28px;
+            color: #3b82f6;
+        }
+
+        .news-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .news-modal.active {
+            display: flex;
+        }
+        .news-modal-content {
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            animation: modalFade 0.25s ease;
+        }
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .dark .news-modal-content {
+            background: rgba(20,20,20,0.98);
+            border-color: rgba(255,255,255,0.05);
+        }
+        .news-modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            font-size: 26px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+            background: none;
+            border: none;
+            color: inherit;
+        }
+        .news-modal-close:hover { opacity: 1; }
+        .news-modal-img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 18px;
+        }
+        .news-modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .news-modal-desc {
+            font-size: 15px;
+            line-height: 1.7;
+            opacity: 0.8;
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+        }
+        .news-modal-date {
+            font-size: 12px;
+            opacity: 0.4;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .news-modal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 22px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            cursor: pointer;
+            will-change: transform;
+        }
+        .news-modal-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+        .news-modal-link.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Job Cards */
+        .job-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 24px;
+            padding: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .dark .job-card {
+            background: rgba(20, 20, 20, 0.6);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15);
+        }
+        .job-card .job-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 16px;
+            background: #e5e7eb;
+        }
+        .dark .job-card .job-img {
+            background: #374151;
+        }
+        .job-card .job-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .job-card .job-desc {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+        .job-card .job-price {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #22c55e;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 6px 18px;
+            border-radius: 100px;
+            align-self: flex-start;
+        }
+        .job-card .job-price i {
+            font-size: 14px;
+        }
+        .job-card .job-contact {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .job-card .job-contact a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .job-card .job-contact a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Floating Instagram */
+        .insta-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            background-size: 300% 300%;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            box-shadow: 0 8px 32px rgba(220, 39, 67, 0.4);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            will-change: transform;
+        }
+        body:not(.no-anim) .insta-float {
+            animation: gradientShift 5s ease infinite, float 3.5s ease-in-out infinite;
+        }
+        .insta-float:hover {
+            transform: scale(1.06) translateY(-2px);
+            box-shadow: 0 12px 40px rgba(220, 39, 67, 0.6);
+        }
+        .insta-float:active {
+            transform: scale(0.95);
+        }
+        .insta-float i {
+            font-size: 22px;
+        }
+        .insta-float .insta-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .insta-float .insta-text .insta-name {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .insta-float .insta-text .insta-cta {
+            font-size: 11px;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+        @media (max-width: 640px) {
+            .insta-float {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 16px;
+            }
+            .insta-float .insta-text .insta-cta {
+                display: none;
+            }
+            .insta-float i {
+                font-size: 20px;
+            }
+            .news-panel {
+                width: calc(100% - 40px);
+                left: 20px;
+                bottom: 100px;
+            }
+            .news-popup {
+                bottom: 20px;
+                left: 20px;
+            }
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+        .category-tab {
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            background: transparent;
+            color: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .category-tab:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+        .category-tab.active {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
+        }
+        .category-tab i {
+            font-size: 15px;
+        }
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .project-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 22px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+        .dark .project-card {
+            background: rgba(20, 20, 20, 0.6);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.15);
+        }
+        .project-card .project-icon {
+            font-size: 32px;
+            color: #3b82f6;
+            opacity: 0.85;
+        }
+        .project-card .project-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .project-card .project-desc {
             font-size: 13px;
+            opacity: 0.7;
             line-height: 1.5;
-        }
-        .ai-msg {
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 14px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            animation: aiFadeIn 0.25s ease;
-        }
-        @keyframes aiFadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .ai-msg.user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-        .ai-msg.bot {
-            align-self: flex-start;
-            background: rgba(16, 185, 129, 0.12);
-            color: #065f46;
-            border-bottom-left-radius: 4px;
-        }
-        .dark .ai-msg.bot {
-            background: rgba(16, 185, 129, 0.18);
-            color: #a7f3d0;
-        }
-        .ai-msg.typing {
-            display: flex; gap: 4px; align-items: center;
-            padding: 12px 16px;
-        }
-        .ai-msg.typing span {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: #10b981; opacity: 0.5;
-            animation: aiBounce 1.2s infinite;
-        }
-        .ai-msg.typing span:nth-child(2) { animation-delay: 0.15s; }
-        .ai-msg.typing span:nth-child(3) { animation-delay: 0.3s; }
-        @keyframes aiBounce {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-            30% { transform: translateY(-5px); opacity: 1; }
-        }
-
-        .ai-input-area {
-            border-top: 1px solid rgba(0,0,0,0.08);
-            padding: 10px;
-            display: flex;
-            gap: 8px;
-            background: rgba(255,255,255,0.5);
-            flex-shrink: 0;
-        }
-        .dark .ai-input-area {
-            border-top-color: rgba(255,255,255,0.08);
-            background: rgba(0,0,0,0.2);
-        }
-        .ai-input-area textarea {
             flex: 1;
-            resize: none;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 12px;
-            padding: 8px 12px;
-            font-size: 13px;
-            font-family: inherit;
-            background: white;
-            color: inherit;
-            outline: none;
-            max-height: 90px;
-            min-height: 38px;
         }
-        .dark .ai-input-area textarea {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.1);
+        .project-card .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #3b82f6;
+            margin-top: 4px;
+        }
+        .project-card .project-link i {
+            transition: transform 0.25s ease;
+        }
+        .project-card:hover .project-link i {
+            transform: translateX(4px);
+        }
+        .project-card .project-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+        .project-badge.soon {
+            background: #f59e0b;
             color: white;
         }
-        .ai-input-area textarea:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+        .project-badge.new-badge {
+            background: #22c55e;
+            color: white;
         }
-        .ai-input-area button {
-            background: linear-gradient(135deg, #10b981, #06b6d4);
-            color: white; border: none;
-            width: 40px; height: 40px; border-radius: 12px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.15s ease;
-            flex-shrink: 0;
-            align-self: flex-end;
+        .project-badge.hot-badge {
+            background: #ef4444;
+            color: white;
         }
-        .ai-input-area button:hover { transform: scale(1.05); }
-        .ai-input-area button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+        /* ============================================
+           ANIMATION SWITCH (top-left)
+           ============================================ */
+        .anim-switch {
+            position: fixed;
+            top: 14px;
+            left: 16px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px 8px 8px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
+            will-change: transform;
+        }
+        .dark .anim-switch {
+            background: rgba(20, 20, 20, 0.8);
+            border-color: rgba(96, 165, 250, 0.3);
+        }
+        body:not(.no-anim) .anim-switch {
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+        .anim-switch:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.35);
+        }
+        .anim-switch-track {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .anim-switch.on .anim-switch-track {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15), 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .anim-switch-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #3b82f6;
+        }
+        .anim-switch.on .anim-switch-thumb {
+            left: 25px;
+            color: #8b5cf6;
+        }
+        .anim-switch-thumb i {
+            transition: transform 0.35s ease;
+        }
+        body:not(.no-anim) .anim-switch.on .anim-switch-thumb i {
+            animation: rotateSlow 4s linear infinite;
+        }
+        .anim-switch-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .anim-switch-label .switch-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #3b82f6;
+        }
+        .dark .anim-switch-label .switch-title {
+            color: #60a5fa;
+        }
+        .anim-switch-label .switch-sub {
+            font-size: 9px;
+            opacity: 0.55;
+            font-weight: 500;
+        }
+        .anim-switch:not(.on) .switch-title { color: #94a3b8; }
+        .dark .anim-switch:not(.on) .switch-title { color: #64748b; }
         @media (max-width: 640px) {
-            .news-panel { width: calc(100% - 40px); left: 20px; bottom: 90px; }
-            .news-popup { bottom: 20px; left: 20px; }
-            .insta-float { bottom: 20px; right: 20px; padding: 8px 14px; }
-            .ai-trigger { bottom: 90px; right: 20px; }
-            .ai-panel {
-                width: calc(100% - 24px);
-                height: 70vh;
-                right: 12px;
-                top: auto;
-                bottom: 90px;
+            .anim-switch {
+                top: 10px;
+                left: 10px;
+                padding: 6px 12px 6px 6px;
             }
+            .anim-switch-label .switch-sub { display: none; }
+            .anim-switch-track { width: 42px; height: 24px; }
+            .anim-switch-thumb { width: 18px; height: 18px; }
+            .anim-switch.on .anim-switch-thumb { left: 21px; }
+        }
+
+        /* Animation toggle notification toast */
+        .anim-toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            z-index: 9999;
+            padding: 10px 22px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 13px;
+            color: white;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .anim-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .anim-toast.off {
+            background: linear-gradient(135deg, #64748b, #475569);
         }
     </style>
 </head>
@@ -343,17 +1021,29 @@
 
     <div class="bg-overlay"></div>
 
-    <!-- Header Navigation -->
+    <!-- ANIMATION SWITCH - TOP LEFT -->
+    <div class="anim-switch on" id="animSwitch" role="switch" aria-checked="true" tabindex="0" title="Toggle animations">
+        <div class="anim-switch-track">
+            <div class="anim-switch-thumb">
+                <i class="fas fa-magic"></i>
+            </div>
+        </div>
+        <div class="anim-switch-label">
+            <span class="switch-title" id="animSwitchTitle">Animations ON</span>
+            <span class="switch-sub">Click to toggle</span>
+        </div>
+    </div>
+
     <header class="fixed top-0 w-full z-50 glass-card">
         <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-            <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400" id="logo-theme-toggle">MSZ</h1>
+            <h1 class="text-3xl font-extrabold neon-logo cursor-pointer tracking-tighter text-blue-600 dark:text-blue-400 ml-32 md:ml-44" id="logo-theme-toggle">MSZ</h1>
             <nav class="hidden md:flex space-x-8 font-semibold text-sm items-center">
-                <span class="nav-link" onclick="updateUI('html')">HTML</span>
                 <span class="nav-link" onclick="updateUI('home')">Home</span>
                 <span class="nav-link" onclick="updateUI('about')">About Me</span>
                 <span class="nav-link" onclick="updateUI('experiences')">Experience</span>
                 <span class="nav-link" onclick="updateUI('portfolio')">Portfolio</span>
                 <span class="nav-link" onclick="updateUI('contact')">Contact</span>
+                <span class="nav-link" onclick="updateUI('html')">HTML</span>
                 <span class="nav-link font-bold text-blue-600 dark:text-blue-400" onclick="updateUI('jobs')">💼 Jobs</span>
             </nav>
             <button id="menu-btn" class="md:hidden text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
@@ -361,22 +1051,19 @@
         </div>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white dark:bg-darkbg flex flex-col items-center justify-center space-y-6 text-2xl font-bold translate-x-full transition-transform duration-300 md:hidden">
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white dark:bg-darkbg flex flex-col items-center justify-center space-y-8 text-2xl font-bold translate-x-full md:hidden">
         <button id="close-menu" class="absolute top-6 right-6 text-3xl">&times;</button>
-        <span onclick="toggleMenu(); updateUI('html')">HTML</span>
         <span onclick="toggleMenu(); updateUI('home')">Home</span>
         <span onclick="toggleMenu(); updateUI('about')">About Me</span>
         <span onclick="toggleMenu(); updateUI('experiences')">Experience</span>
         <span onclick="toggleMenu(); updateUI('portfolio')">Portfolio</span>
         <span onclick="toggleMenu(); updateUI('contact')">Contact</span>
+        <span onclick="toggleMenu(); updateUI('html')">HTML</span>
         <span onclick="toggleMenu(); updateUI('jobs')" class="text-blue-600">💼 Jobs</span>
     </div>
 
-    <!-- Main Content Dynamic Container -->
     <main id="app-content" class="pt-28 pb-16 px-6 max-w-6xl mx-auto min-h-screen"></main>
 
-    <!-- Footer -->
     <footer class="py-8 text-center glass-card border-t dark:border-gray-800">
         <p class="opacity-70 text-sm">&copy; 2025 Burak. All Rights Reserved.</p>
         <div class="mt-3 flex justify-center space-x-6 text-xl">
@@ -386,166 +1073,382 @@
         </div>
     </footer>
 
-    <!-- Floating Instagram Link -->
+    <!-- Floating Instagram Button - ONLY ON JOBS PAGE -->
     <a href="https://instagram.com/burak_msz" target="_blank" id="instaFloat" class="insta-float" style="display:none;">
-        <i class="fab fa-instagram text-xl"></i>
-        <div class="flex flex-col text-left leading-tight">
-            <span class="text-xs font-bold">@burak_msz</span>
-            <span class="text-[10px] opacity-80 hidden sm:inline">DM for work</span>
+        <i class="fab fa-instagram"></i>
+        <div class="insta-text">
+            <span class="insta-name">@burak_msz</span>
+            <span class="insta-cta">DM for work</span>
         </div>
     </a>
 
-    <!-- News Widget Popup -->
     <div class="news-popup">
         <div class="news-trigger" id="newsTrigger">
-            <i class="fas fa-newspaper text-xl"></i>
+            <i class="fas fa-newspaper"></i>
             <span class="news-badge" id="newsBadge">0</span>
         </div>
     </div>
 
-    <!-- News List Panel -->
     <div class="news-panel" id="newsPanel">
-        <div class="p-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white flex justify-between items-center font-bold">
+        <div class="news-panel-header">
             <span><i class="fas fa-bullhorn mr-2"></i> Highlights</span>
-            <span class="cursor-pointer opacity-80 hover:opacity-100" id="newsClose"><i class="fas fa-times"></i></span>
+            <span class="news-close" id="newsClose"><i class="fas fa-times"></i></span>
         </div>
-        <div class="p-3 max-h-[360px] overflow-y-auto" id="newsList"></div>
+        <div class="news-list" id="newsList">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Loading news...</span>
+            </div>
+        </div>
     </div>
 
-    <!-- News Modal -->
     <div class="news-modal" id="newsModal">
         <div class="news-modal-content">
-            <button class="absolute top-4 right-4 text-2xl opacity-60 hover:opacity-100" onclick="modalKapat()">&times;</button>
-            <img class="w-full h-48 object-cover rounded-xl mb-4" id="modalImg" src="" alt="News">
-            <h3 class="text-xl font-bold mb-2" id="modalTitle">Title</h3>
-            <p class="text-sm opacity-80 mb-4 whitespace-pre-wrap leading-relaxed" id="modalDesc">Description</p>
-            <div class="text-xs opacity-50 mb-4 flex items-center gap-2"><i class="far fa-clock"></i> <span id="modalDateText">Date</span></div>
-            <div class="flex gap-3 flex-wrap">
-                <a class="btn-primary text-sm py-2 px-5" id="modalLink" href="#" target="_blank"><i class="fas fa-external-link-alt"></i> View Details</a>
-                <button class="px-5 py-2 rounded-full border border-gray-300 dark:border-gray-700 text-sm font-semibold" onclick="modalKapat()">Close</button>
+            <button class="news-modal-close" onclick="modalKapat()">&times;</button>
+            <img class="news-modal-img" id="modalImg" src="" alt="News image">
+            <div class="news-modal-title" id="modalTitle">Title</div>
+            <div class="news-modal-desc" id="modalDesc">Description</div>
+            <div class="news-modal-date" id="modalDate">
+                <i class="far fa-clock"></i> <span id="modalDateText">Date</span>
+            </div>
+            <div class="modal-buttons">
+                <a class="news-modal-link" id="modalLink" href="#" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> View Details
+                </a>
+                <button class="btn-primary" onclick="modalKapat()" style="padding:10px 22px; font-size:14px;">
+                    <i class="fas fa-times"></i> Close
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- ================= AI ASSISTANT ================= -->
-    <div class="ai-trigger" id="aiTrigger" title="MSZ AI Asistan">
-        <i class="fas fa-robot"></i>
-    </div>
-
-    <div class="ai-panel" id="aiPanel">
-        <div class="ai-header" id="aiHeader">
-            <div class="title">
-                <i class="fas fa-robot"></i> MSZ AI Asistan
-            </div>
-            <div class="controls">
-                <button id="aiClear" title="Sohbeti temizle"><i class="fas fa-trash"></i></button>
-                <button id="aiClose" title="Kapat"><i class="fas fa-times"></i></button>
-            </div>
-        </div>
-        <div class="ai-messages" id="aiMessages"></div>
-        <div class="ai-input-area">
-            <textarea id="aiInput" rows="1" placeholder="Bir şey sor... (Enter = gönder)"></textarea>
-            <button id="aiSend" title="Gönder"><i class="fas fa-paper-plane"></i></button>
-        </div>
+    <!-- Toast for animation toggle -->
+    <div class="anim-toast" id="animToast">
+        <i class="fas fa-magic"></i>
+        <span id="animToastText">Animations enabled</span>
     </div>
 
     <script>
-        // ========== HABER DATA ==========
-        const haberler = [
-            { id: 1, baslik: "NEW PROJECTS IN EXPERIENCES>", ozet: "Come on the cengO and msz media!", detay: "Hi guys. Projects updated: CengO chat and Msz media are now available.", tarih: "2026-09-14", link: "https://burak-code.github.io/cengo/", resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB28Iq68g69lkNltz3n_CcrfkJC7OpQlwU86t_Iflz5A&s=10", tag: "new" },
-            { id: 2, baslik: "MSZ HIRING", ozet: "Go to Jobs section for hiring!", detay: "MSZ is building a strong team. Check Jobs for details.", tarih: "2026-09-14", link: "https://www.instagram.com/burak_msz/", resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnfEnY47lE7rjQ4unut4v59C1ys0Qb5ExanfIGUZBuTQ&s=10", tag: "new" },
-            { id: 3, baslik: "FINISH OF MSZ TOURNAMENT", ozet: "Last Efootball Tournament.", detay: "Efootball tournament concluded. Transitioning towards new formats.", tarih: "2026-09-14", link: "html/tournament.html", resim: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCxrioHi33E9aWS5_UxmDOPmopaPk9T65zd7t01yPf1g&s=10", tag: "hot" },
-            { id: 4, baslik: "PIXEL CRAFT GAME!", ozet: "Open world + multiplayer.", detay: "Explore pixel craft open world experience with interactive features.", tarih: "2026-09-27", link: "https://burak-code.github.io/pixel-craft/", resim: "🛻", tag: "hot" }
+        // ========== NEWS ==========
+        const news = [
+            {
+                id: 1,
+                title: "NEW PROJECTS IN EXPERIENCES",
+                summary: "Check out cengO and MSZ Media! I'm waiting for you!",
+                detail: "Hi guys. These are my projects. CengO chat, a roomly chat site, like Discord. MSZ Media, social media like X. Go to experiences.",
+                date: "2026-09-14",
+                link: "https://burak-code.github.io/cengo/",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB28Iq68g69lkNltz3n_CcrfkJC7OpQlwU86t_Iflz5A&s=10",
+                tag: "new"
+            },
+            {
+                id: 2,
+                title: "MSZ HIRING",
+                summary: "Go to Jobs section for hiring!",
+                detail: "MSZ is hiring anyone. Because we are going to be a real company. But I am alone. And I need teammates.",
+                date: "2026-09-14",
+                link: "https://www.instagram.com/burak_msz/",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnfEnY47lE7rjQ4unut4v59C1ys0Qb5ExanfIGUZBuTQ&s=10",
+                tag: "new"
+            },
+            {
+                id: 3,
+                title: "END OF MSZ TOURNAMENT - EFOOTBALL",
+                summary: "Last Efootball Tournament.",
+                detail: "This is the last tournament with efootball. We are going to haxball. Because efootball is not working on any device. And this is not the talent. We are going for raw talent.",
+                date: "2026-09-14",
+                link: "html/tournament.html",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCxrioHi33E9aWS5_UxmDOPmopaPk9T65zd7t01yPf1g&s=10",
+                tag: "hot"
+            },
+            {
+                id: 4,
+                title: "PIXEL CRAFT GAME!",
+                summary: "Open world + multiplayer.",
+                detail: "This is the multiplayer open world game. It has an economy and space.",
+                date: "2026-09-27",
+                link: "https://burak-code.github.io/pixel-craft/",
+                image: "🛻",
+                tag: "hot"
+            },
         ];
 
-        // ========== COMPONENT HELPERS ==========
-        function mszTeamCard(variant = 'default') {
-            return `
-                <div class="msz-team-card p-6 md:p-8 mt-8 ${variant === 'about' ? '' : 'text-center'}">
-                    <div class="flex flex-col ${variant === 'about' ? 'md:flex-row' : ''} items-center gap-6">
-                        <div class="w-20 h-20 rounded-full gold-icon-circle flex items-center justify-center text-3xl shrink-0">
-                            <i class="fas fa-crown text-white"></i>
-                        </div>
-                        <div class="flex-1 ${variant === 'about' ? 'text-center md:text-left' : ''}">
-                            <h3 class="text-2xl font-extrabold mb-2"><span class="gold-gradient-text">TEAM MSZ</span></h3>
-                            <p class="opacity-80 mb-4 text-sm leading-relaxed">Meet the talented crew behind MSZ projects! Developers and innovators working together.</p>
-                            <a href="https://burak-code.github.io/msz_ekibi/" target="_blank" class="btn-gold text-sm">
-                                <i class="fas fa-users"></i> <span>View MSZ Team</span> <i class="fas fa-arrow-right text-xs"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>`;
+        // ========== ANIMATION SWITCH ==========
+        const animSwitch = document.getElementById('animSwitch');
+        const animSwitchTitle = document.getElementById('animSwitchTitle');
+        const animToast = document.getElementById('animToast');
+        const animToastText = document.getElementById('animToastText');
+
+        let animationsEnabled = localStorage.getItem('msz_animations') !== 'off';
+
+        function applyAnimationState() {
+            const html = document.documentElement;
+            const body = document.body;
+
+            if (animationsEnabled) {
+                body.classList.remove('no-anim');
+                html.classList.remove('no-anim');
+                animSwitch.classList.add('on');
+                animSwitch.setAttribute('aria-checked', 'true');
+                animSwitchTitle.textContent = 'Animations ON';
+                // Re-enable smooth scroll
+                html.classList.add('scroll-smooth');
+            } else {
+                body.classList.add('no-anim');
+                html.classList.add('no-anim');
+                animSwitch.classList.remove('on');
+                animSwitch.setAttribute('aria-checked', 'false');
+                animSwitchTitle.textContent = 'Animations OFF';
+                html.classList.remove('scroll-smooth');
+            }
         }
 
-        // ========== PAGE CONTENT RENDERERS ==========
+        function showToast(text, isOn) {
+            animToastText.textContent = text;
+            animToast.classList.toggle('off', !isOn);
+            animToast.classList.add('show');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                animToast.classList.remove('show');
+            }, 1800);
+        }
+
+        function toggleAnimations() {
+            animationsEnabled = !animationsEnabled;
+            localStorage.setItem('msz_animations', animationsEnabled ? 'on' : 'off');
+            applyAnimationState();
+
+            if (animationsEnabled) {
+                showToast('✨ Animations enabled', true);
+                // Trigger scroll reveal reset for extra effect
+                document.querySelectorAll('.reveal').forEach(el => {
+                    el.classList.remove('revealed');
+                });
+                setTimeout(runScrollReveal, 100);
+            } else {
+                showToast('Animations disabled', false);
+            }
+        }
+
+        animSwitch.addEventListener('click', toggleAnimations);
+        animSwitch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleAnimations();
+            }
+        });
+
+        // ========== SCROLL REVEAL ==========
+        let revealObserver = null;
+
+        function initScrollReveal() {
+            if (revealObserver) revealObserver.disconnect();
+            revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, {
+                threshold: 0.12,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                revealObserver.observe(el);
+            });
+        }
+
+        function runScrollReveal() {
+            if (!animationsEnabled) {
+                document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                    el.classList.add('revealed');
+                });
+                return;
+            }
+            initScrollReveal();
+        }
+
+        // ========== AUTO-INJECT REVEAL CLASSES ==========
+        function autoApplyReveal() {
+            // Cards
+            document.querySelectorAll('.glass-card, .project-card, .job-card, .msz-team-card').forEach((el, i) => {
+                if (!el.classList.contains('reveal') && !el.classList.contains('reveal-scale') && !el.classList.contains('reveal-left') && !el.classList.contains('reveal-right')) {
+                    el.classList.add('reveal');
+                    el.style.transitionDelay = `${Math.min(i * 0.05, 0.4)}s`;
+                }
+            });
+            // Headings
+            document.querySelectorAll('#app-content h2, #app-content h3').forEach((el, i) => {
+                if (!el.classList.contains('reveal')) {
+                    el.classList.add('reveal');
+                    el.style.transitionDelay = `${Math.min(i * 0.06, 0.3)}s`;
+                }
+            });
+            // Category tabs
+            document.querySelectorAll('.category-tab').forEach((el, i) => {
+                if (!el.classList.contains('reveal-scale')) {
+                    el.classList.add('reveal-scale');
+                    el.style.transitionDelay = `${i * 0.05}s`;
+                }
+            });
+        }
+
+        // ========== MSZ TEAM CARD ==========
+        function mszTeamCard(variant = 'default') {
+            if (variant === 'about') {
+                return `
+                    <div class="msz-team-card p-6 md:p-8 mt-8 reveal">
+                        <span class="gold-sparkle" style="top: 15%; left: 8%; animation-delay: 0s;"></span>
+                        <span class="gold-sparkle" style="top: 70%; left: 92%; animation-delay: 0.8s;"></span>
+                        <span class="gold-sparkle" style="top: 30%; left: 95%; animation-delay: 1.5s;"></span>
+                        <span class="gold-sparkle" style="top: 85%; left: 15%; animation-delay: 2.1s;"></span>
+
+                        <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
+                            <div class="w-20 h-20 rounded-full gold-icon-circle flex items-center justify-center text-4xl flex-shrink-0">
+                                <i class="fas fa-crown text-white drop-shadow-lg"></i>
+                            </div>
+                            <div class="flex-1 text-center md:text-left">
+                                <h3 class="text-2xl md:text-3xl font-extrabold mb-2">
+                                    <span class="gold-gradient-text">TEAM MSZ</span>
+                                </h3>
+                                <p class="opacity-80 mb-4 text-base leading-relaxed">
+                                    Meet the talented crew behind MSZ projects! Developers, creators, and innovators working together.
+                                </p>
+                                <a href="https://burak-code.github.io/msz_ekibi/" target="_blank" class="btn-gold">
+                                    <i class="fas fa-users"></i>
+                                    <span>View MSZ Team</span>
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            return `
+                <div class="msz-team-card p-8 mt-8 text-center reveal">
+                    <span class="gold-sparkle" style="top: 12%; left: 10%; animation-delay: 0s;"></span>
+                    <span class="gold-sparkle" style="top: 75%; left: 88%; animation-delay: 0.7s;"></span>
+                    <span class="gold-sparkle" style="top: 25%; left: 92%; animation-delay: 1.4s;"></span>
+                    <span class="gold-sparkle" style="top: 88%; left: 18%; animation-delay: 2.0s;"></span>
+                    <span class="gold-sparkle" style="top: 50%; left: 5%; animation-delay: 2.5s;"></span>
+
+                    <div class="relative z-10">
+                        <div class="w-24 h-24 rounded-full gold-icon-circle flex items-center justify-center text-5xl mx-auto mb-5">
+                            <i class="fas fa-crown text-white drop-shadow-lg"></i>
+                        </div>
+                        <h3 class="text-3xl font-extrabold mb-3">
+                            <span class="gold-gradient-text">TEAM MSZ</span>
+                        </h3>
+                        <p class="opacity-80 mb-6 max-w-md mx-auto leading-relaxed">
+                            The MSZ team is here! Meet the people behind the projects and innovations.
+                        </p>
+                        <a href="https://burak-code.github.io/msz_ekibi/" target="_blank" class="btn-gold text-lg">
+                            <i class="fas fa-users"></i>
+                            <span>Visit MSZ Team Page</span>
+                            <i class="fas fa-arrow-right text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ========== CATEGORIZED PROJECTS ==========
+        const projectCategories = [
+            { id: "all", label: "All Projects", icon: "fa-th-large" },
+            { id: "games", label: "Games", icon: "fa-gamepad" },
+            { id: "social", label: "Social & Communication", icon: "fa-comments" },
+            { id: "tools", label: "Tools & Utilities", icon: "fa-tools" },
+            { id: "ai", label: "AI & Tech", icon: "fa-robot" },
+            { id: "sports", label: "Sports & Football", icon: "fa-futbol" }
+        ];
+
+        const allProjects = [
+            { title: "SimSiyaset", desc: "Multiplayer strategy game.", link: "html/SimSiyaset.html", icon: "fa-vault", category: "games", badge: "" },
+            { title: "Pixel Craft", desc: "2D open world multiplayer game. Has an economy.", link: "https://burak-code.github.io/pixel-craft/", icon: "fa-pickup", category: "games", badge: "hot" },
+            { title: "Online Chess", desc: "Chess with online rooms.", link: "html/satranç.html", icon: "fa-chess", category: "games", badge: "" },
+            { title: "MSZ Pixel", desc: "Pixel world. Paint and create.", link: "html/msz_pixel.html", icon: "fa-palette", category: "games", badge: "" },
+            { title: "Stumble Boys", desc: "HTML-based, smooth platform game.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad", category: "games", badge: "" },
+            { title: "Flag Quiz", desc: "Geography game with ranking system.", link: "html/oyun1.html", icon: "fa-flag", category: "games", badge: "" },
+            { title: "Score Game", desc: "Mouse test and speed-focused mini game.", link: "html/plazma.html", icon: "fa-bolt", category: "games", badge: "" },
+
+            { title: "cengO", desc: "Free chat rooms with Discord-like features.", link: "https://burak-code.github.io/cengo/", icon: "fa-envelope", category: "social", badge: "new" },
+            { title: "MSZ MEDYA", desc: "A social media platform. Created by me. 100% Turkish...", link: "https://burak-code.github.io/msz-medya/", icon: "fa-phone", category: "social", badge: "new" },
+
+            { title: "MSZ Trade", desc: "Economy-focused strategy simulation.", link: "html/oyun2.html", icon: "fa-chart-line", category: "tools", badge: "" },
+            { title: "University Planner", desc: "Digital assistant for students.", link: "html/oyun3.html", icon: "fa-university", category: "tools", badge: "" },
+
+            { title: "MSZ AI", desc: "Free and up-to-date artificial intelligence bot.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot", category: "ai", badge: "" },
+            { title: "Game Studio", desc: "The foundations of the game studio of the future.", link: "#", icon: "fa-rocket", category: "ai", badge: "soon" },
+
+            { title: "Tournament", desc: "The final tournament. You can play dream teams.", link: "html/tournament.html", icon: "fa-football", category: "sports", badge: "hot" },
+            { title: "Team Manager", desc: "Manage the national football team on a World Cup journey.", link: "html/team-menager.html", icon: "fa-football", category: "sports", badge: "" },
+        ];
+
+        let activeCategory = "all";
+
+        function filterProjects(category) {
+            activeCategory = category;
+            renderExperiences();
+        }
+
+        // ========== PAGES ==========
         const pages = {
             home: `
                 <div class="text-center py-16">
-                    <h2 class="text-4xl md:text-6xl font-extrabold mb-5">Hello, I'm <span class="text-blue-600 dark:text-blue-400">Burak</span>.</h2>
-                    <p class="text-lg md:text-xl opacity-80 max-w-2xl mx-auto mb-8">A technology enthusiast coding the future. I'm into web development, game design, and digital project.<br> <strong>If you're just going to criticize, please get-out!</strong></p>
-                    <button onclick="updateUI('experiences')" class="btn-primary">View Projects <i class="fas fa-arrow-right"></i></button>
-                </div>`,
+                    <h2 class="text-4xl md:text-6xl font-extrabold mb-5 leading-tight reveal">Hello, I'm <span class="text-blue-600 dark:text-blue-400">Burak</span>.</h2>
+                    <p class="text-lg md:text-xl opacity-80 max-w-2xl mx-auto mb-8 reveal">A technology enthusiast coding the future. I'm into web development, game design, and every corner of the digital world.</p>
+                    <button onclick="updateUI('experiences')" class="btn-primary reveal-scale">View Projects <i class="fas fa-arrow-right"></i></button>
+                </div>
+            `,
             about: `
-                <div class="glass-card rounded-3xl p-8">
+                <div class="glass-card rounded-3xl p-8 md:p-10 reveal">
                     <h2 class="text-3xl font-bold mb-6 flex items-center"><i class="fas fa-user-astronaut mr-4 text-blue-500"></i> About Me</h2>
-                    <div class="grid md:grid-cols-2 gap-8 leading-relaxed opacity-90">
+                    <div class="grid md:grid-cols-2 gap-8 text-base leading-relaxed opacity-90">
                         <div>
-                            <p class="mb-3">I'm a developer continuously expanding my technical skills. Fluent in browsing documentation and technical specifications.</p>
-                            <p>Active across game development, digital design, web platforms, and interactive media.</p>
+                            <p class="mb-3">I'm a developer who has stepped into the coding world and is constantly improving myself. My English is at B1-B2 level and I can comfortably browse technical documentation.</p>
+                            <p>I'm active in many areas, from game development to music production, YouTube content creation to web design.</p>
                         </div>
                         <div class="bg-blue-500/10 rounded-2xl p-5 border border-blue-500/20">
-                            <h3 class="font-bold text-xl mb-2 text-blue-600 dark:text-blue-400">MSZ Vision</h3>
-                            <p>MSZ represents high standards in digital designs, efficiency, and interactive projects.</p>
+                            <h3 class="font-bold text-xl mb-3 text-blue-600 dark:text-blue-400">MSZ Vision</h3>
+                            <p>Above all, unshakeable discipline is required. MSZ is a vision I have established to produce the world's best designs and technologies.</p>
                         </div>
                     </div>
                 </div>
-                ${mszTeamCard('about')}`,
+                ${mszTeamCard('about')}
+            `,
             experiences: `
-                <h2 class="text-3xl font-bold mb-8 text-center">Digital Experience</h2>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    ${[
-                        {title: "SimSiyaset", desc: "Multiplayer strategy game.", link: "html/SimSiyaset.html", icon: "fa-vault"},
-                        {title: "Pixel craft", desc: "2d open world multiplayer game. Have an economy.", link: "https://burak-code.github.io/pixel-craft/", icon: "fa-pickup"},
-                        {title: "MSZ MEDYA", desc: "A social media. Designed by me. %100 Turkish...", link: "https://burak-code.github.io/msz-medya/", icon: "fa-phone"},
-                        {title: "⭐⭐cengO⭐⭐", desc: "Free, chat rooms. <br> BEST PROJECT!", link: "https://burak-code.github.io/cengo/", icon: "fa-envelope"},
-                        {title: "MSZ Trade", desc: "Economy-focused strategy simulation.", link: "html/oyun2.html", icon: "fa-chart-line"},
-                        {title: "Team-Manager", desc: "Manage the national football team on a World Cup journey.", link: "html/team-menager.html", icon: "fa-football"},
-                        {title: "MSZ PİXEL", desc: "Pixel world. Paint.", link: "html/msz_pixel.html", icon: "fa-color"},
-                        {title: "University Planner", desc: "Digital assistant for students.", link: "html/oyun3.html", icon: "fa-university"},
-                        {title: "FİNALLY TOURNAMENT", desc: "İt is the finally tournament. You can play dream teams.", link: "html/tournament.html", icon: "fa-football"},
-                        {title: "Stumble Boys", desc: "HTML-based, smooth platform game.", link: "https://burak-code.github.io/stumble-boys/", icon: "fa-gamepad"},
-                        {title: "Game Studio", desc: "The foundations of the game studio of the future.", link: "#", disabled: true, icon: "fa-rocket"},
-                        {title: "Online Chess", desc: "This is have rooms...", link: "html/satranç.html", icon: "fa-chess"},
-                        {title: "MSZ AI", desc: "Free and up-to-date artificial intelligence bot.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot"},
-                        {title: "Flag Quiz", desc: "Geography game with ranking system.", link: "html/oyun1.html", icon: "fa-flag"},
-                        {title: "Score Game", desc: "Mouse test and speed-focused mini game.", link: "html/plazma.html", icon: "fa-bolt"}
-                    ].map(p => `
-                        <div class="glass-card p-5 rounded-2xl group ${p.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}" ${!p.disabled ? `onclick="window.open('${p.link}', '_blank')"` : ''}>
-                            <i class="fas ${p.icon} text-3xl text-blue-500 mb-3 opacity-80"></i>
-                            <h3 class="text-xl font-bold mb-1">${p.title}</h3>
-                            <p class="opacity-70 mb-4 text-sm">${p.desc}</p>${p.disabled 
-                                ? `<span class="inline-flex items-center font-bold text-gray-500 text-sm">Coming Soon</span>` 
-                                : `<span class="inline-flex items-center font-bold text-blue-500 text-sm">Explore <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span>`
-                            }
-                        </div>
+                <div class="text-center mb-8 reveal">
+                    <h2 class="text-3xl font-bold mb-2">Digital Experience</h2>
+                    <p class="opacity-60 text-sm">Browse my projects by category</p>
+                </div>
+                <div class="category-tabs" id="categoryTabs">
+                    ${projectCategories.map(cat => `
+                        <button class="category-tab ${cat.id === 'all' ? 'active' : ''}" onclick="filterProjects('${cat.id}')" data-category="${cat.id}">
+                            <i class="fas ${cat.icon}"></i> ${cat.label}
+                        </button>
                     `).join('')}
-                </div>`,
+                </div>
+                <div class="project-grid" id="projectGrid"></div>
+            `,
             portfolio: `
-                <h2 class="text-3xl font-bold mb-8 text-center">MSZ Goals</h2>
-                <div class="space-y-6 max-w-3xl mx-auto">
-                    <div class="glass-card p-6 rounded-3xl border-l-8 border-blue-600">
-                        <h3 class="text-xl font-bold mb-2">Simulation Engine</h3>
-                        <p class="opacity-80">A goal to design immersive life and economy simulation web engines.</p>
+                <h2 class="text-3xl font-bold mb-8 text-center reveal">MSZ Future Goals</h2>
+                <div class="space-y-6">
+                    <div class="glass-card p-7 rounded-3xl border-l-8 border-blue-600 reveal-left">
+                        <h3 class="text-xl font-bold mb-2">Realistic Game</h3>
+                        <p class="opacity-80">To recreate the world in a digital environment. Not just a game, but a fully-fledged life simulation goal.</p>
                     </div>
-                    <div class="glass-card p-6 rounded-3xl border-l-8 border-purple-500">
-                        <h3 class="text-xl font-bold mb-2">Innovation Lab</h3>
-                        <p class="opacity-80">Building tools and ideas that make digital utility tools accessible for everyone.</p>
+                    <div class="glass-card p-7 rounded-3xl border-l-8 border-purple-500 reveal-right">
+                        <h3 class="text-xl font-bold mb-2">BIG BANG</h3>
+                        <p class="opacity-80">An innovation centre that aims to analyse humanity's historical inventions and generate ideas to save the future.</p>
                     </div>
-                </div>`,
+                </div>
+            `,
             contact: `
-                <div class="max-w-2xl mx-auto glass-card p-8 rounded-3xl">
-                    <h2 class="text-3xl font-bold mb-6 text-center">Get in Touch</h2>
-                    <div class="grid gap-4">
+                <div class="max-w-2xl mx-auto glass-card p-8 rounded-3xl text-center reveal">
+                    <h2 class="text-3xl font-bold mb-6">Get in Touch</h2>
+                    <p class="mb-8 opacity-70">Reach out to me about your projects or just to say hello.</p>
+                    <div class="grid gap-4 text-left">
                         <a href="html/linktree.html" target="_blank" class="flex items-center justify-between p-5 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors border border-white/10 group">
                             <div class="flex items-center"><i class="fas fa-link text-emerald-400 mr-4 text-xl"></i> <span>Linktree</span></div>
                             <i class="fas fa-chevron-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
@@ -564,321 +1467,291 @@
                         </a>
                     </div>
                 </div>
-                <div class="max-w-2xl mx-auto">${mszTeamCard('contact')}</div>`,
+                <div class="max-w-2xl mx-auto">
+                    ${mszTeamCard('contact')}
+                </div>
+            `,
             html: `
                 <div class="space-y-8">
-                    <div class="text-center">
-                        <h2 class="text-3xl font-bold mb-2 flex items-center justify-center gap-2"><i class="fab fa-html5 text-orange-500"></i> HTML Demos</h2>
-                        <p class="opacity-80 max-w-xl mx-auto text-sm">Interactive responsive HTML web templates.</p>
+                    <div class="text-center reveal">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-3 flex items-center justify-center gap-3"><i class="fab fa-html5 text-orange-500"></i> HTML Demos</h2>
+                        <p class="text-base md:text-lg opacity-80 max-w-2xl mx-auto leading-relaxed">Hello, you can see the HTML demos I have created here. I can adapt them for you and build your website.</p>
                     </div>
                     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         ${[
-                            {title: "CV / Chef", file: "html/ito.chef.html", img: "https://st2.depositphotos.com/1967477/8956/v/450/depositphotos_89562614-stock-illustration-cartoon-funny-italian-chef-cartoon.jpg"},
-                            {title: "Restaurant", file: "html/restoran.html", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600"},
-                            {title: "Barber", file: "html/berber.html", img: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600"},
-                            {title: "Sports", file: "html/spor.html", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600"},
-                            {title: "Real Estate", file: "html/emlak.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600"},
-                            {title: "Photographer", file: "html/fotoğrafçı.html", img: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600"}
-                        ].map(item => `
-                            <div class="glass-card rounded-2xl overflow-hidden group">
-                                <img src="${item.img}" alt="${item.title}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
+                            {title: "CV", file: "html/ito.chef.html", img: "https://st2.depositphotos.com/1967477/8956/v/450/depositphotos_89562614-stock-illustration-cartoon-funny-italian-chef-cartoon.jpg", icon: "fa-utensils"},
+                            {title: "Restaurant", file: "html/restoran.html", img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop&crop=center", icon: "fa-utensils"},
+                            {title: "Barber", file: "html/berber.html", img: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&crop=center", icon: "fa-cut"},
+                            {title: "Sports", file: "html/spor.html", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop&crop=center", icon: "fa-dumbbell"},
+                            {title: "Real Estate", file: "html/emlak.html", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop&crop=center", icon: "fa-building"},
+                            {title: "Photographer", file: "html/fotoğrafçı.html", img: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&h=400&fit=crop&crop=center", icon: "fa-camera"}
+                        ].map((item, index) => `
+                            <div class="glass-card rounded-2xl overflow-hidden group transition-transform hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10 reveal-scale" style="transition-delay: ${index * 0.06}s">
+                                <div class="relative overflow-hidden h-44">
+                                    <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div class="absolute top-3 left-3 bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-xs font-bold text-white flex items-center gap-1.5"><i class="fas ${item.icon}"></i> ${item.title}</div>
+                                </div>
                                 <div class="p-4 flex items-center justify-between">
-                                    <span class="font-bold">${item.title}</span>
-                                    <a href="${item.file}" target="_blank" class="btn-primary text-xs py-1 px-3">View</a>
+                                    <div><h3 class="text-lg font-bold">${item.title}</h3><p class="text-xs opacity-60">HTML demo</p></div>
+                                    <a href="${item.file}" target="_blank" class="btn-primary text-sm py-1.5 px-4">View <i class="fas fa-arrow-right text-xs"></i></a>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-                </div>`,
+                    <div class="text-center pt-4 opacity-60 text-sm reveal"><i class="fas fa-external-link-alt mr-1"></i> Opens in a new tab when clicked.</div>
+                </div>
+            `,
             jobs: `
-                <div class="max-w-4xl mx-auto">
-                    <h2 class="text-3xl font-bold mb-6 text-center"><i class="fas fa-briefcase text-blue-500 mr-2"></i> Opportunities</h2>
-                    <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row gap-6 items-center">
-                        <img class="w-full md:w-1/2 h-48 object-cover rounded-2xl" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600" alt="Job">
-                        <div>
-                            <h3 class="text-2xl font-bold mb-2">🌐 Web & Project Team</h3>
-                            <p class="opacity-80 text-sm mb-4 leading-relaxed">Looking for team collaborators with programming skills and English proficiency. Contact via Instagram DM for details.</p>
-                            <a href="https://instagram.com/burak_msz" target="_blank" class="btn-primary text-sm"><i class="fab fa-instagram"></i> Apply via Instagram</a>
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-10 reveal">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-3 flex items-center justify-center gap-3"><i class="fas fa-briefcase text-blue-500"></i> Part-time Jobs</h2>
+                        <p class="text-base md:text-lg opacity-70 max-w-2xl mx-auto">Open positions and freelance opportunities. Contact me for collaboration!</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="job-card reveal-scale">
+                            <img class="job-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=300&fit=crop&crop=center" alt="Web Development">
+                            <div class="job-title">🌐 Web Development</div>
+                            <div class="job-desc">
+                                I need a team for MSZ. A programmer, a content creator. They should have at least B1 level English proficiency. If you want to work on the MSZ team, send an Instagram DM. Only Turkish youths.
+                            </div>
+                            <div class="job-price">
+                                <i class="fas fa-tag"></i> Go to Instagram for details
+                            </div>
+                            <div class="job-contact">
+                                <a href="https://instagram.com/burak_msz" target="_blank">
+                                    <i class="fab fa-instagram"></i> DM on Instagram
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>`
+
+                    <div class="text-center mt-10 opacity-50 text-sm reveal">
+                        <i class="fas fa-info-circle mr-1"></i> Custom projects available. DM for details.
+                    </div>
+                </div>
+            `
         };
 
-        // ========== APPLICATION CONTROL ==========
+        // ========== BAD WORDS FILTER (kept for compatibility) ==========
+        const badWords = ['amk', 'siktir', 'orospu', 'piç', 'mal', 'gerizekalı', 'aptal', 'salak', 'embesil', 'ibne', 'göt', 'sik', 'yarrak', 'am', 'fuck', 'shit', 'bitch', 'asshole', 'dick', 'porn', 'sex', 'nude', 'pussy', 'cunt', 'motherfucker'];
+        function filterBadWords(text) {
+            let filtered = text;
+            badWords.forEach(word => {
+                const regex = new RegExp('\\b' + word + '\\b|' + word, 'gi');
+                filtered = filtered.replace(regex, '*****');
+            });
+            return filtered;
+        }
+        function containsBadWords(text) {
+            const lower = text.toLowerCase();
+            return badWords.some(word => lower.includes(word));
+        }
+
+        // ========== RENDER EXPERIENCES ==========
+        function renderExperiences() {
+            const grid = document.getElementById('projectGrid');
+            if (!grid) return;
+
+            let filtered = allProjects;
+            if (activeCategory !== "all") {
+                filtered = allProjects.filter(p => p.category === activeCategory);
+            }
+
+            grid.innerHTML = filtered.map((p, i) => {
+                const badgeHtml = p.badge === 'soon' 
+                    ? '<span class="project-badge soon">Coming Soon</span>' 
+                    : p.badge === 'new' 
+                        ? '<span class="project-badge new-badge">✨ New</span>' 
+                        : p.badge === 'hot' 
+                            ? '<span class="project-badge hot-badge">🔥 Hot</span>' 
+                            : '';
+
+                const isDisabled = p.link === '#';
+
+                return `
+                    <div class="project-card reveal-scale" style="transition-delay: ${Math.min(i * 0.05, 0.5)}s" onclick="${isDisabled ? '' : `window.open('${p.link}', '_blank')`}">
+                        ${badgeHtml}
+                        <i class="fas ${p.icon} project-icon"></i>
+                        <div class="project-title">${p.title}</div>
+                        <div class="project-desc">${p.desc}</div>
+                        <div class="project-link ${isDisabled ? 'opacity-40' : ''}">
+                            ${isDisabled ? '<i class="fas fa-clock"></i> Coming Soon' : `Explore <i class="fas fa-arrow-right"></i>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === activeCategory);
+            });
+
+            // Trigger reveal after render
+            requestAnimationFrame(() => {
+                runScrollReveal();
+            });
+        }
+
+        // ========== UI FUNCTIONS ==========
         function updateUI(page) {
-            document.getElementById('app-content').innerHTML = pages[page] || pages.home;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const content = document.getElementById('app-content');
+            content.innerHTML = pages[page] || pages.home;
+            window.scrollTo({ top: 0, behavior: animationsEnabled ? 'smooth' : 'auto' });
             
             const instaBtn = document.getElementById('instaFloat');
-            if (instaBtn) instaBtn.style.display = (page === 'jobs') ? 'flex' : 'none';
+            if (instaBtn) {
+                instaBtn.style.display = (page === 'jobs') ? 'flex' : 'none';
+            }
+
+            if (page === 'experiences') {
+                activeCategory = 'all';
+                renderExperiences();
+            } else {
+                // Auto-apply reveal to rendered cards
+                setTimeout(() => {
+                    autoApplyReveal();
+                    runScrollReveal();
+                }, 50);
+            }
         }
 
         function toggleMenu() {
             document.getElementById('mobile-menu').classList.toggle('translate-x-full');
         }
 
-        function modalAc(haber) {
-            if (!haber) return;
-            document.getElementById('modalImg').src = haber.resim.length > 5 ? haber.resim : 'https://via.placeholder.com/600x300/3b82f6/ffffff?text=MSZ';
-            document.getElementById('modalTitle').textContent = haber.baslik;
-            document.getElementById('modalDesc').textContent = haber.detay || haber.ozet;
-            document.getElementById('modalDateText').textContent = haber.tarih;
+        // ========== NEWS FUNCTIONS ==========
+        function getTagHtml(tag) {
+            if (!tag) return '';
+            const tags = {
+                hot: '<span class="news-item-tag hot">🔥 Hot</span>',
+                new: '<span class="news-item-tag new">✨ New</span>',
+                update: '<span class="news-item-tag update">🔄 Update</span>'
+            };
+            return tags[tag] || '';
+        }
+
+        function modalAc(item) {
+            const modal = document.getElementById('newsModal');
+            document.getElementById('modalImg').src = item.image || 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
+            document.getElementById('modalImg').alt = item.title;
+            document.getElementById('modalTitle').textContent = item.title;
+            document.getElementById('modalDesc').textContent = item.detail || item.summary || 'No details available.';
+            document.getElementById('modalDateText').textContent = new Date(item.date).toLocaleDateString('en-GB');
             
             const linkBtn = document.getElementById('modalLink');
-            linkBtn.href = haber.link || '#';
+            if (item.link && item.link !== '#' && item.link !== 'https://...') {
+                linkBtn.href = item.link;
+                linkBtn.classList.remove('disabled');
+                linkBtn.innerHTML = '<i class="fas fa-external-link-alt"></i> View Details';
+            } else {
+                linkBtn.href = '#';
+                linkBtn.classList.add('disabled');
+                linkBtn.innerHTML = '<i class="fas fa-link"></i> No Link';
+            }
             
-            document.getElementById('newsModal').classList.add('active');
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
         function modalKapat() {
-            document.getElementById('newsModal').classList.remove('active');
+            const modal = document.getElementById('newsModal');
+            modal.classList.remove('active');
             document.body.style.overflow = '';
         }
 
         function haberleriGoster() {
             const list = document.getElementById('newsList');
-            document.getElementById('newsBadge').textContent = haberler.length;
+            const badge = document.getElementById('newsBadge');
+            
+            if (!news || news.length === 0) {
+                list.innerHTML = `<div class="news-empty"><i class="fas fa-newspaper text-4xl mb-3 opacity-30"></i><p>No news available.</p></div>`;
+                badge.textContent = '0';
+                return;
+            }
 
-            list.innerHTML = haberler.map(h => `
-                <div class="news-item" onclick='modalAc(${JSON.stringify(h)})'>
-                    <div class="news-item-content">
-                        <div class="font-semibold text-xs text-blue-500 mb-1">${h.tag.toUpperCase()}</div>
-                        <div class="font-bold text-sm leading-snug">${h.baslik}</div>
-                        <div class="text-xs opacity-60 mt-1">${h.ozet}</div>
+            const sorted = [...news].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const shown = sorted.slice(0, 8);
+            badge.textContent = news.length;
+
+            list.innerHTML = shown.map((item) => {
+                const imgSrc = item.image && item.image !== '' ? item.image : 'https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ';
+                return `
+                    <div class="news-item" onclick="modalAc(news.find(h => h.id === ${item.id}))">
+                        <img src="${imgSrc}" class="news-item-img" alt="News image" loading="lazy" onerror="this.src='https://via.placeholder.com/60x60/3b82f6/ffffff?text=MSZ'">
+                        <div class="news-item-content">
+                            ${getTagHtml(item.tag)}
+                            <div class="news-item-title">${item.title || 'Untitled'}</div>
+                            <div class="news-item-desc">${item.summary || 'No summary'}</div>
+                            <div class="news-item-date">
+                                <i class="far fa-clock"></i> ${item.date ? new Date(item.date).toLocaleDateString('en-GB') : 'No date'}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // ========== EVENT LISTENERS ==========
         document.getElementById('menu-btn').addEventListener('click', toggleMenu);
         document.getElementById('close-menu').addEventListener('click', toggleMenu);
-        document.getElementById('logo-theme-toggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        document.getElementById('logo-theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
 
+        document.getElementById('newsModal').addEventListener('click', function(e) {
+            if (e.target === this) modalKapat();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') modalKapat();
+        });
+
+        const newsTrigger = document.getElementById('newsTrigger');
         const newsPanel = document.getElementById('newsPanel');
-        document.getElementById('newsTrigger').addEventListener('click', () => newsPanel.classList.toggle('active'));
-        document.getElementById('newsClose').addEventListener('click', () => newsPanel.classList.remove('active'));
+        const newsClose = document.getElementById('newsClose');
 
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modalKapat(); });
-
-        // ============================================================
-        // ====================== MSZ AI ASISTAN ======================
-        // ============================================================
-        const aiTrigger = document.getElementById('aiTrigger');
-        const aiPanel = document.getElementById('aiPanel');
-        const aiHeader = document.getElementById('aiHeader');
-        const aiClose = document.getElementById('aiClose');
-        const aiClear = document.getElementById('aiClear');
-        const aiMessages = document.getElementById('aiMessages');
-        const aiInput = document.getElementById('aiInput');
-        const aiSend = document.getElementById('aiSend');
-
-        // Sistem talimatı — AI'ya MSZ sitesi hakkında bağlam verir
-        const SYSTEM_PROMPT = `Sen "MSZ AI Asistan"sın. Burak'ın kişisel web sitesinde (MSZ) ziyaretçilere yardımcı olan samimi, kısa ve net cevap veren bir Türkçe yapay zeka asistanısın.
-Sitede şu bölümler var: Home, About Me, Experience (projeler), Portfolio, Contact, HTML demoları ve Jobs.
-Burak; web geliştirme, oyun tasarımı ve dijital projelerle uğraşan bir geliştirici.
-MSZ projeleri: SimSiyaset, Pixel Craft, MSZ Medya, cengO (chat), MSZ Trade, Team-Manager, MSZ Pixel, University Planner, Stumble Boys, Online Chess, MSZ AI, Flag Quiz, Score Game gibi projeler.
-İletişim: Instagram @burak_msz, YouTube @msz-burak, Gmail burakbilec123@gmail.com.
-Cevaplarını kısa tut (max 3-4 cümle), samimi ol, gereksiz uzun yazma. Bilmediğin şeyi uydurma.`;
-
-        // Sohbet geçmişi (sadece oturum boyunca)
-        let chatHistory = [
-            { role: "system", content: SYSTEM_PROMPT }
-        ];
-
-        // ---------- Panel aç/kapat ----------
-        function openAI() {
-            aiPanel.classList.add('active');
-            aiTrigger.classList.add('hidden');
-            setTimeout(() => aiInput.focus(), 100);
-        }
-        function closeAI() {
-            aiPanel.classList.remove('active');
-            aiTrigger.classList.remove('hidden');
-        }
-
-        aiTrigger.addEventListener('click', openAI);
-        aiClose.addEventListener('click', closeAI);
-
-        // ---------- Mesaj ekleme ----------
-        function addMessage(text, role) {
-            const msg = document.createElement('div');
-            msg.className = `ai-msg ${role}`;
-            msg.textContent = text;
-            aiMessages.appendChild(msg);
-            aiMessages.scrollTop = aiMessages.scrollHeight;
-            return msg;
-        }
-
-        function addTyping() {
-            const typing = document.createElement('div');
-            typing.className = 'ai-msg bot typing';
-            typing.innerHTML = '<span></span><span></span><span></span>';
-            aiMessages.appendChild(typing);
-            aiMessages.scrollTop = aiMessages.scrollHeight;
-            return typing;
-        }
-
-        // ---------- Pollinations API çağrısı ----------
-        async function askPollinations(userText) {
-            // Konuşma geçmişine ekle
-            chatHistory.push({ role: "user", content: userText });
-
-            const res = await fetch("https://text.pollinations.ai/openai", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    model: "openai",
-                    messages: chatHistory,
-                    temperature: 0.7
-                })
-            });
-
-            if (!res.ok) {
-                throw new Error(`API hatası: ${res.status}`);
-            }
-
-            const data = await res.json();
-            const reply = data.choices?.[0]?.message?.content || "Cevap alınamadı.";
-
-            chatHistory.push({ role: "assistant", content: reply });
-            return reply;
-        }
-
-        // ---------- Gönderme ----------
-        let isSending = false;
-        async function sendMessage() {
-            const text = aiInput.value.trim();
-            if (!text || isSending) return;
-
-            isSending = true;
-            aiSend.disabled = true;
-            aiInput.value = '';
-            aiInput.style.height = 'auto';
-
-            addMessage(text, 'user');
-            const typing = addTyping();
-
-            try {
-                const reply = await askPollinations(text);
-                typing.remove();
-                addMessage(reply, 'bot');
-            } catch (err) {
-                typing.remove();
-                addMessage("Bağlantı hatası: " + err.message + "\nİnternetini kontrol et veya biraz sonra tekrar dene.", 'bot');
-                console.error(err);
-            } finally {
-                isSending = false;
-                aiSend.disabled = false;
-                aiInput.focus();
-            }
-        }
-
-        aiSend.addEventListener('click', sendMessage);
-
-        aiInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+        newsTrigger.addEventListener('click', () => {
+            newsPanel.classList.toggle('active');
+            if (newsPanel.classList.contains('active')) {
+                haberleriGoster();
             }
         });
 
-        // Textarea otomatik büyüme
-        aiInput.addEventListener('input', () => {
-            aiInput.style.height = 'auto';
-            aiInput.style.height = Math.min(aiInput.scrollHeight, 90) + 'px';
+        newsClose.addEventListener('click', () => {
+            newsPanel.classList.remove('active');
         });
 
-        // ---------- Sohbeti temizle ----------
-        aiClear.addEventListener('click', () => {
-            if (confirm("Sohbeti temizlemek istediğine emin misin?")) {
-                chatHistory = [{ role: "system", content: SYSTEM_PROMPT }];
-                aiMessages.innerHTML = '';
-                greetUser();
+        document.addEventListener('click', (e) => {
+            if (newsPanel.classList.contains('active')) {
+                if (!newsPanel.contains(e.target) && !newsTrigger.contains(e.target)) {
+                    newsPanel.classList.remove('active');
+                }
             }
         });
 
-        // ---------- Karşılama mesajı ----------
-        function greetUser() {
-            addMessage("Merhaba! 👋 Ben MSZ AI Asistan. Sana projeler, site veya Burak hakkında yardımcı olabilirim. Ne sormak istersin?", 'bot');
-        }
-
-        // ============================================================
-        // ================== SÜRÜKLEME (DRAG) ========================
-        // ============================================================
-        (function makeDraggable() {
-            let isDragging = false;
-            let startX = 0, startY = 0;
-            let startLeft = 0, startTop = 0;
-
-            // Panel konumunu getBoundingClientRect ile takip et
-            function getCurrentPos() {
-                const rect = aiPanel.getBoundingClientRect();
-                return { left: rect.left, top: rect.top };
+        // Keyboard shortcut: press "A" to toggle animations
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'a' || e.key === 'A') {
+                if (!e.ctrlKey && !e.metaKey) {
+                    toggleAnimations();
+                }
             }
+        });
 
-            aiHeader.addEventListener('pointerdown', (e) => {
-                // Kapat / temizle butonlarına basıldıysa sürükleme başlatma
-                if (e.target.closest('button')) return;
-
-                isDragging = true;
-                aiHeader.setPointerCapture(e.pointerId);
-
-                const pos = getCurrentPos();
-                startLeft = pos.left;
-                startTop = pos.top;
-                startX = e.clientX;
-                startY = e.clientY;
-
-                // position: fixed olduğu için left/top ile konumlandır
-                aiPanel.style.left = startLeft + 'px';
-                aiPanel.style.top = startTop + 'px';
-                aiPanel.style.right = 'auto';
-                aiPanel.style.bottom = 'auto';
-                aiPanel.style.transition = 'none';
-            });
-
-            aiHeader.addEventListener('pointermove', (e) => {
-                if (!isDragging) return;
-
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-
-                let newLeft = startLeft + dx;
-                let newTop = startTop + dy;
-
-                // Ekran sınırları (viewport) içinde tut
-                const maxLeft = window.innerWidth - aiPanel.offsetWidth;
-                const maxTop = window.innerHeight - aiPanel.offsetHeight;
-
-                newLeft = Math.max(0, Math.min(maxLeft, newLeft));
-                newTop = Math.max(0, Math.min(maxTop, newTop));
-
-                aiPanel.style.left = newLeft + 'px';
-                aiPanel.style.top = newTop + 'px';
-            });
-
-            aiHeader.addEventListener('pointerup', (e) => {
-                if (!isDragging) return;
-                isDragging = false;
-                try { aiHeader.releasePointerCapture(e.pointerId); } catch (_) {}
-                aiPanel.style.transition = '';
-            });
-
-            aiHeader.addEventListener('pointercancel', (e) => {
-                if (!isDragging) return;
-                isDragging = false;
-                try { aiHeader.releasePointerCapture(e.pointerId); } catch (_) {}
-                aiPanel.style.transition = '';
-            });
-        })();
-
-        // ========== Initial Initialization ==========
+        // ========== INIT ==========
         window.onload = () => {
+            applyAnimationState();
             updateUI('home');
+            document.getElementById('newsBadge').textContent = news.length;
             haberleriGoster();
-            greetUser();
+
+            // Ensure reveal classes applied on home load
+            setTimeout(() => {
+                autoApplyReveal();
+                runScrollReveal();
+            }, 100);
         };
     </script>
 </body>
