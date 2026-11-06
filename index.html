@@ -1015,6 +1015,13 @@
         .anim-toast.off {
             background: linear-gradient(135deg, #64748b, #475569);
         }
+.project-icon-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 8px;
+}
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100">
@@ -1378,7 +1385,15 @@
             { title: "MSZ Trade", desc: "Economy-focused strategy simulation.", link: "html/oyun2.html", icon: "fa-chart-line", category: "tools", badge: "" },
             { title: "University Planner", desc: "Digital assistant for students.", link: "html/oyun3.html", icon: "fa-university", category: "tools", badge: "" },
 
-            { title: "MSZ AI", desc: "Free and up-to-date artificial intelligence bot.", link: "https://burak-code.github.io/msz_ai/", icon: "fa-robot", category: "ai", badge: "" },
+{ 
+    title: "MSZ AI",
+    desc: "Free and up-to-date artificial intelligence bot.",
+    link: "https://burak-code.github.io/msz_ai/",
+    icon: "fa-robot",
+    image: "https://burak-code.github.io/msz_ai/favicon.png",
+    category: "ai",
+    badge: ""
+},
             { title: "Game Studio", desc: "The foundations of the game studio of the future.", link: "#", icon: "fa-rocket", category: "ai", badge: "soon" },
 
             { title: "Tournament", desc: "The final tournament. You can play dream teams.", link: "html/tournament.html", icon: "fa-football", category: "sports", badge: "hot" },
@@ -1550,48 +1565,61 @@
         }
 
         // ========== RENDER EXPERIENCES ==========
-        function renderExperiences() {
-            const grid = document.getElementById('projectGrid');
-            if (!grid) return;
 
-            let filtered = allProjects;
-            if (activeCategory !== "all") {
-                filtered = allProjects.filter(p => p.category === activeCategory);
-            }
+function renderExperiences() {
+    const grid = document.getElementById('projectGrid');
+    if (!grid) return;
 
-            grid.innerHTML = filtered.map((p, i) => {
-                const badgeHtml = p.badge === 'soon' 
-                    ? '<span class="project-badge soon">Coming Soon</span>' 
-                    : p.badge === 'new' 
-                        ? '<span class="project-badge new-badge">✨ New</span>' 
-                        : p.badge === 'hot' 
-                            ? '<span class="project-badge hot-badge">🔥 Hot</span>' 
-                            : '';
+    let filtered = allProjects;
+    if (activeCategory !== "all") {
+        filtered = allProjects.filter(p => p.category === activeCategory);
+    }
 
-                const isDisabled = p.link === '#';
+    grid.innerHTML = filtered.map((p, i) => {
+        const badgeHtml = p.badge === 'soon'
+            ? '<span class="project-badge soon">Coming Soon</span>'
+            : p.badge === 'new'
+                ? '<span class="project-badge new-badge">✨ New</span>'
+                : p.badge === 'hot'
+                    ? '<span class="project-badge hot-badge">🔥 Hot</span>'
+                    : '';
 
-                return `
-                    <div class="project-card reveal-scale" style="transition-delay: ${Math.min(i * 0.05, 0.5)}s" onclick="${isDisabled ? '' : `window.open('${p.link}', '_blank')`}">
-                        ${badgeHtml}
-                        <i class="fas ${p.icon} project-icon"></i>
-                        <div class="project-title">${p.title}</div>
-                        <div class="project-desc">${p.desc}</div>
-                        <div class="project-link ${isDisabled ? 'opacity-40' : ''}">
-                            ${isDisabled ? '<i class="fas fa-clock"></i> Coming Soon' : `Explore <i class="fas fa-arrow-right"></i>`}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+        const isDisabled = p.link === '#';
 
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.category === activeCategory);
-            });
+        return `
+            <div class="project-card reveal-scale"
+                 style="transition-delay: ${Math.min(i * 0.05, 0.5)}s"
+                 onclick="${isDisabled ? '' : `window.open('${p.link}', '_blank')`}">
 
-            // Trigger reveal after render
-            requestAnimationFrame(() => {
-                runScrollReveal();
-            });
-        }
+                ${badgeHtml}
+
+                ${p.image
+                    ? `<img src="${p.image}" alt="${p.title}" class="project-icon-img" loading="lazy">`
+                    : `<i class="fas ${p.icon} project-icon"></i>`
+                }
+
+                <div class="project-title">${p.title}</div>
+                <div class="project-desc">${p.desc}</div>
+
+                <div class="project-link ${isDisabled ? 'opacity-40' : ''}">
+                    ${isDisabled
+                        ? '<i class="fas fa-clock"></i> Coming Soon'
+                        : `Explore <i class="fas fa-arrow-right"></i>`
+                    }
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.category === activeCategory);
+    });
+
+    requestAnimationFrame(() => {
+        runScrollReveal();
+    });
+}
+
 
         // ========== UI FUNCTIONS ==========
         function updateUI(page) {
